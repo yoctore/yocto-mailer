@@ -1,46 +1,44 @@
 {
-    "name": "yocto-mailer",
-    "version": "0.1.0",
-    "description": "Mailer utility for yocto core stack based on nodemailer",
-    "repository": {
-        "type": "git",
-        "url": "git@lab.yocto.digital:yocto-node-modules/yocto-mailer.git"
-    },
-    "keywords": [
-        "mailer"
-    ],
-    "main" : "dist/index.js",
-    "repository" : {
-        "type" : "git",
-        "url" : "git+ssh:://git@lab.yocto.digital:yocto-node-modules/yocto-logger.git"
-    },
-    "engines" : {
-        "node" : ">=0.12.2"
-    },
-    "files" : [
-        "src",
-        "dist",
-        "documentation",
-        "example"
-    ],
-    "author": "Yocto SAS <http://www.yocto.re>",
-    "contributors" : [{
-        "name"  : "BALARD Cédric",
-        "email" : "cedric@yocto.re"
-        }],
-    "license": "ISC",
-    "dependencies" : {
-        "lodash" : "latest",
-        "nodemailer" : "latest",
-        "yocto-logger":"git+ssh://git@lab.yocto.digital:yocto-node-modules/yocto-logger.git"
-    },
-
-    "devDependencies" : {
-        "grunt" : "~0.4.5",
-        "grunt-contrib-copy" : "^0.8.0",
-        "grunt-contrib-jshint" : "~0.10.0",
-        "grunt-contrib-nodeunit" : "~0.4.1",
-        "grunt-contrib-uglify" : "~0.5.0",
-        "grunt-contrib-yuidoc" : "^0.7.0"
+  "name": "yocto-mailer",
+  "version": "0.1.0",
+  "description": "Mailer utility for yocto core stack based on nodemailer",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh:://git@lab.yocto.digital:yocto-node-modules/yocto-mailer.git"
+  },
+  "keywords": [
+    "mailer"
+  ],
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=0.12.2"
+  },
+  "files": [
+    "src",
+    "dist",
+    "documentation",
+    "example"
+  ],
+  "author": "Yocto SAS <http://www.yocto.re>",
+  "contributors": [
+    {
+      "name": "BALARD Cédric",
+      "email": "cedric@yocto.re"
     }
+  ],
+  "dependencies": {
+    "joi": "^6.4.1",
+    "lodash": "latest",
+    "nodemailer": "latest",
+    "nodemailer-smtp-transport": "^1.0.2",
+    "yocto-logger": "git+ssh://git@lab.yocto.digital:yocto-node-modules/yocto-logger.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-yuidoc": "^0.7.0"
+  }
 }

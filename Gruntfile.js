@@ -1,4 +1,4 @@
-'use-strict';
+'use strict';
 /**
  * Gruntfile.js is used to configure or define tasks and load Grunt plugins.
  *

@@ -1,0 +1,205 @@
+{
+    "project": {
+        "name": "yocto-mailer",
+        "description": "Mailer utility for yocto core stack based on nodemailer",
+        "version": "0.1.0",
+        "url": ""
+    },
+    "files": {
+        "src/index.js": {
+            "name": "src/index.js",
+            "modules": {},
+            "classes": {
+                "Mailer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {},
+    "classes": {
+        "Mailer": {
+            "name": "Mailer",
+            "shortname": "Mailer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src/index.js",
+            "line": 9,
+            "description": "Yocto Mailer\n\nThis module manage your own mailer\n\nThis module his a wrapper of nodemailer for node js package\n\nFor more details on used dependencies read links below :\n- yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- LodAsh : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- nodemailer : https://github.com/andris9/Nodemailer\n- nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport",
+            "date": ": 29/04/2015",
+            "author": ": Cédric BALARD <cedric@yocto.re>",
+            "copyright": ": Yocto SAS, All right reserved"
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/index.js",
+            "line": 29,
+            "description": "The transporter for sending mail",
+            "itemtype": "property",
+            "name": "transport",
+            "type": "Object",
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 36,
+            "description": "Structure of the object that contains all mail options",
+            "itemtype": "property",
+            "name": "mailOptions",
+            "type": "Object",
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 51,
+            "description": "Add a new recipient or an array of recipient<br/>\nThis will remove all previous recipient",
+            "itemtype": "method",
+            "name": "addRecipient",
+            "params": [
+                {
+                    "name": "dest",
+                    "description": "if it's a string it's contains a email of recepients else if it's an array it contains an array of string (email)",
+                    "type": "String, Array"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 80,
+            "description": "Set the smtp configuration <br/>\nBefore set the configuration we check with Joi all parameters it's correct<br/>\nIf is correct we set configuration, otherwise no",
+            "itemtype": "method",
+            "name": "setConfigSMTP",
+            "params": [
+                {
+                    "name": "smtpConf",
+                    "description": "New smtp configuration",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 121,
+            "description": "Set the expeditor <br/>\nThis param is save in memory",
+            "itemtype": "method",
+            "name": "setExpeditor",
+            "params": [
+                {
+                    "name": "exp",
+                    "description": "email of the exoeditor",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 138,
+            "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will remove all previous CC recipient",
+            "itemtype": "method",
+            "name": "addCC",
+            "params": [
+                {
+                    "name": "cc",
+                    "description": "if it's a string it's contains a email of ccrecepients else if it's an array it contains an array of string (cc email)",
+                    "type": "String, Array"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 167,
+            "description": "Add a new BCC (CCI) recipient or an array of BCC recipient<br/>\nThis will remove all previous BCC recipient",
+            "itemtype": "method",
+            "name": "addBCC",
+            "params": [
+                {
+                    "name": "bcc",
+                    "description": "if it's a string it's contains a email of ccrecepients else if it's an array it contains an array of string (bcc email)",
+                    "type": "String, Array"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 196,
+            "description": "Send the mail with all parameters ( from, to, cc , bcc)\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
+            "itemtype": "method",
+            "name": "send",
+            "params": [
+                {
+                    "name": "subject",
+                    "description": "Subject of the email",
+                    "type": "String"
+                },
+                {
+                    "name": "message",
+                    "description": "Html message to send",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "on optional callback, If is not specied a default callback will be execute",
+                    "type": "Function"
+                }
+            ],
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 239,
+            "description": "Delete mail otpions : to, cc, bcc, subject, message (html)",
+            "itemtype": "method",
+            "name": "deleteMailOptions",
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 253,
+            "description": "Export current Mailer to use it on node",
+            "class": "Mailer"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "unknown tag: date",
+            "line": " src/index.js:9"
+        },
+        {
+            "message": "unknown tag: copyright",
+            "line": " src/index.js:9"
+        },
+        {
+            "message": "Missing item type\nExport current Mailer to use it on node",
+            "line": " src/index.js:253"
+        }
+    ]
+}
