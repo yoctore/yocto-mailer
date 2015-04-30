@@ -229,28 +229,27 @@ Mailer.prototype.addBCC = function(bcc) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.processEmailFormat = function(data, option, nameOfMethod) {
-    var result;
-    if (_.isString(data)) {
-        //Joi validation for check if cc is an email
-        result = Joi.string().email().validate(data);
-    } else if (_.isArray(data)) {
-        //Joi validation for check if cc is anarray of email
-        var array = Joi.array().items(Joi.string().email());
-        result = array.validate(data);
+    //Set a default value
+    var result = Joi.string().email();
+
+    //Change result if needed
+    if (_.isArray(data) ) {
+         result = Joi.array().items(Joi.string().email());
     }
 
-    //Check if have an error in Joi validation
+    //Execute the Joi vailidation
+    result = result.validate(data);
+
+    //Check if have no error in Joi validation
     if ((_.isEmpty(result)) || (_.isEmpty(result.error))) {
         logger.info( &#x27;[ Mailer.&#x27; + nameOfMethod +&#x27; ] - Validation email ok &#x27;);
         this.mailOptions[option] = data;
         return true;
     }
-    logger.error(&#x27;[ Mailer.&#x27; + nameOfMethod +&#x27; ] - Validation email failed, at least one string dosen\&#x27;t pass email validation&#x27;);
 
+    logger.error(&#x27;[ Mailer.&#x27; + nameOfMethod +&#x27; ] - Validation email failed, at least one string dosen\&#x27;t pass email validation&#x27;);
     return false;
 };
-
-
 
 
 /**

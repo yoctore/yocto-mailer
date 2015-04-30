@@ -177,7 +177,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 175,
+            "line": 174,
             "description": "Send the mail with all parameters ( from, to, cc , bcc)\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
@@ -202,7 +202,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 221,
+            "line": 220,
             "description": "Delete mail otpions : to, cc, bcc, subject, message (html)",
             "itemtype": "method",
             "name": "deleteMailOptions",
@@ -210,7 +210,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 235,
+            "line": 234,
             "description": "Export current Mailer to use it on node",
             "class": "Mailer"
         }
@@ -226,7 +226,7 @@
         },
         {
             "message": "Missing item type\nExport current Mailer to use it on node",
-            "line": " src/index.js:235"
+            "line": " src/index.js:234"
         }
     ]
 }
