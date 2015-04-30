@@ -57,24 +57,7 @@ function Mailer() {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addRecipient = function(dest) {
-    var result;
-    if (_.isString(dest)) {
-        //Joi validation for check if dest is an email
-        result = Joi.string().email().validate(dest);
-    } else if (_.isArray(dest)) {
-        //Joi validation for check if dest is anarray of email
-        var array = Joi.array().items(Joi.string().email());
-        result = array.validate(dest);
-    }
-
-    //Check if have an error in Joi validation
-    if ((_.isEmpty(result)) || (_.isEmpty(result.error))) {
-        logger.info("adding destinataire ok");
-        this.mailOptions.to = dest;
-        return true;
-    }
-    logger.warning('Error : at least one string dosen\'t pass email validation');
-    return false;
+    return this.processEmailFormat(dest, 'to', 'addRecipient');
 };
 
 /**
@@ -106,8 +89,7 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
         logger.error(' setting smtp : doesn\'t match ');
 
         //Log each error
-          _.forEach(result.error.details, function(val)
-          {
+          _.forEach(result.error.details, function(val) {
               logger.warning(  val.message + ' at ' + val.path );
           });
         return false;
@@ -127,12 +109,7 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.setExpeditor = function(exp) {
-    if (_.isString(exp)) {
-        this.mailOptions.from = exp;
-        logger.info('set expeditor ');
-        return true;
-    }
-    return false;
+    return this.processEmailFormat(exp, 'from', 'setExpeditor');
 };
 
 /**
@@ -144,24 +121,7 @@ Mailer.prototype.setExpeditor = function(exp) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addCC = function(cc) {
-    var result;
-    if (_.isString(cc)) {
-        //Joi validation for check if cc is an email
-        result = Joi.string().email().validate(cc);
-    } else if (_.isArray(cc)) {
-        //Joi validation for check if cc is anarray of email
-        var array = Joi.array().items(Joi.string().email());
-        result = array.validate(cc);
-    }
-
-    //Check if have an error in Joi validation
-    if ((_.isEmpty(result)) || (_.isEmpty(result.error))) {
-        logger.info("adding CC ok");
-        this.mailOptions.cc = cc ;
-        return true;
-    }
-    logger.error(' adding cc : at least one string dosen\'t pass email validation');
-    return false;
+    return this.processEmailFormat(cc, 'cc', 'addCC');
 };
 
 /**
@@ -173,25 +133,44 @@ Mailer.prototype.addCC = function(cc) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addBCC = function(bcc) {
+    return this.processEmailFormat(bcc, 'bcc', 'addBCC');
+};
+
+/**
+ * Check if object 'data' conatains only email <br/>
+ * If it's not case return false and logg an error
+ * Else add 'data' into Mailer.mailOptions.<option>
+ *
+ * @method addBCC
+ * @param {String, Array}  data that shoul'd be contains only email
+ * @param option It's the property in Mailer.mailOptions
+ * @param nameOfMethod It's the name of the method that call this method (it's for logger)
+ * @return {Boolean} true if success, false otherwise
+ */
+Mailer.prototype.processEmailFormat = function(data, option, nameOfMethod) {
     var result;
-    if (_.isString(bcc)) {
+    if (_.isString(data)) {
         //Joi validation for check if cc is an email
-        result = Joi.string().email().validate(bcc);
-    } else if (_.isArray(bcc)) {
+        result = Joi.string().email().validate(data);
+    } else if (_.isArray(data)) {
         //Joi validation for check if cc is anarray of email
         var array = Joi.array().items(Joi.string().email());
-        result = array.validate(bcc);
+        result = array.validate(data);
     }
 
     //Check if have an error in Joi validation
     if ((_.isEmpty(result)) || (_.isEmpty(result.error))) {
-        logger.info("adding bcc ok");
-        this.mailOptions.bcc = bcc ;
+        logger.info( '[ Mailer.' + nameOfMethod +' ] - Validation email ok ');
+        this.mailOptions[option] = data;
         return true;
     }
-    logger.error(' adding bcc : at least one string dosen\'t pass email validation');
+    logger.error('[ Mailer.' + nameOfMethod +' ] - Validation email failed, at least one string dosen\'t pass email validation');
+
     return false;
 };
+
+
+
 
 /**
  * Send the mail with all parameters ( from, to, cc , bcc)
@@ -214,27 +193,30 @@ Mailer.prototype.send = function( subject, message, callback ) {
         this.mailOptions.subject = subject;
     }
 
-    var result;
-    //Check if somes params are not empty
-    if (!_.isEmpty(this.transport) && !_.isEmpty(this.mailOptions.to) && !_.isEmpty(this.mailOptions.from) ) {
-        //check if have specific callback
-        if (_.isUndefined(callback)) {
-            this.transport.sendMail(this.mailOptions, function(error, info) {
-                 //Default callback
-                 if (error) {
-                     logger.error(error);
-                 } else {
-                     logger.info(" +++ Message sent: " + info.response);
-                 }
-             });
-        } else {
-            this.transport.sendMail(this.mailOptions, callback);
-        }
-     } else {
-         logger.error('can\'t send mail, please check configuration : \n' + this.mailOptions);
-     }
-     this.deleteMailOptions();
-};
+    console.log("---- display");
+    console.log(this.mailOptions);
+
+//     var result;
+//     //Check if somes params are not empty
+//     if (!_.isEmpty(this.transport) && !_.isEmpty(this.mailOptions.to) && !_.isEmpty(this.mailOptions.from) ) {
+//         //check if have specific callback
+//         if (_.isUndefined(callback)) {
+//             this.transport.sendMail(this.mailOptions, function(error, info) {
+//                  //Default callback
+//                  if (error) {
+//                      logger.error(error);
+//                  } else {
+//                      logger.info(" +++ Message sent: " + info.response);
+//                  }
+//              });
+//         } else {
+//             this.transport.sendMail(this.mailOptions, callback);
+//         }
+//      } else {
+//          logger.error('can\'t send mail, please check configuration : \n' + this.mailOptions);
+//      }
+//      this.deleteMailOptions();
+ };
 
 /**
  * Delete mail otpions : to, cc, bcc, subject, message (html)

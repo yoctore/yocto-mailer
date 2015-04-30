@@ -74,7 +74,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 80,
+            "line": 63,
             "description": "Set the smtp configuration <br/>\nBefore set the configuration we check with Joi all parameters it's correct<br/>\nIf is correct we set configuration, otherwise no",
             "itemtype": "method",
             "name": "setConfigSMTP",
@@ -93,7 +93,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 121,
+            "line": 103,
             "description": "Set the expeditor <br/>\nThis param is save in memory",
             "itemtype": "method",
             "name": "setExpeditor",
@@ -112,7 +112,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 138,
+            "line": 115,
             "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will remove all previous CC recipient",
             "itemtype": "method",
             "name": "addCC",
@@ -131,7 +131,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 167,
+            "line": 127,
             "description": "Add a new BCC (CCI) recipient or an array of BCC recipient<br/>\nThis will remove all previous BCC recipient",
             "itemtype": "method",
             "name": "addBCC",
@@ -150,7 +150,34 @@
         },
         {
             "file": "src/index.js",
-            "line": 196,
+            "line": 139,
+            "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error\nElse add 'data' into Mailer.mailOptions.<option>",
+            "itemtype": "method",
+            "name": "addBCC",
+            "params": [
+                {
+                    "name": "data",
+                    "description": "that shoul'd be contains only email",
+                    "type": "String, Array"
+                },
+                {
+                    "name": "option",
+                    "description": "It's the property in Mailer.mailOptions"
+                },
+                {
+                    "name": "nameOfMethod",
+                    "description": "It's the name of the method that call this method (it's for logger)"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 175,
             "description": "Send the mail with all parameters ( from, to, cc , bcc)\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
@@ -175,7 +202,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 239,
+            "line": 221,
             "description": "Delete mail otpions : to, cc, bcc, subject, message (html)",
             "itemtype": "method",
             "name": "deleteMailOptions",
@@ -183,7 +210,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 253,
+            "line": 235,
             "description": "Export current Mailer to use it on node",
             "class": "Mailer"
         }
@@ -199,7 +226,7 @@
         },
         {
             "message": "Missing item type\nExport current Mailer to use it on node",
-            "line": " src/index.js:253"
+            "line": " src/index.js:235"
         }
     ]
 }

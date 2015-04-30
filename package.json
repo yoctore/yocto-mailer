@@ -27,6 +27,7 @@
     }
   ],
   "dependencies": {
+    "email-existence": "^0.1.5",
     "joi": "^6.4.1",
     "lodash": "latest",
     "nodemailer": "latest",

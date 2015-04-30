@@ -13,16 +13,16 @@ For more details on used dependencies read links below :
 
 
 
- ### Examples :
+### Examples :
 
 
- ##### Adding a new yocto mailer
+##### Adding a new yocto mailer
 
- ```javascript
+```javascript
  var mailer = require('yocto-mailer');
- ```
+```
 
- ##### Set the smtp transport
+##### Set the smtp transport
 
  ```javascript
  var smtpConf = {
@@ -36,10 +36,9 @@ For more details on used dependencies read links below :
  };
 
  mailer.setConfigSMTP(smtpConf);
-
  ```
 
- ##### Add a new recipient
+##### Add a new recipient
 
  ```javascript
  //for a unique recipient
@@ -52,23 +51,43 @@ For more details on used dependencies read links below :
      'foo@yocto.re',
      'bar@yocto.re'
  ];
- mailer.addRecipient(rec);
+ mailer.addRecipient(recTab);
  ```
 
- ##### Set the expeditor
+##### Set the expeditor
 
  ```javascript
  mailer.setExpeditor('Foo barr <foo.bar@yocto.re>');
  ```
 
- ##### Set a cc recipient
+##### Set a cc recipient
 
  ```javascript
- mailer.addCC('Foo barr <foo.bar@yocto.re>');
+ //for a unique recipient
+ var rec = 'toto@yocto.re';
+ mailer.addCC(rec);
+
+ //for mutliple recipient
+ var recTab = [
+     'toto@yocto.re',
+     'foo@yocto.re',
+     'bar@yocto.re'
+ ];
+ mailer.addCC(recTab);
  ```
 
- ##### Set a bcc recipient
+##### Set a bcc recipient
 
  ```javascript
- mailer.addBCC('Foo barr <foo.bar@yocto.re>');
+ //for a unique recipient
+ var rec = 'toto@yocto.re';
+ mailer.addBCC(rec);
+
+ //for mutliple recipient
+ var recTab = [
+     'toto@yocto.re',
+     'foo@yocto.re',
+     'bar@yocto.re'
+ ];
+ mailer.addBCC(recTab);
  ```

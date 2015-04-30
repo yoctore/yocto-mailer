@@ -12,7 +12,7 @@ var smtpConf = {
     port                : "587", // port for secure SMTP
     auth                : {
         user    : "cedric.balard@yocto.re",
-        pass    : ""
+        pass    : "w9r0WPeCZ2fm"
     }
 };
 
@@ -23,15 +23,19 @@ var destTab = [
     'cedric@yocto.re'
 ];
 
+var destTabBcc = [
+    'toto@yocto.re',
+    'tata@yocto.re'
+];
 
-mailer.setExpeditor('Cedric balard <cedric@yocto.re>');
+mailer.setExpeditor(destTab);
 mailer.addRecipient(dest);
 mailer.setConfigSMTP(smtpConf);
 mailer.addCC(destTab);
-mailer.addBCC(destTab);
+mailer.addBCC(destTabBcc);
 
 
-var res = mailer.send(' #2 nodemailer ', '<b> test tab </b>', function(error, info) {
+var res = mailer.send(' #3 nodemailer ', '<b> test tab </b>', function(error, info) {
     console.log('specific callback');
     if(error) {
         console.log(error);
