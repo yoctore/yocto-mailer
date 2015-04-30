@@ -149,6 +149,16 @@ Mailer.prototype.addRecipient = function(dest) {
  * @method setConfigSMTP
  * @param {Object}  smtpConf New smtp configuration
  * @return {Boolean} true if success, false otherwise
+ *
+ *     var schema = Joi.object().keys({
+         host                : Joi.string().required(),
+         secureConnection    : Joi.boolean().required(),
+         port                : Joi.number().required(),
+         auth                : Joi.object().keys({
+             user    : Joi.string().email().required(),
+             pass    : Joi.string().required()
+         }).valid(&#x27;user&#x27;,&#x27;pass&#x27;)
+     }).valid(&#x27;host&#x27;,&#x27;secureConnection&#x27;,&#x27;port&#x27;,&#x27;auth&#x27;);
  */
 Mailer.prototype.setConfigSMTP = function(smtpConf) {
     //Construct a schema to check if smtpConf is ok
@@ -159,25 +169,25 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
         auth                : Joi.object().keys({
             user    : Joi.string().email().required(),
             pass    : Joi.string().required()
-        })
-    });
+        }).allow(&#x27;user&#x27;,&#x27;pass&#x27;)
+    }).allow(&#x27;host&#x27;,&#x27;secureConnection&#x27;,&#x27;port&#x27;,&#x27;auth&#x27;);
 
     //execute validation
     var result = Joi.validate(smtpConf, schema);
 
     //check if have error on previous validation
     if ((! _.isEmpty(result)) &amp;&amp; (!_.isEmpty(result.error))) {
-        logger.error(&#x27; setting smtp : doesn\&#x27;t match &#x27;);
+        logger.error(&#x27;[ Mailer.setConfigSMTP ] - setting smtp, error description :&#x27;);
 
         //Log each error
           _.forEach(result.error.details, function(val) {
-              logger.warning(  val.message + &#x27; at &#x27; + val.path );
+              logger.warning(&#x27;[ Mailer.setConfigSMTP ] - &#x27; +   val.message + &#x27; at &#x27; + val.path );
           });
         return false;
     }
 
-    logger.info(&quot;set smtp conf ok &quot;);
-    this.transport = nodemailer.createTransport( smtpTransport(smtpConf) );
+    logger.info(&#x27;[ Mailer.setConfigSMTP ] - Set smtp configuration ok &#x27;);
+    this.transport = nodemailer.createTransport(smtpTransport(smtpConf));
     return true;
 };
 

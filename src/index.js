@@ -68,6 +68,16 @@ Mailer.prototype.addRecipient = function(dest) {
  * @method setConfigSMTP
  * @param {Object}  smtpConf New smtp configuration
  * @return {Boolean} true if success, false otherwise
+ *
+ *     var schema = Joi.object().keys({
+         host                : Joi.string().required(),
+         secureConnection    : Joi.boolean().required(),
+         port                : Joi.number().required(),
+         auth                : Joi.object().keys({
+             user    : Joi.string().email().required(),
+             pass    : Joi.string().required()
+         }).valid('user','pass')
+     }).valid('host','secureConnection','port','auth');
  */
 Mailer.prototype.setConfigSMTP = function(smtpConf) {
     //Construct a schema to check if smtpConf is ok
@@ -78,25 +88,25 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
         auth                : Joi.object().keys({
             user    : Joi.string().email().required(),
             pass    : Joi.string().required()
-        })
-    });
+        }).allow('user','pass')
+    }).allow('host','secureConnection','port','auth');
 
     //execute validation
     var result = Joi.validate(smtpConf, schema);
 
     //check if have error on previous validation
     if ((! _.isEmpty(result)) && (!_.isEmpty(result.error))) {
-        logger.error(' setting smtp : doesn\'t match ');
+        logger.error('[ Mailer.setConfigSMTP ] - setting smtp, error description :');
 
         //Log each error
           _.forEach(result.error.details, function(val) {
-              logger.warning(  val.message + ' at ' + val.path );
+              logger.warning('[ Mailer.setConfigSMTP ] - ' +   val.message + ' at ' + val.path );
           });
         return false;
     }
 
-    logger.info("set smtp conf ok ");
-    this.transport = nodemailer.createTransport( smtpTransport(smtpConf) );
+    logger.info('[ Mailer.setConfigSMTP ] - Set smtp configuration ok ');
+    this.transport = nodemailer.createTransport(smtpTransport(smtpConf));
     return true;
 };
 
