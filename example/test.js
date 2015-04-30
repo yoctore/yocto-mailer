@@ -34,13 +34,16 @@ mailer.setConfigSMTP(smtpConf);
 mailer.addCC(destTab);
 mailer.addBCC(destTabBcc);
 
+//
+// var res = mailer.send(' #4 nodemailer ', '<b> test tab </b>', function(error, info) {
+//     console.log('specific callback');
+//     if(error) {
+//         console.log(error);
+//     } else {
+//         console.log('mail was send successfuly')
+//         console.log(info.response);
+//     }
+// });
 
-var res = mailer.send(' #3 nodemailer ', '<b> test tab </b>', function(error, info) {
-    console.log('specific callback');
-    if(error) {
-        console.log(error);
-    } else {
-        console.log('mail was send successfuly')
-        console.log(info.response);
-    }
-});
+
+var res = mailer.send(' #5 nodemailer ', '<b> test tab </b>');

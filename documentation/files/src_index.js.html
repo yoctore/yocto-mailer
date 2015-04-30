@@ -273,7 +273,7 @@ Mailer.prototype.processEmailFormat = function(data, option, nameOfMethod) {
  */
 Mailer.prototype.send = function( subject, message, callback ) {
     // send mail with defined transport object
-    logger.info(&#x27;send mail &#x27;);
+    logger.info(&#x27;[ Mailer.send ] - Try sending a new email&#x27;);
 
     if (_.isString(message)) {
         this.mailOptions.html = message;
@@ -283,30 +283,31 @@ Mailer.prototype.send = function( subject, message, callback ) {
         this.mailOptions.subject = subject;
     }
 
-    console.log(&quot;---- display&quot;);
-    console.log(this.mailOptions);
+    var result;
+    //Check if somes params are not empty
+    if (!_.isEmpty(this.transport) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp; !_.isEmpty(this.mailOptions.from)  &amp;&amp; !_.isEmpty(this.mailOptions.subject)  &amp;&amp; !_.isEmpty(this.mailOptions.html)) {
+        //check if have specific callback
+        if (!_.isFunction(callback)) {
+            callback = this.defaultCallbackSendMail;
+        }
 
-//     var result;
-//     //Check if somes params are not empty
-//     if (!_.isEmpty(this.transport) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp; !_.isEmpty(this.mailOptions.from) ) {
-//         //check if have specific callback
-//         if (_.isUndefined(callback)) {
-//             this.transport.sendMail(this.mailOptions, function(error, info) {
-//                  //Default callback
-//                  if (error) {
-//                      logger.error(error);
-//                  } else {
-//                      logger.info(&quot; +++ Message sent: &quot; + info.response);
-//                  }
-//              });
-//         } else {
-//             this.transport.sendMail(this.mailOptions, callback);
-//         }
-//      } else {
-//          logger.error(&#x27;can\&#x27;t send mail, please check configuration : \n&#x27; + this.mailOptions);
-//      }
-//      this.deleteMailOptions();
+        //Send mail
+        this.transport.sendMail(this.mailOptions, callback);
+
+     } else {
+         logger.error(&#x27; [ Mailer.send ] - can\&#x27;t send mail, please check configuration.&#x27;);
+     }
+     this.deleteMailOptions();
  };
+
+Mailer.prototype.defaultCallbackSendMail = function(error, info) {
+    if (error) {
+        logger.error(&#x27;[ Mailer.send ] - error sending message, more details : &#x27; + error);
+    } else {
+        logger.info(&#x27;[ Mailer.send ] - message sent, more info : &#x27; + info.response);
+    }
+};
+
 
 /**
  * Delete mail otpions : to, cc, bcc, subject, message (html)
