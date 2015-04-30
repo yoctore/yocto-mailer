@@ -3,7 +3,7 @@
 
 var nodemailer      = require("nodemailer");
 var smtpTransport   = require('nodemailer-smtp-transport');
-var mailer          = require('../src/index.js');
+var mailer          = require('../dist/index.js');
 var _               = require('lodash');
 
 var smtpConf = {
@@ -16,7 +16,7 @@ var smtpConf = {
     }
 };
 
-var dest = 'cedric@yocto.re';
+var dest = 'cedricyocto.re';
 
 var destTab = [
     'cedric@yocto.re',
@@ -33,17 +33,44 @@ mailer.addRecipient(dest);
 mailer.setConfigSMTP(smtpConf);
 mailer.addCC(destTab);
 mailer.addBCC(destTabBcc);
+/*
+var o = {};
+o.from  = '';
+o.prototype.set(name, value) {
+    this[name] = value;
+}
 
-//
-// var res = mailer.send(' #4 nodemailer ', '<b> test tab </b>', function(error, info) {
-//     console.log('specific callback');
-//     if(error) {
-//         console.log(error);
-//     } else {
-//         console.log('mail was send successfuly')
-//         console.log(info.response);
-//     }
-// });
+o.prototype.get(name) {
+    return this[name];
+}
+
+o.a = function() {
+    return this;
+}
+
+o.mySuccess = function() {
+    // event
+}
 
 
-var res = mailer.send(' #5 nodemailer ', '<b> test tab </b>');
+o.a().mySucces().tot?.tottt
+
+
+o.set('from', 'yocto');
+
+*/
+
+
+
+var res = mailer.send(' #4 nodemailer ', '<b> test tab </b>', function(error, info) {
+    console.log('*** specific callback');
+    if(error) {
+        console.log(error);
+    } else {
+        console.log('*** mail was send successfuly')
+        console.log(info.response);
+    }
+});
+
+
+//var res = mailer.send(' #5 nodemailer ', '<b> test tab </b>');

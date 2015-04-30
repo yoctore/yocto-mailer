@@ -136,10 +136,6 @@
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_deleteMailOptions">deleteMailOptions</a>
-
-                            </li>
-                            <li class="index-item method">
                                 <a href="#method_send">send</a>
 
                             </li>
@@ -158,6 +154,10 @@
                     <h3>Properties</h3>
 
                     <ul class="index-list properties">
+                            <li class="index-item property">
+                                <a href="#property_defaultMailOtpion">defaultMailOtpion</a>
+
+                            </li>
                             <li class="index-item property">
                                 <a href="#property_mailOptions">mailOptions</a>
 
@@ -199,7 +199,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l137"><code>src&#x2F;index.js:137</code></a>
+        <a href="../files/src_index.js.html#l136"><code>src&#x2F;index.js:136</code></a>
         </p>
 
 
@@ -253,9 +253,6 @@ This will remove all previous BCC recipient</p>
                 <li class="arg">
                         <code>option</code>
                 </li>
-                <li class="arg">
-                        <code>nameOfMethod</code>
-                </li>
             </ul><span class="paren">)</span>
         </div>
 
@@ -272,7 +269,7 @@ This will remove all previous BCC recipient</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l149"><code>src&#x2F;index.js:149</code></a>
+        <a href="../files/src_index.js.html#l148"><code>src&#x2F;index.js:148</code></a>
         </p>
 
 
@@ -281,7 +278,7 @@ This will remove all previous BCC recipient</p>
 
     <div class="description">
         <p>Check if object &#39;data&#39; conatains only email <br/>
-If it&#39;s not case return false and logg an error
+If it&#39;s not case return false and logg an error <br/>
 Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
 
     </div>
@@ -307,18 +304,7 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
 
 
                     <div class="param-description">
-                        <p>It&#39;s the property in Mailer.mailOptions</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">nameOfMethod</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>It&#39;s the name of the method that call this method (it&#39;s for logger)</p>
+                        <p>It&#39;s the name of the property in Mailer.mailOptions</p>
 
                     </div>
 
@@ -362,7 +348,7 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l125"><code>src&#x2F;index.js:125</code></a>
+        <a href="../files/src_index.js.html#l124"><code>src&#x2F;index.js:124</code></a>
         </p>
 
 
@@ -429,7 +415,7 @@ This will remove all previous CC recipient</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l51"><code>src&#x2F;index.js:51</code></a>
+        <a href="../files/src_index.js.html#l100"><code>src&#x2F;index.js:100</code></a>
         </p>
 
 
@@ -472,37 +458,6 @@ This will remove all previous recipient</p>
 
 
 </div>
-<div id="method_deleteMailOptions" class="method item">
-    <h3 class="name"><code>deleteMailOptions</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_index.js.html#l231"><code>src&#x2F;index.js:231</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Delete mail otpions : to, cc, bcc, subject, message (html)</p>
-
-    </div>
-
-
-
-
-</div>
 <div id="method_send" class="method item">
     <h3 class="name"><code>send</code></h3>
 
@@ -530,7 +485,7 @@ This will remove all previous recipient</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l184"><code>src&#x2F;index.js:184</code></a>
+        <a href="../files/src_index.js.html#l182"><code>src&#x2F;index.js:182</code></a>
         </p>
 
 
@@ -610,7 +565,7 @@ After the mail was send this paramater will be remove : to, cc, bcc, subject, me
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l63"><code>src&#x2F;index.js:63</code></a>
+        <a href="../files/src_index.js.html#l59"><code>src&#x2F;index.js:59</code></a>
         </p>
 
 
@@ -648,16 +603,7 @@ If is correct we set configuration, otherwise no</p>
             <div class="returns-description">
                         <span class="type">Boolean</span>:
                     <p>true if success, false otherwise</p>
-<pre><code>var schema = Joi.object().keys({
-    host                : Joi.string().required(),
-    secureConnection    : Joi.boolean().required(),
-    port                : Joi.number().required(),
-    auth                : Joi.object().keys({
-        user    : Joi.string().email().required(),
-        pass    : Joi.string().required()
-    }).valid(&#39;user&#39;,&#39;pass&#39;)
-}).valid(&#39;host&#39;,&#39;secureConnection&#39;,&#39;port&#39;,&#39;auth&#39;);
-</code></pre>
+
             </div>
         </div>
 
@@ -687,7 +633,7 @@ If is correct we set configuration, otherwise no</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l113"><code>src&#x2F;index.js:113</code></a>
+        <a href="../files/src_index.js.html#l112"><code>src&#x2F;index.js:112</code></a>
         </p>
 
 
@@ -735,6 +681,32 @@ This param is save in memory</p>
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
+                    <div id="property_defaultMailOtpion" class="property item">
+                        <h3 class="name"><code>defaultMailOtpion</code></h3>
+                        <span class="type">Object</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_index.js.html#l50"><code>src&#x2F;index.js:50</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Clone the mailOptions and omit parameter &#39;from&#39;<br/>
+                    It used for deleteMailOptions when a mail as sent</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
                     <div id="property_mailOptions" class="property item">
                         <h3 class="name"><code>mailOptions</code></h3>
                         <span class="type">Object</span>
