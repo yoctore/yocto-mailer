@@ -30,6 +30,7 @@ function Mailer() {
      * The transporter for sending mail
      *
      * @property {Object} transport
+     * @default empty
      */
     this.transport = {};
 
@@ -37,21 +38,37 @@ function Mailer() {
      * Structure of the object that contains all mail options
      *
      * @property {Object} mailOptions
+     * @default {
+     * 	   from    : '',
+     *     to      : '',
+     *     subject : '',
+     *     html    : '',
+     *     cc      : '',
+     *     bcc     : ''
+     *     }
      */
     this.mailOptions = {
         from    : '', // sender address
         to      : '', // list of receivers
         subject : '', // Subject line
         html    : '', // html body
-        cc      : '',
-        bcc     : ''
+        cc      : '', // cc receivers
+        bcc     : ''  // bcc reveivers
     };
 
     /**
      * Clone the mailOptions and omit parameter 'from'<br/>
-     * It used for deleteMailOptions when a mail as sent
+     * It used for deleteMailOptions when a mail as sent <br/>
+     * Only 'cc' and 'bcc' are optionals
      *
      * @property {Object} defaultMailOtpion
+     *  @default {
+     *     to      : '',
+     *     subject : '',
+     *     html    : '',
+     *     cc      : '',
+     *     bcc     : ''
+     *     }
      */
     this.defaultMailOption = _.omit(_.clone(this.mailOptions), 'from');
 }
@@ -64,7 +81,15 @@ function Mailer() {
  * @method setConfigSMTP
  * @param {Object}  smtpConf New smtp configuration
  * @return {Boolean} true if success, false otherwise
- *
+ * @example The structure off smtpShould be obligatory : {
+ *     host                : {string},
+ *     secureConnection    : {string},
+ *     port                : {number},
+ *     auth                : {
+ *         user    : {string},
+ *         pass    : {string}
+ *     }
+ * }
  */
 Mailer.prototype.setConfigSMTP = function(smtpConf) {
     //Construct a schema to check if smtpConf is ok
@@ -86,13 +111,13 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
         logger.error('[ Mailer.setConfigSMTP ] - setting smtp, error description :');
 
         //Log each error
-          _.forEach(result.error.details, function(val) {
-              logger.warning('[ Mailer.setConfigSMTP ] - ' + val.message + ' at ' + val.path );
-          });
+        _.forEach(result.error.details, function(val) {
+            logger.warning('[ Mailer.setConfigSMTP ] - ' + val.message + ' at ' + val.path);
+        });
         return false;
     }
 
-    logger.info('[ Mailer.setConfigSMTP ] - Set smtp configuration ok ');
+    logger.info('[ Mailer.setConfigSMTP ] - Set smtp configuration ok');
     this.transport = nodemailer.createTransport(smtpTransport(smtpConf));
     return true;
 };
@@ -150,7 +175,8 @@ Mailer.prototype.addBCC = function(bcc) {
  * If it's not case return false and logg an error <br/>
  * Else add 'data' into Mailer.mailOptions.<option>
  *
- * @method addBCC
+ * @method processEmailFormat
+ * @private
  * @param {String, Array}  data that shoul'd be contains only email
  * @param option It's the name of the property in Mailer.mailOptions
  * @return {Boolean} true if success, false otherwise
@@ -168,8 +194,8 @@ Mailer.prototype.processEmailFormat = function(data, option) {
     result = result.validate(data);
 
     //Check if have no error in Joi validation
-    if ((_.isEmpty(result)) || (_.isEmpty(result.error))) {
-        logger.info( '[ Mailer.processEmailFormat ] - Validation email for field : ' + option);
+    if (_.isEmpty(result) || _.isEmpty(result.error)) {
+        logger.info('[ Mailer.processEmailFormat ] - Validation email for field : ' + option);
         this.mailOptions[option] = data;
         return true;
     }
@@ -180,13 +206,20 @@ Mailer.prototype.processEmailFormat = function(data, option) {
 
 
 /**
- * Send the mail with all parameters ( from, to, cc , bcc)
+ * Send the mail with all parameters ( from, to, cc , bcc)<br/>
  * After the mail was send this paramater will be remove : to, cc, bcc, subject, message
  *
  * @method send
  * @param {String} subject Subject of the email
  * @param {String} message Html message to send
  * @param {Function} callback on optional callback, If is not specied a default callback will be execute
+ * @example Obligatory step before call this method
+ * 1. require the module like this : var mailer = require('yocto-mailer');
+ * 2. set a valid SMTP transport
+ * 3. set an expeditor
+ * 4. set at least one recipient
+ *     - You can optionaly add CC or BCC receivers
+ * 5. call send() with your subject and contents for sending your email
  */
 Mailer.prototype.send = function(subject, message, callback) {
     // send mail with defined transport object
@@ -211,7 +244,7 @@ Mailer.prototype.send = function(subject, message, callback) {
 
     //saveContext for deleteMailOptions()
     var context = this;
-    function deleteMailOptions () {
+    function deleteMailOptions() {
         logger.info('[ Mailer.deleteMailOptions ] - Delete mail otpions');
 
         //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
@@ -224,26 +257,26 @@ Mailer.prototype.send = function(subject, message, callback) {
         !_.isEmpty(this.mailOptions.html)) {
 
        //SendMail
-       this.transport.sendMail(this.mailOptions, function(error, info) {
+        this.transport.sendMail(this.mailOptions, function(error, info) {
 
-           //Determine which callback is called
-           if (!_.isFunction(callback)) {
-               defaultCallbackSendMail(error, info);
-           } else {
-               callback(error, info);
-           }
+            //Determine which callback is called
+            if (!_.isFunction(callback)) {
+                defaultCallbackSendMail(error, info);
+            } else {
+                callback(error, info);
+            }
 
-           //Delete options
-           deleteMailOptions();
-       });
+            //Delete options
+            deleteMailOptions();
+        });
 
      } else {
-         logger.error('[ Mailer.send ] - can\'t send mail, please check configuration.');
-         console.log(this.mailOptions);
+        logger.error('[ Mailer.send ] - can\'t send mail, please check configuration.');
+        console.log(this.mailOptions);
 
-         //Delete options
-         deleteMailOptions();
-         console.log(this.mailOptions);
+        //Delete options
+        deleteMailOptions();
+        console.log(this.mailOptions);
 
     }
  };

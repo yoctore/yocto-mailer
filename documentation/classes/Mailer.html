@@ -124,15 +124,15 @@
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_addBCC">addBCC</a>
-
-                            </li>
-                            <li class="index-item method">
                                 <a href="#method_addCC">addCC</a>
 
                             </li>
                             <li class="index-item method">
                                 <a href="#method_addRecipient">addRecipient</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method_processEmailFormat">processEmailFormat</a>
 
                             </li>
                             <li class="index-item method">
@@ -199,7 +199,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l136"><code>src&#x2F;index.js:136</code></a>
+        <a href="../files/src_index.js.html#l161"><code>src&#x2F;index.js:161</code></a>
         </p>
 
 
@@ -223,88 +223,6 @@ This will remove all previous BCC recipient</p>
 
                     <div class="param-description">
                         <p>if it&#39;s a string it&#39;s contains a email of ccrecepients else if it&#39;s an array it contains an array of string (bcc email)</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type">Boolean</span>:
-                    <p>true if success, false otherwise</p>
-
-            </div>
-        </div>
-
-
-</div>
-<div id="method_addBCC" class="method item">
-    <h3 class="name"><code>addBCC</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>data</code>
-                </li>
-                <li class="arg">
-                        <code>option</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-        <span class="returns-inline">
-            <span class="type">Boolean</span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_index.js.html#l148"><code>src&#x2F;index.js:148</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Check if object &#39;data&#39; conatains only email <br/>
-If it&#39;s not case return false and logg an error <br/>
-Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">data</code>
-                        <span class="type">String, Array</span>
-
-
-                    <div class="param-description">
-                        <p>that shoul&#39;d be contains only email</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">option</code>
-                        <span class="type">Object</span>
-
-
-                    <div class="param-description">
-                        <p>It&#39;s the name of the property in Mailer.mailOptions</p>
 
                     </div>
 
@@ -348,7 +266,7 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l124"><code>src&#x2F;index.js:124</code></a>
+        <a href="../files/src_index.js.html#l149"><code>src&#x2F;index.js:149</code></a>
         </p>
 
 
@@ -415,7 +333,7 @@ This will remove all previous CC recipient</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l100"><code>src&#x2F;index.js:100</code></a>
+        <a href="../files/src_index.js.html#l125"><code>src&#x2F;index.js:125</code></a>
         </p>
 
 
@@ -439,6 +357,89 @@ This will remove all previous recipient</p>
 
                     <div class="param-description">
                         <p>if it&#39;s a string it&#39;s contains a email of recepients else if it&#39;s an array it contains an array of string (email)</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_processEmailFormat" class="method item private">
+    <h3 class="name"><code>processEmailFormat</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>data</code>
+                </li>
+                <li class="arg">
+                        <code>option</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l173"><code>src&#x2F;index.js:173</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check if object &#39;data&#39; conatains only email <br/>
+If it&#39;s not case return false and logg an error <br/>
+Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">data</code>
+                        <span class="type">String, Array</span>
+
+
+                    <div class="param-description">
+                        <p>that shoul&#39;d be contains only email</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">option</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>It&#39;s the name of the property in Mailer.mailOptions</p>
 
                     </div>
 
@@ -485,7 +486,7 @@ This will remove all previous recipient</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l182"><code>src&#x2F;index.js:182</code></a>
+        <a href="../files/src_index.js.html#l208"><code>src&#x2F;index.js:208</code></a>
         </p>
 
 
@@ -493,7 +494,7 @@ This will remove all previous recipient</p>
     </div>
 
     <div class="description">
-        <p>Send the mail with all parameters ( from, to, cc , bcc)
+        <p>Send the mail with all parameters ( from, to, cc , bcc)<br/>
 After the mail was send this paramater will be remove : to, cc, bcc, subject, message</p>
 
     </div>
@@ -540,6 +541,24 @@ After the mail was send this paramater will be remove : to, cc, bcc, subject, me
 
 
 
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p> Obligatory step before call this method</p>
+<ol>
+<li>require the module like this : var mailer = require(&#39;yocto-mailer&#39;);</li>
+<li>set a valid SMTP transport</li>
+<li>set an expeditor</li>
+<li>set at least one recipient<ul>
+<li>You can optionaly add CC or BCC receivers</li>
+</ul>
+</li>
+<li>call send() with your subject and contents for sending your email</li>
+</ol>
+
+            </div>
+        </div>
 </div>
 <div id="method_setConfigSMTP" class="method item">
     <h3 class="name"><code>setConfigSMTP</code></h3>
@@ -565,7 +584,7 @@ After the mail was send this paramater will be remove : to, cc, bcc, subject, me
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l59"><code>src&#x2F;index.js:59</code></a>
+        <a href="../files/src_index.js.html#l76"><code>src&#x2F;index.js:76</code></a>
         </p>
 
 
@@ -608,6 +627,22 @@ If is correct we set configuration, otherwise no</p>
         </div>
 
 
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p> The structure off smtpShould be obligatory : {
+    host                : {string},
+    secureConnection    : {string},
+    port                : {number},
+    auth                : {
+        user    : {string},
+        pass    : {string}
+    }
+}</p>
+
+            </div>
+        </div>
 </div>
 <div id="method_setExpeditor" class="method item">
     <h3 class="name"><code>setExpeditor</code></h3>
@@ -633,7 +668,7 @@ If is correct we set configuration, otherwise no</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l112"><code>src&#x2F;index.js:112</code></a>
+        <a href="../files/src_index.js.html#l137"><code>src&#x2F;index.js:137</code></a>
         </p>
 
 
@@ -692,7 +727,7 @@ This param is save in memory</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l50"><code>src&#x2F;index.js:50</code></a>
+                            <a href="../files/src_index.js.html#l59"><code>src&#x2F;index.js:59</code></a>
                             </p>
                     
                     
@@ -700,10 +735,18 @@ This param is save in memory</p>
                     
                         <div class="description">
                             <p>Clone the mailOptions and omit parameter &#39;from&#39;<br/>
-                    It used for deleteMailOptions when a mail as sent</p>
+                    It used for deleteMailOptions when a mail as sent <br/>
+                    Only &#39;cc&#39; and &#39;bcc&#39; are optionals</p>
                     
                         </div>
                     
+                            <p><strong>Default:</strong> {
+                        to      : &#x27;&#x27;,
+                        subject : &#x27;&#x27;,
+                        html    : &#x27;&#x27;,
+                        cc      : &#x27;&#x27;,
+                        bcc     : &#x27;&#x27;
+                        }</p>
                     
                     
                     </div>
@@ -718,7 +761,7 @@ This param is save in memory</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l36"><code>src&#x2F;index.js:36</code></a>
+                            <a href="../files/src_index.js.html#l37"><code>src&#x2F;index.js:37</code></a>
                             </p>
                     
                     
@@ -729,6 +772,14 @@ This param is save in memory</p>
                     
                         </div>
                     
+                            <p><strong>Default:</strong> {
+                    	   from    : &#x27;&#x27;,
+                        to      : &#x27;&#x27;,
+                        subject : &#x27;&#x27;,
+                        html    : &#x27;&#x27;,
+                        cc      : &#x27;&#x27;,
+                        bcc     : &#x27;&#x27;
+                        }</p>
                     
                     
                     </div>
@@ -754,6 +805,7 @@ This param is save in memory</p>
                     
                         </div>
                     
+                            <p><strong>Default:</strong> empty</p>
                     
                     
                     </div>

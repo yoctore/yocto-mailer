@@ -42,29 +42,32 @@
             "itemtype": "property",
             "name": "transport",
             "type": "Object",
+            "default": "empty",
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
-            "line": 36,
+            "line": 37,
             "description": "Structure of the object that contains all mail options",
             "itemtype": "property",
             "name": "mailOptions",
             "type": "Object",
-            "class": "Mailer"
-        },
-        {
-            "file": "src/index.js",
-            "line": 50,
-            "description": "Clone the mailOptions and omit parameter 'from'<br/>\nIt used for deleteMailOptions when a mail as sent",
-            "itemtype": "property",
-            "name": "defaultMailOtpion",
-            "type": "Object",
+            "default": "{\n\t   from    : '',\n    to      : '',\n    subject : '',\n    html    : '',\n    cc      : '',\n    bcc     : ''\n    }",
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
             "line": 59,
+            "description": "Clone the mailOptions and omit parameter 'from'<br/>\nIt used for deleteMailOptions when a mail as sent <br/>\nOnly 'cc' and 'bcc' are optionals",
+            "itemtype": "property",
+            "name": "defaultMailOtpion",
+            "type": "Object",
+            "default": "{\n    to      : '',\n    subject : '',\n    html    : '',\n    cc      : '',\n    bcc     : ''\n    }",
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 76,
             "description": "Set the smtp configuration <br/>\nBefore set the configuration we check with Joi all parameters it's correct<br/>\nIf is correct we set configuration, otherwise no",
             "itemtype": "method",
             "name": "setConfigSMTP",
@@ -79,11 +82,14 @@
                 "description": "true if success, false otherwise",
                 "type": "Boolean"
             },
+            "example": [
+                " The structure off smtpShould be obligatory : {\n    host                : {string},\n    secureConnection    : {string},\n    port                : {number},\n    auth                : {\n        user    : {string},\n        pass    : {string}\n    }\n}"
+            ],
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
-            "line": 100,
+            "line": 125,
             "description": "Add a new recipient or an array of recipient<br/>\nThis will remove all previous recipient",
             "itemtype": "method",
             "name": "addRecipient",
@@ -102,7 +108,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 112,
+            "line": 137,
             "description": "Set the expeditor <br/>\nThis param is save in memory",
             "itemtype": "method",
             "name": "setExpeditor",
@@ -121,7 +127,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 124,
+            "line": 149,
             "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will remove all previous CC recipient",
             "itemtype": "method",
             "name": "addCC",
@@ -140,7 +146,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 136,
+            "line": 161,
             "description": "Add a new BCC (CCI) recipient or an array of BCC recipient<br/>\nThis will remove all previous BCC recipient",
             "itemtype": "method",
             "name": "addBCC",
@@ -159,10 +165,12 @@
         },
         {
             "file": "src/index.js",
-            "line": 148,
+            "line": 173,
             "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into Mailer.mailOptions.<option>",
             "itemtype": "method",
-            "name": "addBCC",
+            "name": "processEmailFormat",
+            "access": "private",
+            "tagname": "",
             "params": [
                 {
                     "name": "data",
@@ -182,8 +190,8 @@
         },
         {
             "file": "src/index.js",
-            "line": 182,
-            "description": "Send the mail with all parameters ( from, to, cc , bcc)\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
+            "line": 208,
+            "description": "Send the mail with all parameters ( from, to, cc , bcc)<br/>\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
             "params": [
@@ -203,11 +211,14 @@
                     "type": "Function"
                 }
             ],
+            "example": [
+                " Obligatory step before call this method\n1. require the module like this : var mailer = require('yocto-mailer');\n2. set a valid SMTP transport\n3. set an expeditor\n4. set at least one recipient\n    - You can optionaly add CC or BCC receivers\n5. call send() with your subject and contents for sending your email"
+            ],
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
-            "line": 251,
+            "line": 284,
             "description": "Export current Mailer to use it on node",
             "class": "Mailer"
         }
@@ -223,7 +234,7 @@
         },
         {
             "message": "Missing item type\nExport current Mailer to use it on node",
-            "line": " src/index.js:251"
+            "line": " src/index.js:284"
         }
     ]
 }

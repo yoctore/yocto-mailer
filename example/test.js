@@ -16,7 +16,7 @@ var smtpConf = {
     }
 };
 
-var dest = 'cedricyocto.re';
+var dest = 'cedric@yocto.re';
 
 var destTab = [
     'cedric@yocto.re',
@@ -33,36 +33,9 @@ mailer.addRecipient(dest);
 mailer.setConfigSMTP(smtpConf);
 mailer.addCC(destTab);
 mailer.addBCC(destTabBcc);
-/*
-var o = {};
-o.from  = '';
-o.prototype.set(name, value) {
-    this[name] = value;
-}
-
-o.prototype.get(name) {
-    return this[name];
-}
-
-o.a = function() {
-    return this;
-}
-
-o.mySuccess = function() {
-    // event
-}
 
 
-o.a().mySucces().tot?.tottt
-
-
-o.set('from', 'yocto');
-
-*/
-
-
-
-var res = mailer.send(' #4 nodemailer ', '<b> test tab </b>', function(error, info) {
+var res = mailer.send(' #10 nodemailer ', '<b> test tab </b>', function(error, info) {
     console.log('*** specific callback');
     if(error) {
         console.log(error);
