@@ -17,6 +17,8 @@ For more details on used dependencies read links below :
 Each email that you will sent is based on an object called 'mailOptions'.
 This object contains all parameters, and this is his structure :
 
+### Examples :
+
 ``` javascript
 var mailOptions = {
     from    : '', // sender address
@@ -28,7 +30,10 @@ var mailOptions = {
 };
 ```
 
+
 The property `from` will be save in memory, but the other will be deleted automatically after the email will be sent.
+
+#### Adding a new yocto mailer
 
 `cc` and `bcc` are two optionally properties. If an error occur when trying validating `cc` and `bcc`, the mail will be sent anyway.
 
@@ -56,18 +61,17 @@ The property `from` will be save in memory, but the other will be deleted automa
 
  ```javascript
  var smtpConf = {
-     host                : "pop3.yocto.re", // hostname
+     host                : "host", // hostname
      secureConnection    : true, // use SSL
-     port                : "587", // port for secure SMTP
+     port                : "PORT", // port for secure SMTP
      auth                : {
-         user    : "mailer@yocto.re",
+         user    : "user@domain.com",
          pass    : 'ThisIsMyPassw0rd'
      }
  };
 
  mailer.setConfigSMTP(smtpConf);
  ```
-
 
 ##### Add a new recipient
 
@@ -85,7 +89,6 @@ The property `from` will be save in memory, but the other will be deleted automa
  mailer.addRecipient(recTab);
  ```
 
-
 ##### Set the expeditor
 
  ```javascript
@@ -101,7 +104,6 @@ The property `from` will be save in memory, but the other will be deleted automa
  ];
  mailer.setExpeditor(recTab);
  ```
-
 
 ##### Set a cc recipient
 
@@ -119,7 +121,6 @@ The property `from` will be save in memory, but the other will be deleted automa
  mailer.addCC(recTab);
  ```
 
-
 ##### Set a bcc recipient
 
  ```javascript
@@ -135,3 +136,10 @@ The property `from` will be save in memory, but the other will be deleted automa
  ];
  mailer.addBCC(recTab);
  ```
+
+##### Set a bcc recipient
+
+ ```javascript
+ mailer.addBCC('Foo barr <foo.bar@yocto.re>');
+ ```
+
