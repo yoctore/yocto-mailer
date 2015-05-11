@@ -20,22 +20,22 @@ var dest = 'cedric@yocto.re';
 
 var destTab = [
     'cedric@yocto.re',
-    'cedric@yocto.re'
+
 ];
 
 var destTabBcc = [
     'toto@yocto.re',
-    'tata@yocto.re'
+
 ];
 
-mailer.setExpeditor(destTab);
+mailer.setExpeditor(dest);
 mailer.addRecipient(dest);
 mailer.setConfigSMTP(smtpConf);
-mailer.addCC(destTab);
-mailer.addBCC(destTabBcc);
+//mailer.addCC(destTab);
+//mailer.addBCC(destTabBcc);
 
 
-var res = mailer.send(' #10 nodemailer ', '<b> test tab </b>', function(error, info) {
+var res = mailer.send(' #11 nodemailer ', '<b> test tab </b>', function(error, info) {
     console.log('*** specific callback');
     if(error) {
         console.log(error);

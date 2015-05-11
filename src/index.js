@@ -4,7 +4,7 @@ var nodemailer      = require("nodemailer");
 var smtpTransport   = require('nodemailer-smtp-transport');
 var logger          = require('yocto-logger');
 var _               = require('lodash');
-var Joi             = require('joi');
+var joi             = require('joi');
 
 /**
  * Yocto Mailer
@@ -75,7 +75,7 @@ function Mailer() {
 
 /**
  * Set the smtp configuration <br/>
- * Before set the configuration we check with Joi all parameters it's correct<br/>
+ * Before set the configuration we check with joi all parameters it's correct<br/>
  * If is correct we set configuration, otherwise no
  *
  * @method setConfigSMTP
@@ -92,19 +92,20 @@ function Mailer() {
  * }
  */
 Mailer.prototype.setConfigSMTP = function(smtpConf) {
+
     //Construct a schema to check if smtpConf is ok
-    var schema = Joi.object().keys({
-        host                : Joi.string().required(),
-        secureConnection    : Joi.boolean().required(),
-        port                : Joi.number().required(),
-        auth                : Joi.object().keys({
-            user    : Joi.string().email().required(),
-            pass    : Joi.string().required()
+    var schema = joi.object().keys({
+        host                : joi.string().required(),
+        secureConnection    : joi.boolean().required(),
+        port                : joi.number().required(),
+        auth                : joi.object().keys({
+            user    : joi.string().email().required(),
+            pass    : joi.string().required()
         }).allow('user','pass')
     }).allow('host','secureConnection','port','auth');
 
     //execute validation
-    var result = Joi.validate(smtpConf, schema);
+    var result = joi.validate(smtpConf, schema);
 
     //check if have error on previous validation
     if (!_.isEmpty(result) && !_.isEmpty(result.error)) {
@@ -131,6 +132,7 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addRecipient = function(to) {
+
     return this.processEmailFormat(to, 'to');
 };
 
@@ -143,6 +145,7 @@ Mailer.prototype.addRecipient = function(to) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.setExpeditor = function(from) {
+
     return this.processEmailFormat(from, 'from');
 };
 
@@ -155,6 +158,7 @@ Mailer.prototype.setExpeditor = function(from) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addCC = function(cc) {
+
     return this.processEmailFormat(cc, 'cc');
 };
 
@@ -167,6 +171,7 @@ Mailer.prototype.addCC = function(cc) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addBCC = function(bcc) {
+
     return this.processEmailFormat(bcc, 'bcc');
 };
 
@@ -182,18 +187,19 @@ Mailer.prototype.addBCC = function(bcc) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.processEmailFormat = function(data, option) {
+
     //Set a default value
-    var result = Joi.string().email();
+    var result = joi.string().email();
 
     //Change result if needed
     if (_.isArray(data)) {
-         result = Joi.array().items(Joi.string().email());
+         result = joi.array().items(joi.string().email());
     }
 
-    //Execute the Joi vailidation
+    //Execute the joi vailidation
     result = result.validate(data);
 
-    //Check if have no error in Joi validation
+    //Check if have no error in joi validation
     if (_.isEmpty(result) || _.isEmpty(result.error)) {
         logger.info('[ Mailer.processEmailFormat ] - Validation email for field : ' + option);
         this.mailOptions[option] = data;
@@ -203,7 +209,6 @@ Mailer.prototype.processEmailFormat = function(data, option) {
     logger.error('[ Mailer.processEmailFormat ] - Validation email failed, at least one string dosen\'t pass email validation for field : ' + option);
     return false;
 };
-
 
 /**
  * Send the mail with all parameters ( from, to, cc , bcc)<br/>
@@ -222,6 +227,7 @@ Mailer.prototype.processEmailFormat = function(data, option) {
  * 5. call send() with your subject and contents for sending your email
  */
 Mailer.prototype.send = function(subject, message, callback) {
+
     // send mail with defined transport object
     logger.info('[ Mailer.send ] - Try sending a new email');
 
@@ -233,8 +239,9 @@ Mailer.prototype.send = function(subject, message, callback) {
         this.mailOptions.subject = subject;
     }
 
-    //Default callback in case 'callback' is empty
+    //Default callback will call in case where 'callback' is empty
     function defaultCallbackSendMail(error, info) {
+
         if (error) {
             logger.error('[ Mailer.send.defaultCallBackSendMail ] -  error sending message, more details : ' + error);
         } else {
@@ -244,7 +251,10 @@ Mailer.prototype.send = function(subject, message, callback) {
 
     //saveContext for deleteMailOptions()
     var context = this;
+
+    //Function that delete all params in this.mailOptions expect 'from'
     function deleteMailOptions() {
+
         logger.info('[ Mailer.deleteMailOptions ] - Delete mail otpions');
 
         //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
@@ -266,18 +276,16 @@ Mailer.prototype.send = function(subject, message, callback) {
                 callback(error, info);
             }
 
-            //Delete options
+            //Delete mail options
             deleteMailOptions();
         });
 
      } else {
+        //At least one params are empty, so the mail will be not sent
         logger.error('[ Mailer.send ] - can\'t send mail, please check configuration.');
-        console.log(this.mailOptions);
 
-        //Delete options
+        //Delete mail options
         deleteMailOptions();
-        console.log(this.mailOptions);
-
     }
  };
 
