@@ -1,7 +1,9 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
-        "Mailer"
+        "Mailer",
+        "MandrillWrapper",
+        "NodeMailer"
     ],
     "modules": [],
     "allModules": []

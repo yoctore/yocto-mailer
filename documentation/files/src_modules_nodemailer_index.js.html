@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/modules/nodemailer/index.js - yocto-mailer</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="yocto-mailer" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Mailer.html">Mailer</a></li>
+                                <li><a href="../classes/MandrillWrapper.html">MandrillWrapper</a></li>
+                                <li><a href="../classes/NodeMailer.html">NodeMailer</a></li>
+                            </ul>
+                
+                            <ul id="api-modules" class="apis modules">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: src/modules/nodemailer/index.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+&#x27;use strict&#x27;;
+
+var nodemailer      = require(&quot;nodemailer&quot;);
+var smtpTransport   = require(&#x27;nodemailer-smtp-transport&#x27;);
+var logger          = require(&#x27;yocto-logger&#x27;);
+var _               = require(&#x27;lodash&#x27;);
+var joi             = require(&#x27;joi&#x27;);
+
+/**
+* Yocto Mailer
+*
+* This module manage your own mailer
+*
+* This module his a wrapper of nodemailer for node js package
+*
+* For more details on used dependencies read links below :
+* - yocto-this.logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
+* - LodAsh : https://lodash.com/
+* - joi : https://github.com/hapijs/joi
+* - nodemailer : https://github.com/andris9/Nodemailer
+* - nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport
+*
+* @date : 29/04/2015
+* @author : Cédric BALARD &lt;cedric@yocto.re&gt;
+* @copyright : Yocto SAS, All right reserved
+* @class NodeMailer
+*/
+function NodeMailer() {
+  /**
+  * The transporter for sending mail
+  *
+  * @property {Object} transport
+  * @default empty
+  */
+  this.transport = {};
+
+  /**
+  * Structure of the object that contains all mail options
+  *
+  * @property {Object} mailOptions
+  * @default {
+  * 	   from    : &#x27;&#x27;,
+  *     to      : &#x27;&#x27;,
+  *     subject : &#x27;&#x27;,
+  *     html    : &#x27;&#x27;,
+  *     cc      : &#x27;&#x27;,
+  *     bcc     : &#x27;&#x27;
+  *     }
+  */
+  this.mailOptions = {
+    from    : &#x27;&#x27;, // sender address
+    to      : [], // list of receivers
+    subject : &#x27;&#x27;, // Subject line
+    html    : &#x27;&#x27;, // html body
+    cc      : [], // cc receivers
+    bcc     : []  // bcc reveivers
+  };
+
+  /**
+  * Clone the mailOptions and omit parameter &#x27;from&#x27;&lt;br/&gt;
+  * It used for deleteMailOptions when a mail as sent to reinitialize it &lt;br/&gt;
+  * Only &#x27;cc&#x27; and &#x27;bcc&#x27; are optionals
+  *
+  * @property {Object} defaultMailOtpion
+  *  @default {
+  *     to      : &#x27;&#x27;,
+  *     subject : &#x27;&#x27;,
+  *     html    : &#x27;&#x27;,
+  *     cc      : &#x27;&#x27;,
+  *     bcc     : &#x27;&#x27;
+  *     }
+  */
+  this.defaultMailOption = _.omit(_.clone(this.mailOptions), &#x27;from&#x27;);
+  
+  /**
+   * Default this.logger properties
+   * 
+   * @property {Object} this.logger
+   */
+  this.logger = logger;
+}
+
+/**
+* Set the smtp configuration &lt;br/&gt;
+* Before set the configuration we check with joi all parameters it&#x27;s correct&lt;br/&gt;
+* If is correct we set configuration, otherwise no
+*
+* @method setConfigSMTP
+* @param {Object}  smtpConf New smtp configuration
+* @return {Boolean} true if success, false otherwise
+* @example The structure off smtpShould be obligatory : {
+*     host                : {string},
+*     secureConnection    : {string},
+*     port                : {number},
+*     auth                : {
+*         user    : {string},
+*         pass    : {string}
+*     }
+* }
+*/
+NodeMailer.prototype.setConfigSMTP = function(smtpConf) {
+
+  //Construct a schema to check if smtpConf is ok
+  var schema = joi.object().keys({
+    host                : joi.string().required(),
+    secureConnection    : joi.boolean().required(),
+    port                : joi.number().required(),
+    auth                : joi.object().keys({
+      user    : joi.string().email().required(),
+      pass    : joi.string().required()
+    }).allow(&#x27;user&#x27;,&#x27;pass&#x27;)
+  }).allow(&#x27;host&#x27;,&#x27;secureConnection&#x27;,&#x27;port&#x27;,&#x27;auth&#x27;);
+
+  //execute validation
+  var result = joi.validate(smtpConf, schema);
+
+  //check if have error on previous validation
+  if (!_.isEmpty(result) &amp;&amp; !_.isEmpty(result.error)) {
+    this.logger.error(&#x27;[ NodeMailer.setConfigSMTP ] - setting smtp, error description :&#x27;);
+
+    //Log each error
+    _.forEach(result.error.details, function(val) {
+      this.logger.warning(&#x27;[ NodeMailer.setConfigSMTP ] - &#x27; + val.message + &#x27; at &#x27; + val.path);
+    });
+    return false;
+  }
+
+  this.logger.info(&#x27;[ NodeMailer.setConfigSMTP ] - Set smtp configuration ok&#x27;);
+  this.transport = nodemailer.createTransport(smtpTransport(smtpConf));
+  return true;
+};
+
+/**
+* Add a new recipient or an array of recipient&lt;br/&gt;
+* This will add a new recipient to the array of recipient
+*
+* @method addRecipient
+* @param {Object, Array}
+* @return {Boolean} true if success, false otherwise
+* @example
+*
+*var user = {
+*  name  : &#x27;Foo Bar&#x27;,
+*  email : &#x27;foo@bar.com&#x27;
+*};
+* mailer.nodemailer.addRecipient(user);
+*/
+NodeMailer.prototype.addRecipient = function(to) {
+  // processing email format
+  return this.processEmailFormat(to, &#x27;to&#x27;);
+};
+
+/**
+* Set the expeditor &lt;br/&gt;
+* This param is save in memory
+*
+* @method setExpeditor
+* @param {String} from email of the exoeditor
+* @return {Boolean} true if success, false otherwise
+*/
+NodeMailer.prototype.setExpeditor = function(from) {
+
+  if (!_.isString(from)) {
+    this.logger.error(&#x27;Error - from_email should be a string email&#x27;);
+    return &#x27;Error - from_email should be a string email&#x27;;
+  }
+  return this.processEmailFormat(from, &#x27;from&#x27;);
+};
+
+/**
+* Add a new CC recipient or an array of CC recipient&lt;br/&gt;
+* This will remove all previous CC recipient
+*
+* @method addCC
+* @param {String, Array}  cc if it&#x27;s a string it&#x27;s contains a email of ccrecepients else if it&#x27;s an array it contains an array of string (cc email)
+* @return {Boolean} true if success, false otherwise
+*/
+NodeMailer.prototype.addCC = function(cc) {
+  // processing email format
+  return this.processEmailFormat(cc, &#x27;cc&#x27;);
+};
+
+/**
+* Add a new BCC (CCI) recipient or an array of BCC recipient&lt;br/&gt;
+* This will remove all previous BCC recipient
+*
+* @method addBCC
+* @param {String, Array}  bcc if it&#x27;s a string it&#x27;s contains a email of ccrecepients else if it&#x27;s an array it contains an array of string (bcc email)
+* @return {Boolean} true if success, false otherwise
+*/
+NodeMailer.prototype.addBCC = function(bcc) {
+  // processing email format
+  return this.processEmailFormat(bcc, &#x27;bcc&#x27;);
+};
+
+/**
+* Check if object &#x27;data&#x27; conatains only email &lt;br/&gt;
+* If it&#x27;s not case return false and logg an error &lt;br/&gt;
+* Else add &#x27;data&#x27; into NodeMailer.mailOptions.&lt;option&gt;
+*
+* @method processEmailFormat
+* @private
+* @param {String, Array}  data that shoul&#x27;d be contains only email
+* @param option It&#x27;s the name of the property in NodeMailer.mailOptions
+* @return {Boolean} true if success, false otherwise
+*/
+NodeMailer.prototype.processEmailFormat = function(data, option) {
+
+  //Test type, only param &#x27;from&#x27; should be a string
+  if (option !== &#x27;from&#x27; &amp;&amp; _.isString(data)) {
+    this.logger.warning(&#x27;Error &#x27; + option + &#x27; should be on object or array of object&#x27;);
+    return &#x27;Error &#x27; + option + &#x27; should be on object or array of object&#x27;;
+  }
+
+  //Set a default value
+  var result = joi.string().email();
+
+//Determine wich type data is for define the good joi shecma
+  if (_.isObject(data)) {
+
+    if (_.isArray(data)) {
+
+      result = joi.array().items(
+        joi.object().keys({
+          email : joi.string().email(),
+          name  : joi.string(),
+          type  : joi.string()
+        })
+      );
+
+    } else {
+
+      data.address = data.email;
+      delete data.email;
+
+      result = joi.object().keys({
+        address : joi.string().email(),
+        name    : joi.string()
+      });
+    }
+  }
+
+  //Execute the joi vailidation
+  result = result.validate(data);
+
+  //Check if have no error in joi validation
+  if (_.isEmpty(result) || _.isEmpty(result.error)) {
+    this.logger.debug(&#x27;[ NodeMailer.processEmailFormat ] - Validation email for field : &#x27; + option);
+
+    //test the type of param in mailOptions
+    if (_.isArray(this.mailOptions[option]) &amp;&amp; _.isObject(data)) {
+      //is an array
+
+      //Change result if needed
+      if (_.isArray(data)) {
+
+        //is an array
+        _.forEach(data, function(user) {
+          this.mailOptions[option].push(user);
+        }, this);
+        return true;
+      }
+
+      //is an object
+      this.mailOptions[option].push(data);
+      return true;
+    }
+
+    //the param is a string
+    this.mailOptions[option] = data;
+    return true;
+  }
+
+  console.log(result.error);
+  this.logger.error(&#x27;[ NodeMailer.processEmailFormat ] - Validation email failed, at least one string dosen\&#x27;t pass email validation for field : &#x27; + option);
+  return false;
+};
+
+/**
+* Send the mail with all parameters ( from, to, cc , bcc)&lt;br/&gt;
+* After the mail was send this paramater will be remove : to, cc, bcc, subject, message
+*
+* @method send
+* @param {String} subject Subject of the email
+* @param {String} message Html message to send
+* @param {Function} callback on optional success callback, If is not specied a default callback will be execute
+* @param {Function} callbackFailed on optional failed callback, If is not specied a default callback will be execute
+* @example Obligatory step before call this method
+* 1. require the module like this : var mailer = require(&#x27;NodeMailer&#x27;);
+* 2. set a valid SMTP transport
+* 3. set an expeditor
+* 4. set at least one recipient
+*     - You can optionaly add CC or BCC receivers
+* 5. call send() with your subject and contents for sending your email
+*/
+NodeMailer.prototype.send = function(subject, message, callback) {
+
+  // send mail with defined transport object
+  this.logger.info(&#x27;[ NodeMailer.send ] - Try sending a new email&#x27;);
+
+  // defining default value
+  this.mailOptions.html     = _.isString(message) ? message : &#x27;&#x27;;
+  this.mailOptions.subject  = _.isString(subject) ? subject : &#x27;&#x27;;
+  
+  // process callback
+  callback = !_.isUndefined(callback) &amp;&amp; _.isFunction(callback) ? callback : function(data) {
+    this.logger.info(&#x27;[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, info/error details id : &#x27; + data);
+  };
+  
+  // saving context
+  var context = this;
+
+  /**
+   * Delete mail option after sending data
+   *
+   * @method deleteMailOptions
+   * @param {Object} context default context to use
+   */
+  function deleteMailOptions(context) {
+
+    // logging message
+    context.logger.debug(&#x27;[ NodeMailer.deleteMailOptions ] - Delete mail otpions&#x27;);
+
+    // Extend defaultMailOption to remove this mail options : to, cc, bcc, html
+    _.extend(context.mailOptions, context.defaultMailOption);
+  }
+
+  //Check if somes params are not empty
+  if (!_.isEmpty(this.transport) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp; !_.isEmpty(this.mailOptions.from)  &amp;&amp; !_.isEmpty(this.mailOptions.subject) &amp;&amp; !_.isEmpty(this.mailOptions.html)) {
+
+    // SendMail
+    this.transport.sendMail(this.mailOptions, function(error, info) {
+
+      // get correct data
+      var data = !_.isEmpty(error) ? error : info;
+      
+      // call callback
+      callback(data);
+      
+      // Delete mail options
+      deleteMailOptions(context);
+    });
+  } else {
+
+    // At least one params are empty, so the mail will be not sent
+    this.logger.error(&#x27;[ NodeMailer.send ] - can\&#x27;t send mail, please check configuration.&#x27;);
+
+    //Delete mail options
+    deleteMailOptions(this);
+  }
+};
+
+/**
+* Export the wrapper to use it on node
+*/
+module.exports = new (NodeMailer)();
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 This module manage your own mailer, based on nodemailer module package
 
+<<<<<<< HEAD
 ## Dependencies
 
 For more details on used dependencies read links below :
@@ -149,3 +150,6 @@ mailer.send(' My subject ', '<b>my message</b>', function(error, info) {
  // what append here ?
 });
  ```
+=======
+This module implements two yocto wrapper, one for nodemailer, the second for mandrill
+>>>>>>> 276ad48e03b05b5b247691e94ba7ddaf80900d82

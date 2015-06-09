@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>src/index.js - yocto-mailer</title>
+    <title>test/mailer-tests.js - yocto-mailer</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -77,59 +77,102 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: src/index.js</h1>
+<h1 class="file-heading">File: test/mailer-tests.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
-&#x27;use strict&#x27;;
-
-var nodemailer  = require(&#x27;./modules/nodemailer/&#x27;);
-var mandrill    = require(&#x27;./modules/mandrill/&#x27;);
-
 /**
-* Yocto Mailer
-*
-* This module implements two yocto wrapper, one for nodemailer, the second for mandrill
-*
-*
-* @date : 09/06/2015
-* @author : Cédric BALARD &lt;cedric@yocto.re&gt;
-* @copyright : Yocto SAS, All right reserved
-* @class Mailer
-*/
-function Mailer() {
-  /**
-   * Default unit instance for nodemailer
-   *
-   * @property nodemailer
-   * @type nodemailer
-   */
-  this.nodemailer = nodemailer;
-
-  /**
-   * Default unit instance for mandrill
-   *
-   * @property mandrill
-   * @type mandrill
-   */
-  this.mandrill = mandrill;
-}
-
-/**
- * Default get function
- *
- * @method get
- * @return {Mixed} wanted property
+ * Unit tests
  */
- Mailer.prototype.get = function(name) {
-  return this[name];
-};
+var mailer = require(&#x27;../src/index.js&#x27;);
+var assert = require(&#x27;assert&#x27;);
+var util   = require(&#x27;util&#x27;);
+var _ = require(&#x27;lodash&#x27;);
 
-/**
-* Export Mailer
+var enableLog = false;
+
+// start
+var index = 0;
+var args  = [];   
+var types = [ null, undefined, 1, true, false, NaN, &#x27;a&#x27;, &#x27;&#x27; ];
+var po = 3;
+      
+// build type list
+/*while(index &lt; types.length) {
+  for (var i = 0; i &lt; types.length; i++) {
+    t = types[i];
+  
+    args.push({ arg1 : types[index], arg2 : t });
+  
+    if ((args.length % types.length) == 0) {
+      index++;
+    }    
+  }
+}; 
 */
-module.exports = new (Mailer)();
+types.forEach(function(t) {
+  var fo = [];
+  
+  for(var i = 0; i &lt; po; i++) {
+    fo[i] = t;
+  }
+  args.push(fo);
+});
 
+
+describe(&#x27;Mailer() &gt;&#x27;, function() {
+
+  var moteur = [
+    &#x27;nodemailer&#x27;,
+    &#x27;mandrill&#x27;
+  ];
+
+  var methods = [
+    &#x27;processEmailFormat&#x27;,
+    &#x27;addBCC&#x27;, 
+    &#x27;addCC&#x27;,
+    &#x27;setExpeditor&#x27;,
+    &#x27;addRecipient&#x27;
+  ];
+  
+  moteur.forEach(function(m) {
+
+    if (_.has(mailer.nodemailer.logger, &#x27;enableConsole&#x27;)) {
+      mailer[m].logger.enableConsole(enableLog);      
+    }
+
+    methods.forEach(function(method) {
+        describe(m + &#x27;.&#x27; + method + &#x27;() must return false with invalid data&#x27;, function() {    
+          args.forEach(function(arg) {
+            it(&#x27;Using arg : &#x27; + util.inspect(arg, { depth : null }), function() { 
+              assert.equal(mailer.get(m)[method].apply(mailer, arg), false);      
+            });
+          });
+        });
+        
+        describe(m + &#x27;.&#x27; + method + &#x27;() must return false with invalid option&#x27;, function() {    
+          return false;
+          var args = [
+            // null
+            { arg1 : &#x27;&#x27;, arg2 : null },
+            { arg1 : undefined, arg2 : undefined },
+            { arg1 : null, arg2 : 1 },
+            { arg1 : null, arg2 : true },
+            { arg1 : null, arg2 : false },
+            { arg1 : null, arg2 : NaN },
+            { arg1 : null, arg2 : &#x27;a&#x27; },
+            { arg1 : null, arg2 : &#x27;&#x27; },
+          ];
+          
+          args.forEach(function(arg) {
+            it(&#x27;Using arg : &#x27; + util.inspect(arg, { depth : null }), function() {    
+              assert.equal(mailer[method](arg.arg1, arg.arg2), false);      
+            });
+          });
+        });
+      });    
+  });
+});
     </pre>
 </div>
                     </div>

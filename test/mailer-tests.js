@@ -6,7 +6,7 @@ var assert = require('assert');
 var util   = require('util');
 var _ = require('lodash');
 
-mailer.logger.enableConsole(false);
+var enableLog = false;
 
 // start
 var index = 0;
@@ -37,7 +37,12 @@ types.forEach(function(t) {
 });
 
 
-describe('Mailer()', function() {
+describe('Mailer() >', function() {
+
+  var moteur = [
+    'nodemailer',
+    'mandrill'
+  ];
 
   var methods = [
     'processEmailFormat',
@@ -47,34 +52,41 @@ describe('Mailer()', function() {
     'addRecipient'
   ];
   
-  methods.forEach(function(method) {
-    describe(method + '() must return false with invalid data', function() {    
-      args.forEach(function(arg) {
-        it('Using arg : ' + util.inspect(arg, { depth : null }), function() { 
-          assert.equal(mailer[method].apply(mailer, arg), false);      
+  moteur.forEach(function(m) {
+
+    if (_.has(mailer.nodemailer.logger, 'enableConsole')) {
+      mailer[m].logger.enableConsole(enableLog);      
+    }
+
+    methods.forEach(function(method) {
+        describe(m + '.' + method + '() must return false with invalid data', function() {    
+          args.forEach(function(arg) {
+            it('Using arg : ' + util.inspect(arg, { depth : null }), function() { 
+              assert.equal(mailer.get(m)[method].apply(mailer, arg), false);      
+            });
+          });
         });
-      });
-    });
-    
-    describe(method + '() must return false with invalid option', function() {    
-      return false;
-      var args = [
-        // null
-        { arg1 : '', arg2 : null },
-        { arg1 : undefined, arg2 : undefined },
-        { arg1 : null, arg2 : 1 },
-        { arg1 : null, arg2 : true },
-        { arg1 : null, arg2 : false },
-        { arg1 : null, arg2 : NaN },
-        { arg1 : null, arg2 : 'a' },
-        { arg1 : null, arg2 : '' },
-      ];
-      
-      args.forEach(function(arg) {
-        it('Using arg : ' + util.inspect(arg, { depth : null }), function() {    
-          assert.equal(mailer[method](arg.arg1, arg.arg2), false);      
+        
+        describe(m + '.' + method + '() must return false with invalid option', function() {    
+          return false;
+          var args = [
+            // null
+            { arg1 : '', arg2 : null },
+            { arg1 : undefined, arg2 : undefined },
+            { arg1 : null, arg2 : 1 },
+            { arg1 : null, arg2 : true },
+            { arg1 : null, arg2 : false },
+            { arg1 : null, arg2 : NaN },
+            { arg1 : null, arg2 : 'a' },
+            { arg1 : null, arg2 : '' },
+          ];
+          
+          args.forEach(function(arg) {
+            it('Using arg : ' + util.inspect(arg, { depth : null }), function() {    
+              assert.equal(mailer[method](arg.arg1, arg.arg2), false);      
+            });
+          });
         });
-      });
-    });
+      });    
   });
 });

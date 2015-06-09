@@ -6,6 +6,24 @@
         "url": ""
     },
     "files": {
+        "src/modules/mandrill/index.js": {
+            "name": "src/modules/mandrill/index.js",
+            "modules": {},
+            "classes": {
+                "MandrillWrapper": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/modules/nodemailer/index.js": {
+            "name": "src/modules/nodemailer/index.js",
+            "modules": {},
+            "classes": {
+                "NodeMailer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src/index.js": {
             "name": "src/index.js",
             "modules": {},
@@ -14,10 +32,47 @@
             },
             "fors": {},
             "namespaces": {}
+        },
+        "test/mailer-tests.js": {
+            "name": "test/mailer-tests.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
         }
     },
     "modules": {},
     "classes": {
+        "MandrillWrapper": {
+            "name": "MandrillWrapper",
+            "shortname": "MandrillWrapper",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src/modules/mandrill/index.js",
+            "line": 9,
+            "description": "Yocto MandrillWrapper\n\nThis module manage your own mailer\n\nThis module his a wrapper of mandrill-api for node js package\n\nFor more details on used dependencies read links below :\n- yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- LodAsh : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- mandrill-api : https://www.npmjs.com/package/mandrill-api",
+            "date": ": 08/06/2015",
+            "author": ": Cédric BALARD <cedric@yocto.re>",
+            "copyright": ": Yocto SAS, All right reserved"
+        },
+        "NodeMailer": {
+            "name": "NodeMailer",
+            "shortname": "NodeMailer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src/modules/nodemailer/index.js",
+            "line": 9,
+            "description": "Yocto Mailer\n\nThis module manage your own mailer\n\nThis module his a wrapper of nodemailer for node js package\n\nFor more details on used dependencies read links below :\n- yocto-this.logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- LodAsh : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- nodemailer : https://github.com/andris9/Nodemailer\n- nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport",
+            "date": ": 29/04/2015",
+            "author": ": Cédric BALARD <cedric@yocto.re>",
+            "copyright": ": Yocto SAS, All right reserved"
+        },
         "Mailer": {
             "name": "Mailer",
             "shortname": "Mailer",
@@ -27,47 +82,257 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/index.js",
-            "line": 10,
-            "description": "Yocto Mailer\n\nThis module manage your own mailer\n\nThis module his a wrapper of nodemailer for node js package\n\nFor more details on used dependencies read links below :\n- yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- lodash : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- nodemailer : https://github.com/andris9/Nodemailer\n- nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport",
-            "date": ": 29/04/2015",
-            "author": ": Mathieu ROBERT <mathieu@yocto.re>",
+            "line": 6,
+            "description": "Yocto Mailer\n\nThis module implements two yocto wrapper, one for nodemailer, the second for mandrill",
+            "date": ": 09/06/2015",
+            "author": ": Cédric BALARD <cedric@yocto.re>",
             "copyright": ": Yocto SAS, All right reserved"
         }
     },
     "classitems": [
         {
-            "file": "src/index.js",
-            "line": 31,
+            "file": "src/modules/mandrill/index.js",
+            "line": 29,
+            "description": "The mandrill client for sending mail",
+            "itemtype": "property",
+            "name": "mandrill_client",
+            "type": "Object",
+            "default": "empty",
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 37,
+            "description": "Structure of the object that contains all mail options",
+            "itemtype": "property",
+            "name": "mailOptions",
+            "type": "Object",
+            "default": "{\n\t  from_email    : '',\n    to      : '',\n    subject : '',\n    html    : ''\n    }",
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 54,
+            "description": "Clone the mailOptions and omit parameter 'from_email'<br/>\nIt used for deleteMailOptions when a mail as sent to reinitialize it<br/>",
+            "itemtype": "property",
+            "name": "defaultMailOtpion",
+            "type": "Object",
+            "default": "{\n    to      : '',\n    subject : '',\n    html    : '',\n    }",
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 68,
+            "description": "Set the mandrill client apiKey to connect to mandrill service",
+            "itemtype": "method",
+            "name": "setMandrillClientAPIKey",
+            "params": [
+                {
+                    "name": "apiKey",
+                    "description": "The apikey of mandrill service",
+                    "type": "Object"
+                }
+            ],
+            "example": [
+                " example of usage\n   mailer.mandrill.setMandrillClientAPIKey('JFEKFEa-738dKJFEç-OLN974');"
+            ],
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 83,
+            "description": "Add a new recipient or an array of recipient<br/>\nThis will add a new recipient to the array of recipient",
+            "itemtype": "method",
+            "name": "addRecipient",
+            "params": [
+                {
+                    "name": "rec",
+                    "description": "",
+                    "type": "Object, Array"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "example": [
+                "\n\nvar user = {\n name  : 'Foo Bar',\n email : 'foo@bar.com'\n};\nmailer.nodemailer.addRecipient(user);"
+            ],
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 103,
+            "description": "Set the expeditor <br/>\nThis param is save in memory",
+            "itemtype": "method",
+            "name": "setExpeditor",
+            "params": [
+                {
+                    "name": "from",
+                    "description": "email of the exoeditor",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 120,
+            "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will add a new cc to the array of cc",
+            "itemtype": "method",
+            "name": "addCC",
+            "params": [
+                {
+                    "name": "cc",
+                    "description": "",
+                    "type": "Object, Array"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "example": [
+                "\n\nvar user = {\n name  : 'Foo Bar',\n email : 'foo@bar.com'\n};\nmailer.nodemailer.addCC(user);"
+            ],
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 141,
+            "description": "Add a new BCC recipient or an array of BCC recipient<br/>\nThis will add a new cc to the array of Bcc",
+            "itemtype": "method",
+            "name": "addBCC",
+            "params": [
+                {
+                    "name": "bcc",
+                    "description": "",
+                    "type": "Object, Array"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "example": [
+                "\n\nvar user = {\n name  : 'Foo Bar',\n email : 'foo@bar.com'\n};\nmailer.nodemailer.addBCC(user);"
+            ],
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 162,
+            "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into Mailer.mailOptions.<option>",
+            "itemtype": "method",
+            "name": "processEmailFormat",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "data",
+                    "description": "that shoul'd be contains email",
+                    "type": "String, Array, Object"
+                },
+                {
+                    "name": "option",
+                    "description": "It's the name of the property in Mailer.mailOptions"
+                },
+                {
+                    "name": "option2",
+                    "description": "It's an optional otpion to specify if it's an cc, bcc"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 253,
+            "description": "Send the mail with all parameters ( from_email, to, cc , bcc)<br/>\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
+            "itemtype": "method",
+            "name": "send",
+            "params": [
+                {
+                    "name": "subject",
+                    "description": "Subject of the email",
+                    "type": "String"
+                },
+                {
+                    "name": "message",
+                    "description": "Html message to send",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "on optional success callback, If is not specied a default callback will be execute",
+                    "type": "Function"
+                },
+                {
+                    "name": "callbackFailed",
+                    "description": "on optional failed callback, If is not specied a default callback will be execute",
+                    "type": "Function"
+                }
+            ],
+            "example": [
+                " Obligatory step before call this method\n1. require the module like this : var mandrill = require('MandrillWrapper');\n2. set a valid mandrill apiKey\n3. set an expeditor\n4. set at least one recipient\n    - You can optionaly add CC or BCC receivers\n5. call send() with your subject and contents for sending your email"
+            ],
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/mandrill/index.js",
+            "line": 350,
+            "description": "Export the wrapper to use it on node",
+            "class": "MandrillWrapper"
+        },
+        {
+            "file": "src/modules/nodemailer/index.js",
+            "line": 29,
             "description": "The transporter for sending mail",
             "itemtype": "property",
             "name": "transport",
             "type": "Object",
             "default": "empty",
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 46,
+            "file": "src/modules/nodemailer/index.js",
+            "line": 37,
             "description": "Structure of the object that contains all mail options",
             "itemtype": "property",
             "name": "mailOptions",
             "type": "Object",
             "default": "{\n\t   from    : '',\n    to      : '',\n    subject : '',\n    html    : '',\n    cc      : '',\n    bcc     : ''\n    }",
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 68,
-            "description": "Clone the mailOptions and omit parameter 'from'<br/>\nIt used for deleteMailOptions when a mail as sent <br/>\nOnly 'cc' and 'bcc' are optionals",
+            "file": "src/modules/nodemailer/index.js",
+            "line": 59,
+            "description": "Clone the mailOptions and omit parameter 'from'<br/>\nIt used for deleteMailOptions when a mail as sent to reinitialize it <br/>\nOnly 'cc' and 'bcc' are optionals",
             "itemtype": "property",
             "name": "defaultMailOtpion",
             "type": "Object",
             "default": "{\n    to      : '',\n    subject : '',\n    html    : '',\n    cc      : '',\n    bcc     : ''\n    }",
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 85,
+            "file": "src/modules/nodemailer/index.js",
+            "line": 75,
+            "description": "Default this.logger properties",
+            "itemtype": "property",
+            "name": "this.logger",
+            "type": "Object",
+            "class": "NodeMailer"
+        },
+        {
+            "file": "src/modules/nodemailer/index.js",
+            "line": 83,
             "description": "Set the smtp configuration <br/>\nBefore set the configuration we check with joi all parameters it's correct<br/>\nIf is correct we set configuration, otherwise no",
             "itemtype": "method",
             "name": "setConfigSMTP",
@@ -85,36 +350,39 @@
             "example": [
                 " The structure off smtpShould be obligatory : {\n    host                : {string},\n    secureConnection    : {string},\n    port                : {number},\n    auth                : {\n        user    : {string},\n        pass    : {string}\n    }\n}"
             ],
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 135,
-            "description": "Add a new recipient or an array of recipient<br/>\nThis will remove all previous recipient",
+            "file": "src/modules/nodemailer/index.js",
+            "line": 133,
+            "description": "Add a new recipient or an array of recipient<br/>\nThis will add a new recipient to the array of recipient",
             "itemtype": "method",
             "name": "addRecipient",
             "params": [
                 {
-                    "name": "dest",
-                    "description": "if it's a string it's contains a email of recepients else if it's an array it contains an array of string (email)",
-                    "type": "String, Array"
+                    "name": "UNKNOWN",
+                    "description": "",
+                    "type": "Object, Array"
                 }
             ],
             "return": {
                 "description": "true if success, false otherwise",
                 "type": "Boolean"
             },
-            "class": "Mailer"
+            "example": [
+                "\n\nvar user = {\n name  : 'Foo Bar',\n email : 'foo@bar.com'\n};\nmailer.nodemailer.addRecipient(user);"
+            ],
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 147,
+            "file": "src/modules/nodemailer/index.js",
+            "line": 153,
             "description": "Set the expeditor <br/>\nThis param is save in memory",
             "itemtype": "method",
             "name": "setExpeditor",
             "params": [
                 {
-                    "name": "exp",
+                    "name": "from",
                     "description": "email of the exoeditor",
                     "type": "String"
                 }
@@ -123,11 +391,11 @@
                 "description": "true if success, false otherwise",
                 "type": "Boolean"
             },
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 160,
+            "file": "src/modules/nodemailer/index.js",
+            "line": 170,
             "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will remove all previous CC recipient",
             "itemtype": "method",
             "name": "addCC",
@@ -142,11 +410,11 @@
                 "description": "true if success, false otherwise",
                 "type": "Boolean"
             },
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 172,
+            "file": "src/modules/nodemailer/index.js",
+            "line": 183,
             "description": "Add a new BCC (CCI) recipient or an array of BCC recipient<br/>\nThis will remove all previous BCC recipient",
             "itemtype": "method",
             "name": "addBCC",
@@ -161,12 +429,12 @@
                 "description": "true if success, false otherwise",
                 "type": "Boolean"
             },
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 184,
-            "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into Mailer.mailOptions.<option>",
+            "file": "src/modules/nodemailer/index.js",
+            "line": 196,
+            "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into NodeMailer.mailOptions.<option>",
             "itemtype": "method",
             "name": "processEmailFormat",
             "access": "private",
@@ -179,18 +447,18 @@
                 },
                 {
                     "name": "option",
-                    "description": "It's the name of the property in Mailer.mailOptions"
+                    "description": "It's the name of the property in NodeMailer.mailOptions"
                 }
             ],
             "return": {
                 "description": "true if success, false otherwise",
                 "type": "Boolean"
             },
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 236,
+            "file": "src/modules/nodemailer/index.js",
+            "line": 279,
             "description": "Send the mail with all parameters ( from, to, cc , bcc)<br/>\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
@@ -207,42 +475,128 @@
                 },
                 {
                     "name": "callback",
-                    "description": "on optional callback, If is not specied a default callback will be execute",
+                    "description": "on optional success callback, If is not specied a default callback will be execute",
+                    "type": "Function"
+                },
+                {
+                    "name": "callbackFailed",
+                    "description": "on optional failed callback, If is not specied a default callback will be execute",
                     "type": "Function"
                 }
             ],
             "example": [
-                " Obligatory step before call this method\n\n1. require the module like this : var mailer = require('yocto-mailer');\n2. set a valid SMTP transport\n3. set an expeditor\n4. set at least one recipient\n    - You can optionaly add CC or BCC receivers\n5. call send() with your subject and contents for sending your email"
+                " Obligatory step before call this method\n1. require the module like this : var mailer = require('NodeMailer');\n2. set a valid SMTP transport\n3. set an expeditor\n4. set at least one recipient\n    - You can optionaly add CC or BCC receivers\n5. call send() with your subject and contents for sending your email"
             ],
-            "class": "Mailer"
+            "class": "NodeMailer"
         },
         {
-            "file": "src/index.js",
-            "line": 302,
-            "description": "Default clean function. cleaning mail config option",
+            "file": "src/modules/nodemailer/index.js",
+            "line": 313,
+            "description": "Delete mail option after sending data",
             "itemtype": "method",
-            "name": "clean",
+            "name": "deleteMailOptions",
+            "params": [
+                {
+                    "name": "context",
+                    "description": "default context to use",
+                    "type": "Object"
+                }
+            ],
+            "class": "NodeMailer"
+        },
+        {
+            "file": "src/modules/nodemailer/index.js",
+            "line": 353,
+            "description": "Export the wrapper to use it on node",
+            "class": "NodeMailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 18,
+            "description": "Default unit instance for nodemailer",
+            "itemtype": "property",
+            "name": "nodemailer",
+            "type": "nodemailer",
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
-            "line": 317,
-            "description": "Export current Mailer to use it on node",
+            "line": 26,
+            "description": "Default unit instance for mandrill",
+            "itemtype": "property",
+            "name": "mandrill",
+            "type": "mandrill",
             "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 35,
+            "description": "Default get function",
+            "itemtype": "method",
+            "name": "get",
+            "return": {
+                "description": "wanted property",
+                "type": "Mixed"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 45,
+            "description": "Export Mailer",
+            "class": "Mailer"
+        },
+        {
+            "file": "test/mailer-tests.js",
+            "line": 1,
+            "description": "Unit tests",
+            "class": ""
         }
     ],
     "warnings": [
         {
             "message": "unknown tag: date",
-            "line": " src/index.js:10"
+            "line": " src/modules/mandrill/index.js:9"
         },
         {
             "message": "unknown tag: copyright",
-            "line": " src/index.js:10"
+            "line": " src/modules/mandrill/index.js:9"
         },
         {
-            "message": "Missing item type\nExport current Mailer to use it on node",
-            "line": " src/index.js:317"
+            "message": "unknown tag: date",
+            "line": " src/modules/nodemailer/index.js:9"
+        },
+        {
+            "message": "unknown tag: copyright",
+            "line": " src/modules/nodemailer/index.js:9"
+        },
+        {
+            "message": "param name missing: {Object, Array}",
+            "line": " src/modules/nodemailer/index.js:133"
+        },
+        {
+            "message": "unknown tag: date",
+            "line": " src/index.js:6"
+        },
+        {
+            "message": "unknown tag: copyright",
+            "line": " src/index.js:6"
+        },
+        {
+            "message": "Missing item type\nExport the wrapper to use it on node",
+            "line": " src/modules/mandrill/index.js:350"
+        },
+        {
+            "message": "Missing item type\nExport the wrapper to use it on node",
+            "line": " src/modules/nodemailer/index.js:353"
+        },
+        {
+            "message": "Missing item type\nExport Mailer",
+            "line": " src/index.js:45"
+        },
+        {
+            "message": "Missing item type\nUnit tests",
+            "line": " test/mailer-tests.js:1"
         }
     ]
 }

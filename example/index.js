@@ -1,50 +1,95 @@
-'use strict';
+var mailer = require('../dist');
+var logger = require('yocto-logger');
 
 
-var nodemailer      = require("nodemailer");
-var smtpTransport   = require('nodemailer-smtp-transport');
-var mailer          = require('../src/index.js');
-var _               = require('lodash');
 
-var smtpConf = {
-    host                : "pop3.yocto.re", // hostname
-    secureConnection    : true, // use SSL
-    port                : "587", // port for secure SMTP
-    auth                : {
-        user    : "technique@yocto.re",
-        pass    : "Y0c7oPass"
-    }
-};
+
 
 var dest = 'mathieu@yocto.re';
 
-var destTab = [
-    'mathieu@yocto.re',
+var expeditor = 'cedric@yocto.re';
 
+var user = {
+  name  : 'Cedric Balard',
+  email : dest
+};
+
+var user1 = {
+  name  : 'Tata',
+  email : dest
+};
+
+var user2 = {
+  name  : 'Toto',
+  email : dest
+};
+
+var user3 = {
+  name  : 'Jouns',
+  email : dest
+};
+
+var user4 = {
+  name  : 'lalala',
+  email : dest
+};
+
+var userTab = [
+  {
+    name  : 'myName',
+    email : dest
+  },
+  {
+    name  : 'popo',
+    email : dest
+  }
 ];
 
-var destTabBcc = [
-    'mathieu@yocto.re',
+var callbackSuccess = function(value) {
 
-];
+  logger.info( 'youhou mail sent');
+  console.log(value);
+};
 
-mailer.processEmailFormat(1, 'a');
-mailer.setExpeditor(dest);
-mailer.addRecipient(dest);
-mailer.setConfigSMTP(smtpConf);
-//mailer.addCC(destTab);
-//mailer.addBCC(destTabBcc);
+var callbackFailed = function(error) {
+
+  logger.error( 'oin oin mail not sent');
+  console.log(error);
+};
 
 
-var res = mailer.send(' #11 nodemailer ', '<b> test tab </b>', function(error, info) {
-    console.log('*** specific callback');
-    if(error) {
-        console.log(error);
-    } else {
-        console.log('*** mail was send successfuly')
-        console.log(info.response);
+//--------------------//
+//    TEST Mandrill   //
+//--------------------//
+
+// mailer.mandrill.setMandrillClientAPIKey('K7GkavS-hDh5ZX4D-kiWxg');
+// mailer.mandrill.setExpeditor(dest);
+// mailer.mandrill.addRecipient(userTab);
+// mailer.mandrill.addCC(user1);
+// mailer.mandrill.addBCC(user2);
+//mailer.mandrill.send(' #123 MANDRILL ', '<b> test tab </b>', callbackSuccess, callbackFailed);
+
+
+//--------------------//
+//  TEST nodemailer   //
+//--------------------//
+
+var smtpConf = {
+    host                : "ssl0.ovh.net", // hostname
+    secureConnection    : true, // use SSL
+    port                : "587", // port for secure SMTP
+    auth                : {
+        user    : "cedric.balard@yocto.re",
+        pass    : "w9r0WPeCZ2fm"
     }
-});
+};
+
+mailer.nodemailer.setExpeditor(expeditor);
+mailer.nodemailer.addRecipient(user);
+mailer.nodemailer.setConfigSMTP(smtpConf);
+
+// mailer.nodemailer.addCC(user3);
+// mailer.nodemailer.addBCC(userTab);
 
 
-//var res = mailer.send(' #5 nodemailer ', '<b> test tab </b>');
+mailer.nodemailer.send(' #22 nodemailer ', '<b> test tab </b>', callbackSuccess, callbackFailed);
