@@ -31,7 +31,7 @@
      },
 
      /**
-      * Yuidoc permit to generate the yuidoc of the Yocto Stack Generator
+      * Yuidoc permit to generate the yuidoc
       *
       * @submodule yuidoc
       */
@@ -49,16 +49,18 @@
        },
      },
 
-    /**
+     /**
      * Uglify permit to minify javascript file
-     *
-     * @submodule uglify
      */
      uglify : {
        api : {
-          src    : 'src/index.js',
-          dest   : 'dist/index.js'
-       }
+         files: [{
+          expand: true,
+          cwd: 'src/',
+          src: '**/*.js',
+          dest: 'dist/'
+        }]
+      }
      }
    });
 
