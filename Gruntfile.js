@@ -4,10 +4,10 @@
  *
  * Use uglify with Grunt to minify all ".js" file in documentation
  * Use yuidoc to generate the docs
- *
+ * 
  * @class Gruntfile
- * @module Grunt file
- * @date 21/04/2015
+ * @module Grunt file 
+ * @date 13/05/2015
  * @author ROBERT Mathieu <mathieu@yocto.re>
  * @copyright Yocto SAS, All Right Reserved <http://www.yocto.re>
  *
@@ -44,7 +44,7 @@
          options     : {
            paths   : '.',
            outdir  : 'documentation',
-           exclude : 'Gruntfile.js, example, dist, documentation, node_modules'
+           exclude : 'Gruntfile.js,example,dist,documentation,node_modules,test'
          }
        },
      },
@@ -59,14 +59,30 @@
           src    : 'src/index.js',
           dest   : 'dist/index.js'
        }
-     }
+     },
+     
+     /**
+      * Mocah unit test
+      */
+      mochacli : {
+        options : {
+          'reporter'       : 'spec',
+          'inline-diffs'   : false,
+          'no-exit'        : true,
+          'force'          : false,
+          'check-leaks'    : true,
+          'bail'           : false
+        },
+        all : [ 'test/*.js' ]
+      }
    });
 
    // Load the plugins
    grunt.loadNpmTasks('grunt-contrib-jshint');
    grunt.loadNpmTasks('grunt-contrib-uglify');
    grunt.loadNpmTasks('grunt-contrib-yuidoc');
+   grunt.loadNpmTasks('grunt-mocha-cli');
 
-   // register task
-   grunt.registerTask('default', [ 'jshint', 'yuidoc', 'uglify']);
+   // register task 
+   grunt.registerTask('default', [ 'jshint', 'mochacli','yuidoc', 'uglify']);
  };

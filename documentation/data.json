@@ -27,17 +27,17 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/index.js",
-            "line": 9,
-            "description": "Yocto Mailer\n\nThis module manage your own mailer\n\nThis module his a wrapper of nodemailer for node js package\n\nFor more details on used dependencies read links below :\n- yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- LodAsh : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- nodemailer : https://github.com/andris9/Nodemailer\n- nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport",
+            "line": 10,
+            "description": "Yocto Mailer\n\nThis module manage your own mailer\n\nThis module his a wrapper of nodemailer for node js package\n\nFor more details on used dependencies read links below :\n- yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- lodash : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- nodemailer : https://github.com/andris9/Nodemailer\n- nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport",
             "date": ": 29/04/2015",
-            "author": ": Cédric BALARD <cedric@yocto.re>",
+            "author": ": Mathieu ROBERT <mathieu@yocto.re>",
             "copyright": ": Yocto SAS, All right reserved"
         }
     },
     "classitems": [
         {
             "file": "src/index.js",
-            "line": 29,
+            "line": 31,
             "description": "The transporter for sending mail",
             "itemtype": "property",
             "name": "transport",
@@ -47,7 +47,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 37,
+            "line": 46,
             "description": "Structure of the object that contains all mail options",
             "itemtype": "property",
             "name": "mailOptions",
@@ -57,7 +57,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 59,
+            "line": 68,
             "description": "Clone the mailOptions and omit parameter 'from'<br/>\nIt used for deleteMailOptions when a mail as sent <br/>\nOnly 'cc' and 'bcc' are optionals",
             "itemtype": "property",
             "name": "defaultMailOtpion",
@@ -67,7 +67,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 76,
+            "line": 85,
             "description": "Set the smtp configuration <br/>\nBefore set the configuration we check with joi all parameters it's correct<br/>\nIf is correct we set configuration, otherwise no",
             "itemtype": "method",
             "name": "setConfigSMTP",
@@ -89,7 +89,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 126,
+            "line": 135,
             "description": "Add a new recipient or an array of recipient<br/>\nThis will remove all previous recipient",
             "itemtype": "method",
             "name": "addRecipient",
@@ -108,7 +108,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 139,
+            "line": 147,
             "description": "Set the expeditor <br/>\nThis param is save in memory",
             "itemtype": "method",
             "name": "setExpeditor",
@@ -127,7 +127,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 152,
+            "line": 160,
             "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will remove all previous CC recipient",
             "itemtype": "method",
             "name": "addCC",
@@ -146,7 +146,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 165,
+            "line": 172,
             "description": "Add a new BCC (CCI) recipient or an array of BCC recipient<br/>\nThis will remove all previous BCC recipient",
             "itemtype": "method",
             "name": "addBCC",
@@ -165,7 +165,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 178,
+            "line": 184,
             "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into Mailer.mailOptions.<option>",
             "itemtype": "method",
             "name": "processEmailFormat",
@@ -190,7 +190,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 213,
+            "line": 236,
             "description": "Send the mail with all parameters ( from, to, cc , bcc)<br/>\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
@@ -212,13 +212,21 @@
                 }
             ],
             "example": [
-                " Obligatory step before call this method\n1. require the module like this : var mailer = require('yocto-mailer');\n2. set a valid SMTP transport\n3. set an expeditor\n4. set at least one recipient\n    - You can optionaly add CC or BCC receivers\n5. call send() with your subject and contents for sending your email"
+                " Obligatory step before call this method\n\n1. require the module like this : var mailer = require('yocto-mailer');\n2. set a valid SMTP transport\n3. set an expeditor\n4. set at least one recipient\n    - You can optionaly add CC or BCC receivers\n5. call send() with your subject and contents for sending your email"
             ],
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
-            "line": 292,
+            "line": 302,
+            "description": "Default clean function. cleaning mail config option",
+            "itemtype": "method",
+            "name": "clean",
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 317,
             "description": "Export current Mailer to use it on node",
             "class": "Mailer"
         }
@@ -226,15 +234,15 @@
     "warnings": [
         {
             "message": "unknown tag: date",
-            "line": " src/index.js:9"
+            "line": " src/index.js:10"
         },
         {
             "message": "unknown tag: copyright",
-            "line": " src/index.js:9"
+            "line": " src/index.js:10"
         },
         {
             "message": "Missing item type\nExport current Mailer to use it on node",
-            "line": " src/index.js:292"
+            "line": " src/index.js:317"
         }
     ]
 }

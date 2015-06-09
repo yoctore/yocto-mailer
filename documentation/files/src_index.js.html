@@ -86,6 +86,7 @@ var smtpTransport   = require(&#x27;nodemailer-smtp-transport&#x27;);
 var logger          = require(&#x27;yocto-logger&#x27;);
 var _               = require(&#x27;lodash&#x27;);
 var joi             = require(&#x27;joi&#x27;);
+var util            = require(&#x27;util&#x27;);
 
 /**
  * Yocto Mailer
@@ -96,62 +97,70 @@ var joi             = require(&#x27;joi&#x27;);
  *
  * For more details on used dependencies read links below :
  * - yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
- * - LodAsh : https://lodash.com/
+ * - lodash : https://lodash.com/
  * - joi : https://github.com/hapijs/joi
  * - nodemailer : https://github.com/andris9/Nodemailer
  * - nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport
  *
  * @date : 29/04/2015
  * @author : Cédric BALARD &lt;cedric@yocto.re&gt;
+ * @author : Mathieu ROBERT &lt;mathieu@yocto.re&gt;
  * @copyright : Yocto SAS, All right reserved
  * @class Mailer
  */
 function Mailer() {
-    /**
-     * The transporter for sending mail
-     *
-     * @property {Object} transport
-     * @default empty
-     */
-    this.transport = {};
+  /**
+   * The transporter for sending mail
+   *
+   * @property {Object} transport
+   * @default empty
+   */
+  this.transport = {};
 
-    /**
-     * Structure of the object that contains all mail options
-     *
-     * @property {Object} mailOptions
-     * @default {
-     * 	   from    : &#x27;&#x27;,
-     *     to      : &#x27;&#x27;,
-     *     subject : &#x27;&#x27;,
-     *     html    : &#x27;&#x27;,
-     *     cc      : &#x27;&#x27;,
-     *     bcc     : &#x27;&#x27;
-     *     }
-     */
-    this.mailOptions = {
-        from    : &#x27;&#x27;, // sender address
-        to      : &#x27;&#x27;, // list of receivers
-        subject : &#x27;&#x27;, // Subject line
-        html    : &#x27;&#x27;, // html body
-        cc      : &#x27;&#x27;, // cc receivers
-        bcc     : &#x27;&#x27;  // bcc reveivers
-    };
+  /*
+   * Default logger instance
+   *
+   * @property {Object} logger
+   */
+  this.logger = logger;
 
-    /**
-     * Clone the mailOptions and omit parameter &#x27;from&#x27;&lt;br/&gt;
-     * It used for deleteMailOptions when a mail as sent &lt;br/&gt;
-     * Only &#x27;cc&#x27; and &#x27;bcc&#x27; are optionals
-     *
-     * @property {Object} defaultMailOtpion
-     *  @default {
-     *     to      : &#x27;&#x27;,
-     *     subject : &#x27;&#x27;,
-     *     html    : &#x27;&#x27;,
-     *     cc      : &#x27;&#x27;,
-     *     bcc     : &#x27;&#x27;
-     *     }
-     */
-    this.defaultMailOption = _.omit(_.clone(this.mailOptions), &#x27;from&#x27;);
+  /**
+   * Structure of the object that contains all mail options
+   *
+   * @property {Object} mailOptions
+   * @default {
+   * 	   from    : &#x27;&#x27;,
+   *     to      : &#x27;&#x27;,
+   *     subject : &#x27;&#x27;,
+   *     html    : &#x27;&#x27;,
+   *     cc      : &#x27;&#x27;,
+   *     bcc     : &#x27;&#x27;
+   *     }
+   */
+  this.mailOptions = {
+      from    : &#x27;&#x27;, // sender address
+      to      : &#x27;&#x27;, // list of receivers
+      subject : &#x27;&#x27;, // Subject line
+      html    : &#x27;&#x27;, // html body
+      cc      : &#x27;&#x27;, // cc receivers
+      bcc     : &#x27;&#x27;  // bcc reveivers
+  };
+
+  /**
+   * Clone the mailOptions and omit parameter &#x27;from&#x27;&lt;br/&gt;
+   * It used for deleteMailOptions when a mail as sent &lt;br/&gt;
+   * Only &#x27;cc&#x27; and &#x27;bcc&#x27; are optionals
+   *
+   * @property {Object} defaultMailOtpion
+   *  @default {
+   *     to      : &#x27;&#x27;,
+   *     subject : &#x27;&#x27;,
+   *     html    : &#x27;&#x27;,
+   *     cc      : &#x27;&#x27;,
+   *     bcc     : &#x27;&#x27;
+   *     }
+   */
+  this.defaultMailOption = _.omit(_.clone(this.mailOptions), &#x27;from&#x27;);
 }
 
 /**
@@ -173,35 +182,35 @@ function Mailer() {
  * }
  */
 Mailer.prototype.setConfigSMTP = function(smtpConf) {
+  
+  // Construct a schema to check if smtpConf is ok
+  var schema = joi.object().keys({
+      host                : joi.string().required(),
+      secureConnection    : joi.boolean().required(),
+      port                : joi.number().required(),
+      auth                : joi.object().keys({
+          user    : joi.string().email().required(),
+          pass    : joi.string().required()
+      }).allow(&#x27;user&#x27;,&#x27;pass&#x27;)
+  }).allow(&#x27;host&#x27;,&#x27;secureConnection&#x27;,&#x27;port&#x27;,&#x27;auth&#x27;);
 
-    //Construct a schema to check if smtpConf is ok
-    var schema = joi.object().keys({
-        host                : joi.string().required(),
-        secureConnection    : joi.boolean().required(),
-        port                : joi.number().required(),
-        auth                : joi.object().keys({
-            user    : joi.string().email().required(),
-            pass    : joi.string().required()
-        }).allow(&#x27;user&#x27;,&#x27;pass&#x27;)
-    }).allow(&#x27;host&#x27;,&#x27;secureConnection&#x27;,&#x27;port&#x27;,&#x27;auth&#x27;);
+  // execute validation
+  var result = joi.validate(smtpConf, schema);
 
-    //execute validation
-    var result = joi.validate(smtpConf, schema);
+  // check if have error on previous validation
+  if (!_.isEmpty(result) &amp;&amp; !_.isEmpty(result.error)) {
+    this.logger.error([ &#x27; [ Mailer.setConfigSMTP ] - Config is invalid. error is : &#x27;, util.inspect(result.error.details, { depth : null }) ]);  
+    
+    return false;
+  }
 
-    //check if have error on previous validation
-    if (!_.isEmpty(result) &amp;&amp; !_.isEmpty(result.error)) {
-        logger.error(&#x27;[ Mailer.setConfigSMTP ] - setting smtp, error description :&#x27;);
-
-        //Log each error
-        _.forEach(result.error.details, function(val) {
-            logger.warning(&#x27;[ Mailer.setConfigSMTP ] - &#x27; + val.message + &#x27; at &#x27; + val.path);
-        });
-        return false;
-    }
-
-    logger.info(&#x27;[ Mailer.setConfigSMTP ] - Set smtp configuration ok&#x27;);
-    this.transport = nodemailer.createTransport(smtpTransport(smtpConf));
-    return true;
+  logger.info(&#x27;[ Mailer.setConfigSMTP ] - New config is valid.&#x27;);
+  
+  // set transport
+  this.transport = nodemailer.createTransport(smtpTransport(smtpConf));
+  
+  // return statement
+  return true;
 };
 
 /**
@@ -213,8 +222,7 @@ Mailer.prototype.setConfigSMTP = function(smtpConf) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addRecipient = function(to) {
-
-    return this.processEmailFormat(to, &#x27;to&#x27;);
+  return this.processEmailFormat(to, &#x27;to&#x27;);
 };
 
 /**
@@ -226,8 +234,8 @@ Mailer.prototype.addRecipient = function(to) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.setExpeditor = function(from) {
-
-    return this.processEmailFormat(from, &#x27;from&#x27;);
+  console.log(from);
+  return this.processEmailFormat(from, &#x27;from&#x27;);
 };
 
 /**
@@ -239,8 +247,7 @@ Mailer.prototype.setExpeditor = function(from) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addCC = function(cc) {
-
-    return this.processEmailFormat(cc, &#x27;cc&#x27;);
+  return this.processEmailFormat(cc, &#x27;cc&#x27;);
 };
 
 /**
@@ -252,8 +259,7 @@ Mailer.prototype.addCC = function(cc) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.addBCC = function(bcc) {
-
-    return this.processEmailFormat(bcc, &#x27;bcc&#x27;);
+  return this.processEmailFormat(bcc, &#x27;bcc&#x27;);
 };
 
 /**
@@ -268,27 +274,44 @@ Mailer.prototype.addBCC = function(bcc) {
  * @return {Boolean} true if success, false otherwise
  */
 Mailer.prototype.processEmailFormat = function(data, option) {
+  // Set a default value
+  var result = joi.string().email().required().empty();
 
-    //Set a default value
-    var result = joi.string().email();
+  // Change result if needed
+  if (_.isArray(data)) {
+    result = joi.array().min(1).items(joi.string().email().required().empty());
+  }
 
-    //Change result if needed
-    if (_.isArray(data)) {
-         result = joi.array().items(joi.string().email());
+  // validate options too
+  var options = joi.string().required().empty().valid([ &#x27;from&#x27;, &#x27;bcc&#x27;, &#x27;cc&#x27;, &#x27;to&#x27; ]).validate(option);
+  
+  // Execute the joi validation
+  result = result.validate(data);
+
+  // Check if have no error in joi validation
+  if (_.isNull(result.error) &amp;&amp; _.isNull(options.error)) {
+      logger.info([ &#x27;[ Mailer.processEmailFormat ] - Checking field :&#x27;, option, &#x27;with data :&#x27;, util.inspect(data, { depth : null }), &#x27;is ok&#x27; ].join(&#x27; &#x27;));
+      
+      // set options
+      this.mailOptions[option] = data;
+      
+      // return statement
+      return true;
+  }
+
+  // saving errors for logging after
+  var errors =  [ result.error, options.error ];
+  
+  // parse error
+  _.each(errors, function(r) {
+    if (!_.isNull(r) &amp;&amp; _.has(r, &#x27;details&#x27;)) {
+      // error message
+      this.logger.error([ &#x27;[ Mailer.processEmailFormat ] - Validation failed. validate error is :\n&#x27;, util.inspect(r.details, { depth : null }) ].join(&#x27; &#x27;));      
     }
-
-    //Execute the joi vailidation
-    result = result.validate(data);
-
-    //Check if have no error in joi validation
-    if (_.isEmpty(result) || _.isEmpty(result.error)) {
-        logger.info(&#x27;[ Mailer.processEmailFormat ] - Validation email for field : &#x27; + option);
-        this.mailOptions[option] = data;
-        return true;
-    }
-
-    logger.error(&#x27;[ Mailer.processEmailFormat ] - Validation email failed, at least one string dosen\&#x27;t pass email validation for field : &#x27; + option);
-    return false;
+  }, this);
+  
+  // returning statement
+  return false;
 };
 
 /**
@@ -300,6 +323,7 @@ Mailer.prototype.processEmailFormat = function(data, option) {
  * @param {String} message Html message to send
  * @param {Function} callback on optional callback, If is not specied a default callback will be execute
  * @example Obligatory step before call this method
+ *
  * 1. require the module like this : var mailer = require(&#x27;yocto-mailer&#x27;);
  * 2. set a valid SMTP transport
  * 3. set an expeditor
@@ -308,67 +332,68 @@ Mailer.prototype.processEmailFormat = function(data, option) {
  * 5. call send() with your subject and contents for sending your email
  */
 Mailer.prototype.send = function(subject, message, callback) {
+  
+  // checking message
+  if (_.isString(message)) {
+    this.mailOptions.html = message;
+  }
 
-    // send mail with defined transport object
-    logger.info(&#x27;[ Mailer.send ] - Try sending a new email&#x27;);
+  // checking subject
+  if (_.isString(subject)) {
+    this.mailOptions.subject = subject;
+  }
 
-    if (_.isString(message)) {
-        this.mailOptions.html = message;
-    }
+  // Check if somes params are not empty
+  if (!_.isEmpty(this.transport) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp;
+      !_.isEmpty(this.mailOptions.from)  &amp;&amp; !_.isEmpty(this.mailOptions.subject)  &amp;&amp;
+      !_.isEmpty(this.mailOptions.html)) {
 
-    if (_.isString(subject)) {
-        this.mailOptions.subject = subject;
-    }
+      // send mail with defined transport object
+      this.logger.info([ &#x27;[ Mailer.send ] - Sending email to : &#x27;, this.mailOptions.to ].join(&#x27; &#x27;));      
+      this.logger.debug([ &#x27;[ Mailer.send ] - Sending with option : &#x27;, util.inspect(this.mailOptions, { depth : null } ) ].join(&#x27; &#x27;));
 
-    //Default callback will call in case where &#x27;callback&#x27; is empty
-    function defaultCallbackSendMail(error, info) {
-
+      // saving context for mailer callback
+      var context = this;
+      
+      // sending email
+      this.transport.sendMail(this.mailOptions, function(error, info) {
+        // prelog if error
         if (error) {
-            logger.error(&#x27;[ Mailer.send.defaultCallBackSendMail ] -  error sending message, more details : &#x27; + error);
+          context.logger.error([ &#x27;[ Mailer.send ] - An error occured during sending email. Error is :&#x27;, util.inspect(error, { depth : null }) ].join(&#x27; &#x27;));
         } else {
-            logger.info(&#x27;[ Mailer.send.defaultCallBackSendMail ] - message sent, more info : &#x27; + info.response);
+          context.logger.info([ &#x27;[ Mailer.send ] - Sending email success. response is :\n&#x27;, util.inspect(info, { depth : null }) ].join(&#x27; &#x27;));          
         }
-    }
 
-    //saveContext for deleteMailOptions()
-    var context = this;
+        // callback is function ?
+        if (_.isFunction(callback)) {
+          // calling 
+          callback(error, info);          
+        }
+      });
 
-    //Function that delete all params in this.mailOptions expect &#x27;from&#x27;
-    function deleteMailOptions() {
+   } else {
+      // At least one params are empty, so the mail will be not sent
+      logger.error(&#x27;[ Mailer.send ] - Configuration is invalid. Please check your settings.&#x27;);
+  }
+  
+  // clean mail options
+  return this.clean();
+};
 
-        logger.info(&#x27;[ Mailer.deleteMailOptions ] - Delete mail otpions&#x27;);
-
-        //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
-        _.extend(context.mailOptions, context.defaultMailOption);
-    }
-
-    //Check if somes params are not empty
-    if (!_.isEmpty(this.transport) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp;
-        !_.isEmpty(this.mailOptions.from)  &amp;&amp; !_.isEmpty(this.mailOptions.subject)  &amp;&amp;
-        !_.isEmpty(this.mailOptions.html)) {
-
-       //SendMail
-        this.transport.sendMail(this.mailOptions, function(error, info) {
-
-            //Determine which callback is called
-            if (!_.isFunction(callback)) {
-                defaultCallbackSendMail(error, info);
-            } else {
-                callback(error, info);
-            }
-
-            //Delete mail options
-            deleteMailOptions();
-        });
-
-     } else {
-        //At least one params are empty, so the mail will be not sent
-        logger.error(&#x27;[ Mailer.send ] - can\&#x27;t send mail, please check configuration.&#x27;);
-
-        //Delete mail options
-        deleteMailOptions();
-    }
- };
+/**
+ * Default clean function. cleaning mail config option
+ *
+ * @method clean
+ */
+Mailer.prototype.clean = function() {
+  this.logger.info(&#x27;[ Mailer.clean ] - Cleaning mail otpions&#x27;);
+  
+  // Extend defaultMailOption to remove this mail options : to, cc, bcc, html
+  _.extend(this.mailOptions, this.defaultMailOption);
+  
+  // return mail Options
+  return this.mailOptions;
+};
 
 /**
  * Export current Mailer to use it on node

@@ -3,7 +3,7 @@
 
 var nodemailer      = require("nodemailer");
 var smtpTransport   = require('nodemailer-smtp-transport');
-var mailer          = require('../dist/index.js');
+var mailer          = require('../src/index.js');
 var _               = require('lodash');
 
 var smtpConf = {
@@ -11,23 +11,24 @@ var smtpConf = {
     secureConnection    : true, // use SSL
     port                : "587", // port for secure SMTP
     auth                : {
-        user    : "cedric.balard@yocto.re",
-        pass    : "w9r0WPeCZ2fm"
+        user    : "technique@yocto.re",
+        pass    : "Y0c7oPass"
     }
 };
 
-var dest = 'cedric@yocto.re';
+var dest = 'mathieu@yocto.re';
 
 var destTab = [
-    'cedric@yocto.re',
+    'mathieu@yocto.re',
 
 ];
 
 var destTabBcc = [
-    'toto@yocto.re',
+    'mathieu@yocto.re',
 
 ];
 
+mailer.processEmailFormat(1, 'a');
 mailer.setExpeditor(dest);
 mailer.addRecipient(dest);
 mailer.setConfigSMTP(smtpConf);

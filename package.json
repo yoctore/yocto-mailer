@@ -2,6 +2,7 @@
   "name": "yocto-mailer",
   "version": "0.1.0",
   "description": "Mailer utility for yocto core stack based on nodemailer",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+ssh:://git@lab.yocto.digital:yocto-node-modules/yocto-mailer.git"
@@ -23,6 +24,10 @@
     {
       "name": "BALARD Cédric",
       "email": "cedric@yocto.re"
+    },
+    {
+      "name": "ROBERT Mathieu",
+      "email": "mathieu@yocto.re"
     }
   ],
   "dependencies": {
@@ -39,6 +44,8 @@
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-nodeunit": "~0.4.1",
     "grunt-contrib-uglify": "~0.5.0",
-    "grunt-contrib-yuidoc": "^0.7.0"
+    "grunt-contrib-yuidoc": "^0.7.0",
+    "grunt-mocha-cli": "^1.13.0",
+    "yocto-utils": "git+ssh://git@lab.yocto.digital:yocto-node-modules/yocto-utils.git"
   }
 }
