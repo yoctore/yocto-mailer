@@ -1,7 +1,9 @@
-var mailer = require('../dist');
+var mailer = require('../src');
 var logger = require('yocto-logger');
 
 
+
+console.log('mailer type : ' + mailer.get(mailer.mailerType));
 
 
 
@@ -21,16 +23,6 @@ var user1 = {
 
 var user2 = {
   name  : 'Toto',
-  email : dest
-};
-
-var user3 = {
-  name  : 'Jouns',
-  email : dest
-};
-
-var user4 = {
-  name  : 'lalala',
   email : dest
 };
 
@@ -58,38 +50,27 @@ var callbackFailed = function(error) {
 };
 
 
-//--------------------//
-//    TEST Mandrill   //
-//--------------------//
-
-mailer.mandrill.setMandrillClientAPIKey('K7GkavS-hDh5ZX4D-kiWxg');
-mailer.mandrill.setExpeditor(dest);
-mailer.mandrill.addRecipient(user1);
-// mailer.mandrill.addCC(user1);
-// mailer.mandrill.addBCC(user2);
-mailer.mandrill.send(' #123 MANDRILL ', '<b> test tab </b>', callbackSuccess, callbackFailed);
-
-
-//--------------------//
-//  TEST nodemailer   //
-//--------------------//
-
 var smtpConf = {
-    host                : "ssl0.ovh.net", // hostname
-    secureConnection    : true, // use SSL
-    port                : "587", // port for secure SMTP
-    auth                : {
-        user    : "cedric.balard@yocto.re",
-        pass    : "w9r0WPeCZ2fm"
-    }
+  host                : "ssl0.ovh.net", // hostname
+  secureConnection    : true, // use SSL
+  port                : "587", // port for secure SMTP
+  auth                : {
+    user    : "cedric.balard@yocto.re",
+    pass    : "w9r0WPeCZ2fm"
+  }
 };
 
-// mailer.nodemailer.setExpeditor(expeditor);
-// mailer.nodemailer.addRecipient(user);
-// mailer.nodemailer.setConfigSMTP(smtpConf);
 
-// mailer.nodemailer.addCC(user3);
-// mailer.nodemailer.addBCC(userTab);
+mailer.use('mandrill');
+mailer.setConfig('K7GkavS-hDh5ZX4D-kiWxg');
+
+// mailer.use('nodemailer');
+// mailer.setConfig(smtpConf);
+
+mailer.setExpeditor(dest);
+mailer.addRecipient(user1);
+mailer.addCC(userTab);
+mailer.addBCC(user2);
 
 
-//mailer.nodemailer.send(' #22 nodemailer ', '<b> test tab </b>', callbackSuccess, callbackFailed);
+mailer.send(' #500 MANDRILL ', '<b> test tab </b>', callbackSuccess, callbackFailed);

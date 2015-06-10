@@ -2,7 +2,6 @@
 
 var mandrill = require('mandrill-api/mandrill');
 var _        = require('lodash');
-var joi      = require('joi');
 var logger   = require('yocto-logger');
 
 
@@ -72,6 +71,7 @@ function MandrillWrapper() {
   this.logger = logger;
 }
 
+
 /**
 * Set the mandrill client apiKey to connect to mandrill service
 *
@@ -80,182 +80,15 @@ function MandrillWrapper() {
 * @example example of usage
 *    mailer.mandrill.setMandrillClientAPIKey('JFEKFEa-738dKJFEç-OLN974');
 */
-MandrillWrapper.prototype.setMandrillClientAPIKey = function(apiKey) {
+MandrillWrapper.prototype.setConfig = function(apiKey) {
 
   if (_.isString(apiKey)) {
     this.mandrill_client = new mandrill.Mandrill(apiKey);
-  }
-};
-
-/**
-* Add a new recipient or an array of recipient<br/>
-* This will add a new recipient to the array of recipient
-*
-* @method addRecipient
-* @param {Object, Array} rec
-* @return {Boolean} true if success, false otherwise
-* @example
-*
-*var user = {
-*  name  : 'Foo Bar',
-*  email : 'foo@bar.com'
-*};
-* mailer.nodemailer.addRecipient(user);
-*/
-MandrillWrapper.prototype.addRecipient = function(rec) {
-
-  return this.processEmailFormat(rec, 'to');
-};
-
-/**
-* Set the expeditor <br/>
-* This param is save in memory
-*
-* @method setExpeditor
-* @param {String}  from email of the exoeditor
-* @return {Boolean} true if success, false otherwise
-*/
-MandrillWrapper.prototype.setExpeditor = function(from) {
-
-  //From email should be a string
-  if (!_.isString(from)) {
-    return 'Error - from_email should be a string email';
-  }
-  return this.processEmailFormat(from, 'from_email');
-};
-
-/**
-* Add a new CC recipient or an array of CC recipient<br/>
-* This will add a new cc to the array of cc
-*
-* @method addCC
-* @param {Object, Array}  cc
-* @return {Boolean} true if success, false otherwise
-*
-* @example
-*
-*var user = {
-*  name  : 'Foo Bar',
-*  email : 'foo@bar.com'
-*};
-* mailer.nodemailer.addCC(user);
-*/
-MandrillWrapper.prototype.addCC = function(cc) {
-
-  return this.processEmailFormat(cc, 'to', 'cc');
-};
-
-/**
-* Add a new BCC recipient or an array of BCC recipient<br/>
-* This will add a new cc to the array of Bcc
-*
-* @method addBCC
-* @param {Object, Array} bcc
-* @return {Boolean} true if success, false otherwise
-*
-* @example
-*
-*var user = {
-*  name  : 'Foo Bar',
-*  email : 'foo@bar.com'
-*};
-* mailer.nodemailer.addBCC(user);
-*/
-MandrillWrapper.prototype.addBCC = function(bcc) {
-
-  return this.processEmailFormat(bcc, 'to', 'bcc');
-};
-
-/**
-* Check if object 'data' conatains only email <br/>
-* If it's not case return false and logg an error <br/>
-* Else add 'data' into Mailer.mailOptions.<option>
-*
-* @method processEmailFormat
-* @private
-* @param {String, Array, Object}  data that shoul'd be contains email
-* @param option It's the name of the property in Mailer.mailOptions
-* @param option2 It's an optional otpion to specify if it's an cc, bcc
-* @return {Boolean} true if success, false otherwise
-*/
-MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
-
-  if (option !== 'from_email' && !_.isObject(data)) {
-    this.logger.error('Error ' + option + ' should be on object or array of object');
-    return 'Error ' + option + ' should be on object or array of object';
-  }
-
-  //Set a default value
-  var result = joi.string().email();
-
-  if (_.isObject(data)) {
-
-    //data is an array
-    if (_.isArray(data)) {
-
-      //Add params type to each user
-      _.forEach(data, function(user) {
-
-        user = _.merge(user, { type : (_.isEmpty(option2) ? option : option2) });
-      });
-
-      //Define joi schema
-      result = joi.array().items(
-        joi.object().keys({
-          email : joi.string().email(),
-          name  : joi.string(),
-          type  : joi.string()
-        })
-      );
-    } else {
-      // Data is an Object
-      // Add param type in data
-      data = _.merge(data, { type : (_.isEmpty(option2) ? option : option2) });  // add the param 'type'
-
-      //Define joi schema
-      result = joi.object().keys({
-        email : joi.string().email(),
-        name  : joi.string(),
-        type  : joi.string()
-      });
-    }
-  }
-
-  //Execute the joi vailidation
-  result = result.validate(data);
-
-  //Check if have no error in joi validation
-  if (_.isEmpty(result) || _.isEmpty(result.error)) {
-    this.logger.debug('[ MandrillWrapper.processEmailFormat ] - Validation email for field : ' +  (_.isEmpty(option2) ? option : option2));
-
-    //test the type of param in mailOptions
-    if (_.isArray(this.mailOptions[option]) && _.isObject(data)) {
-      //is an array
-
-      //Change result if needed
-      if (_.isArray(data)) {
-
-        //is an array
-        _.forEach(data, function(user) {
-          this.mailOptions[option].push(user);
-        }, this);
-        return true;
-      }
-
-      //is an object
-      this.mailOptions[option].push(data);
-      return true;
-    }
-
-    //the param is a string
-    this.mailOptions[option] = data;
     return true;
   }
-  
-  console.log(result.error);
-  this.logger.error('[ MandrillWrapper.processEmailFormat ] - Validation email failed, at least one string dosen\'t pass email validation for field : ' + option);
-  return false;
+  this.logger.error('[ MandrillWrapper.setConfig ] - The api key should be a String');
 };
+
 
 /**
 * Send the mail with all parameters ( from_email, to, cc , bcc)<br/>
@@ -279,13 +112,9 @@ MandrillWrapper.prototype.send = function(subject, message, callback, callbackFa
   // send mail with defined transport object
   this.logger.debug('[ MandrillWrapper.send ] - Try sending a new email');
 
-  if (_.isString(message)) {
-    this.mailOptions.html = message;
-  }
-
-  if (_.isString(subject)) {
-    this.mailOptions.subject = subject;
-  }
+  // defining default value
+  this.mailOptions.html     = _.isString(message) ? message : '';
+  this.mailOptions.subject  = _.isString(subject) ? subject : '';
 
   // process callback
   callback = !_.isUndefined(callback) && _.isFunction(callback) ? callback : function(data) {

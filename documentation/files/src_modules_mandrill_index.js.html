@@ -85,7 +85,6 @@
 
 var mandrill = require(&#x27;mandrill-api/mandrill&#x27;);
 var _        = require(&#x27;lodash&#x27;);
-var joi      = require(&#x27;joi&#x27;);
 var logger   = require(&#x27;yocto-logger&#x27;);
 
 
@@ -146,7 +145,15 @@ function MandrillWrapper() {
   *     }
   */
   this.defaultMailOption = _.omit(_.clone(this.mailOptions), &#x27;from_email&#x27;);
+
+  /**
+   * Default this.logger properties
+   *
+   * @property {Object} this.logger
+   */
+  this.logger = logger;
 }
+
 
 /**
 * Set the mandrill client apiKey to connect to mandrill service
@@ -156,182 +163,15 @@ function MandrillWrapper() {
 * @example example of usage
 *    mailer.mandrill.setMandrillClientAPIKey(&#x27;JFEKFEa-738dKJFEç-OLN974&#x27;);
 */
-MandrillWrapper.prototype.setMandrillClientAPIKey = function(apiKey) {
+MandrillWrapper.prototype.setConfig = function(apiKey) {
 
   if (_.isString(apiKey)) {
     this.mandrill_client = new mandrill.Mandrill(apiKey);
-  }
-};
-
-/**
-* Add a new recipient or an array of recipient&lt;br/&gt;
-* This will add a new recipient to the array of recipient
-*
-* @method addRecipient
-* @param {Object, Array} rec
-* @return {Boolean} true if success, false otherwise
-* @example
-*
-*var user = {
-*  name  : &#x27;Foo Bar&#x27;,
-*  email : &#x27;foo@bar.com&#x27;
-*};
-* mailer.nodemailer.addRecipient(user);
-*/
-MandrillWrapper.prototype.addRecipient = function(rec) {
-
-  return this.processEmailFormat(rec, &#x27;to&#x27;);
-};
-
-/**
-* Set the expeditor &lt;br/&gt;
-* This param is save in memory
-*
-* @method setExpeditor
-* @param {String}  from email of the exoeditor
-* @return {Boolean} true if success, false otherwise
-*/
-MandrillWrapper.prototype.setExpeditor = function(from) {
-
-  //From email should be a string
-  if (!_.isString(from)) {
-    return &#x27;Error - from_email should be a string email&#x27;;
-  }
-  return this.processEmailFormat(from, &#x27;from_email&#x27;);
-};
-
-/**
-* Add a new CC recipient or an array of CC recipient&lt;br/&gt;
-* This will add a new cc to the array of cc
-*
-* @method addCC
-* @param {Object, Array}  cc
-* @return {Boolean} true if success, false otherwise
-*
-* @example
-*
-*var user = {
-*  name  : &#x27;Foo Bar&#x27;,
-*  email : &#x27;foo@bar.com&#x27;
-*};
-* mailer.nodemailer.addCC(user);
-*/
-MandrillWrapper.prototype.addCC = function(cc) {
-
-  return this.processEmailFormat(cc, &#x27;to&#x27;, &#x27;cc&#x27;);
-};
-
-/**
-* Add a new BCC recipient or an array of BCC recipient&lt;br/&gt;
-* This will add a new cc to the array of Bcc
-*
-* @method addBCC
-* @param {Object, Array} bcc
-* @return {Boolean} true if success, false otherwise
-*
-* @example
-*
-*var user = {
-*  name  : &#x27;Foo Bar&#x27;,
-*  email : &#x27;foo@bar.com&#x27;
-*};
-* mailer.nodemailer.addBCC(user);
-*/
-MandrillWrapper.prototype.addBCC = function(bcc) {
-
-  return this.processEmailFormat(bcc, &#x27;to&#x27;, &#x27;bcc&#x27;);
-};
-
-/**
-* Check if object &#x27;data&#x27; conatains only email &lt;br/&gt;
-* If it&#x27;s not case return false and logg an error &lt;br/&gt;
-* Else add &#x27;data&#x27; into Mailer.mailOptions.&lt;option&gt;
-*
-* @method processEmailFormat
-* @private
-* @param {String, Array, Object}  data that shoul&#x27;d be contains email
-* @param option It&#x27;s the name of the property in Mailer.mailOptions
-* @param option2 It&#x27;s an optional otpion to specify if it&#x27;s an cc, bcc
-* @return {Boolean} true if success, false otherwise
-*/
-MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
-
-  if (option !== &#x27;from_email&#x27; &amp;&amp; !_.isObject(data)) {
-    logger.error(&#x27;Error &#x27; + option + &#x27; should be on object or array of object&#x27;);
-    return &#x27;Error &#x27; + option + &#x27; should be on object or array of object&#x27;;
-  }
-
-  //Set a default value
-  var result = joi.string().email();
-
-  if (_.isObject(data)) {
-
-    //data is an array
-    if (_.isArray(data)) {
-
-      //Add params type to each user
-      _.forEach(data, function(user) {
-
-        user = _.merge(user, { type : (_.isEmpty(option2) ? option : option2) });
-      });
-
-      //Define joi schema
-      result = joi.array().items(
-        joi.object().keys({
-          email : joi.string().email(),
-          name  : joi.string(),
-          type  : joi.string()
-        })
-      );
-    } else {
-      // Data is an Object
-      // Add param type in data
-      data = _.merge(data, { type : (_.isEmpty(option2) ? option : option2) });  // add the param &#x27;type&#x27;
-
-      //Define joi schema
-      result = joi.object().keys({
-        email : joi.string().email(),
-        name  : joi.string(),
-        type  : joi.string()
-      });
-    }
-  }
-
-  //Execute the joi vailidation
-  result = result.validate(data);
-
-  //Check if have no error in joi validation
-  if (_.isEmpty(result) || _.isEmpty(result.error)) {
-    logger.debug(&#x27;[ MandrillWrapper.processEmailFormat ] - Validation email for field : &#x27; +  (_.isEmpty(option2) ? option : option2));
-
-    //test the type of param in mailOptions
-    if (_.isArray(this.mailOptions[option]) &amp;&amp; _.isObject(data)) {
-      //is an array
-
-      //Change result if needed
-      if (_.isArray(data)) {
-
-        //is an array
-        _.forEach(data, function(user) {
-          this.mailOptions[option].push(user);
-        }, this);
-        return true;
-      }
-
-      //is an object
-      this.mailOptions[option].push(data);
-      return true;
-    }
-
-    //the param is a string
-    this.mailOptions[option] = data;
     return true;
   }
-
-  logger.error(&#x27;[ MandrillWrapper.processEmailFormat ] - Validation email failed, at least one string dosen\&#x27;t pass email validation for field : &#x27; + option);
-  console.log(result.error);
-  return false;
+  this.logger.error(&#x27;[ MandrillWrapper.setConfig ] - The api key should be a String&#x27;);
 };
+
 
 /**
 * Send the mail with all parameters ( from_email, to, cc , bcc)&lt;br/&gt;
@@ -353,81 +193,56 @@ MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
 MandrillWrapper.prototype.send = function(subject, message, callback, callbackFailed) {
 
   // send mail with defined transport object
-  logger.debug(&#x27;[ MandrillWrapper.send ] - Try sending a new email&#x27;);
+  this.logger.debug(&#x27;[ MandrillWrapper.send ] - Try sending a new email&#x27;);
 
-  if (_.isString(message)) {
-    this.mailOptions.html = message;
-  }
+  // defining default value
+  this.mailOptions.html     = _.isString(message) ? message : &#x27;&#x27;;
+  this.mailOptions.subject  = _.isString(subject) ? subject : &#x27;&#x27;;
 
-  if (_.isString(subject)) {
-    this.mailOptions.subject = subject;
-  }
+  // process callback
+  callback = !_.isUndefined(callback) &amp;&amp; _.isFunction(callback) ? callback : function(data) {
+    this.logger.info(&#x27;[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, info details id : &#x27; + data);
+  };
 
-  //Default callback will call in case where &#x27;callback&#x27; is empty
-  function defaultCallbackSendMail(info) {
-
-    logger.info(&#x27;[ MandrillWrapper.send.defaultCallBackSendMail ] - message sent, more info : &#x27; + info);
-  }
-
-  //Default callback will call in case where &#x27;callback&#x27; is empty
-  function defaultFailedCallbackSendMail(error) {
-
-    logger.error(&#x27;[ MandrillWrapper.send.defaultCallBackSendMail ] -  error sending message, more details : &#x27; + error);
-  }
+  // process callback Failed
+  callbackFailed = !_.isUndefined(callbackFailed) &amp;&amp; _.isFunction(callbackFailed) ? callbackFailed : function(data) {
+    this.logger.info(&#x27;[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, error details id : &#x27; + data);
+  };
 
   //saveContext for deleteMailOptions()
   var context = this;
 
   //Function that delete all params in this.mailOptions expect &#x27;from&#x27;
-  function deleteMailOptions() {
+  function deleteMailOptions(context) {
 
-    logger.debug(&#x27;[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions&#x27;);
+    context.logger.debug(&#x27;[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions&#x27;);
 
     //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
     _.extend(context.mailOptions, context.defaultMailOption);
   }
 
   //Check if somes params are not empty
-  if (!_.isEmpty(this.mandrill_client) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp;
-  !_.isEmpty(this.mailOptions.from_email)  &amp;&amp; !_.isEmpty(this.mailOptions.subject)  &amp;&amp;
-  !_.isEmpty(this.mailOptions.html)) {
+  if (!_.isEmpty(this.mandrill_client) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp; !_.isEmpty(this.mailOptions.from_email)  &amp;&amp; !_.isEmpty(this.mailOptions.subject)  &amp;&amp; !_.isEmpty(this.mailOptions.html)) {
 
-    return this.mandrill_client.messages.send({ &quot;message&quot;: this.mailOptions, &quot;async&quot;: false }, function(result) {
+    this.mandrill_client.messages.send({ &quot;message&quot;: this.mailOptions, &quot;async&quot;: false }, function(result) {
 
       // Success Callback
+      callback(result);
+    } , function(error) {
 
-      //Determine which callback is called
-      if (!_.isFunction(callback)) {
-        defaultCallbackSendMail(result);
-      } else {
-        callback(result);
-      }
-
-      //Delete mail options
-      deleteMailOptions();
-      return true;
-
-    } , function(e) {
       // failed callback
-      //
-      //Determine which callback is called
-      if (!_.isFunction(callbackFailed)) {
-        defaultFailedCallbackSendMail(e);
-      } else {
-        callbackFailed(e);
-      }
-
-      //Delete mail options
-      deleteMailOptions();
-      return false;
+      callbackFailed(error);
     });
-  }
-  //At least one params are empty, so the mail will be not sent
-  logger.error(&#x27;[ MandrillWrapper.send ] - can\&#x27;t send mail, please check configuration.&#x27;);
 
-  //Delete mail options
-  deleteMailOptions();
-  return false;
+    deleteMailOptions(context);
+
+  } else {
+    //At least one params are empty, so the mail will be not sent
+    this.logger.error(&#x27;[ MandrillWrapper.send ] - can\&#x27;t send mail, please check configuration.&#x27;);
+
+    //Delete mail options
+    deleteMailOptions(this);
+  }
 };
 
 /**
