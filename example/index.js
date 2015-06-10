@@ -5,7 +5,7 @@ var logger = require('yocto-logger');
 
 
 
-var dest = 'mathieu@yocto.re';
+var dest = 'cedric@yocto.re';
 
 var expeditor = 'cedric@yocto.re';
 
@@ -62,12 +62,12 @@ var callbackFailed = function(error) {
 //    TEST Mandrill   //
 //--------------------//
 
-// mailer.mandrill.setMandrillClientAPIKey('K7GkavS-hDh5ZX4D-kiWxg');
-// mailer.mandrill.setExpeditor(dest);
-// mailer.mandrill.addRecipient(userTab);
+mailer.mandrill.setMandrillClientAPIKey('K7GkavS-hDh5ZX4D-kiWxg');
+mailer.mandrill.setExpeditor(dest);
+mailer.mandrill.addRecipient(user1);
 // mailer.mandrill.addCC(user1);
 // mailer.mandrill.addBCC(user2);
-//mailer.mandrill.send(' #123 MANDRILL ', '<b> test tab </b>', callbackSuccess, callbackFailed);
+mailer.mandrill.send(' #123 MANDRILL ', '<b> test tab </b>', callbackSuccess, callbackFailed);
 
 
 //--------------------//
@@ -84,12 +84,12 @@ var smtpConf = {
     }
 };
 
-mailer.nodemailer.setExpeditor(expeditor);
-mailer.nodemailer.addRecipient(user);
-mailer.nodemailer.setConfigSMTP(smtpConf);
+// mailer.nodemailer.setExpeditor(expeditor);
+// mailer.nodemailer.addRecipient(user);
+// mailer.nodemailer.setConfigSMTP(smtpConf);
 
 // mailer.nodemailer.addCC(user3);
 // mailer.nodemailer.addBCC(userTab);
 
 
-mailer.nodemailer.send(' #22 nodemailer ', '<b> test tab </b>', callbackSuccess, callbackFailed);
+//mailer.nodemailer.send(' #22 nodemailer ', '<b> test tab </b>', callbackSuccess, callbackFailed);

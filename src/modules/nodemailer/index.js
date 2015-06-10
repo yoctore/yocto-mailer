@@ -71,10 +71,10 @@ function NodeMailer() {
   *     }
   */
   this.defaultMailOption = _.omit(_.clone(this.mailOptions), 'from');
-  
+
   /**
    * Default this.logger properties
-   * 
+   *
    * @property {Object} this.logger
    */
   this.logger = logger;
@@ -162,7 +162,7 @@ NodeMailer.prototype.setExpeditor = function(from) {
 
   if (!_.isString(from)) {
     this.logger.error('Error - from_email should be a string email');
-    return 'Error - from_email should be a string email';
+    return false;
   }
   return this.processEmailFormat(from, 'from');
 };
@@ -222,9 +222,8 @@ NodeMailer.prototype.processEmailFormat = function(data, option) {
 
       result = joi.array().items(
         joi.object().keys({
-          email : joi.string().email(),
-          name  : joi.string(),
-          type  : joi.string()
+          address : joi.string().email(),
+          name  : joi.string()
         })
       );
 
@@ -293,7 +292,7 @@ NodeMailer.prototype.processEmailFormat = function(data, option) {
 *     - You can optionaly add CC or BCC receivers
 * 5. call send() with your subject and contents for sending your email
 */
-NodeMailer.prototype.send = function(subject, message, callback) {
+NodeMailer.prototype.send = function(subject, message, callback, callbackFailed) {
 
   // send mail with defined transport object
   this.logger.info('[ NodeMailer.send ] - Try sending a new email');
@@ -301,12 +300,18 @@ NodeMailer.prototype.send = function(subject, message, callback) {
   // defining default value
   this.mailOptions.html     = _.isString(message) ? message : '';
   this.mailOptions.subject  = _.isString(subject) ? subject : '';
-  
+
   // process callback
   callback = !_.isUndefined(callback) && _.isFunction(callback) ? callback : function(data) {
-    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, info/error details id : ' + data);
+    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, info details id : ' + data);
   };
-  
+
+  // process callback Failed
+  callbackFailed = !_.isUndefined(callbackFailed) && _.isFunction(callbackFailed) ? callbackFailed : function(data) {
+    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, error details id : ' + data);
+  };
+
+
   // saving context
   var context = this;
 
@@ -331,12 +336,12 @@ NodeMailer.prototype.send = function(subject, message, callback) {
     // SendMail
     this.transport.sendMail(this.mailOptions, function(error, info) {
 
-      // get correct data
-      var data = !_.isEmpty(error) ? error : info;
-      
-      // call callback
-      callback(data);
-      
+      if (_.isEmpty(error)) {
+        callback(info);
+      } else {
+        callbackFailed(error);
+      }
+
       // Delete mail options
       deleteMailOptions(context);
     });

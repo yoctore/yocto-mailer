@@ -63,6 +63,13 @@ function MandrillWrapper() {
   *     }
   */
   this.defaultMailOption = _.omit(_.clone(this.mailOptions), 'from_email');
+
+  /**
+   * Default this.logger properties
+   *
+   * @property {Object} this.logger
+   */
+  this.logger = logger;
 }
 
 /**
@@ -174,7 +181,7 @@ MandrillWrapper.prototype.addBCC = function(bcc) {
 MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
 
   if (option !== 'from_email' && !_.isObject(data)) {
-    logger.error('Error ' + option + ' should be on object or array of object');
+    this.logger.error('Error ' + option + ' should be on object or array of object');
     return 'Error ' + option + ' should be on object or array of object';
   }
 
@@ -219,7 +226,7 @@ MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
 
   //Check if have no error in joi validation
   if (_.isEmpty(result) || _.isEmpty(result.error)) {
-    logger.debug('[ MandrillWrapper.processEmailFormat ] - Validation email for field : ' +  (_.isEmpty(option2) ? option : option2));
+    this.logger.debug('[ MandrillWrapper.processEmailFormat ] - Validation email for field : ' +  (_.isEmpty(option2) ? option : option2));
 
     //test the type of param in mailOptions
     if (_.isArray(this.mailOptions[option]) && _.isObject(data)) {
@@ -244,9 +251,9 @@ MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
     this.mailOptions[option] = data;
     return true;
   }
-
-  logger.error('[ MandrillWrapper.processEmailFormat ] - Validation email failed, at least one string dosen\'t pass email validation for field : ' + option);
+  
   console.log(result.error);
+  this.logger.error('[ MandrillWrapper.processEmailFormat ] - Validation email failed, at least one string dosen\'t pass email validation for field : ' + option);
   return false;
 };
 
@@ -270,7 +277,7 @@ MandrillWrapper.prototype.processEmailFormat = function(data, option, option2) {
 MandrillWrapper.prototype.send = function(subject, message, callback, callbackFailed) {
 
   // send mail with defined transport object
-  logger.debug('[ MandrillWrapper.send ] - Try sending a new email');
+  this.logger.debug('[ MandrillWrapper.send ] - Try sending a new email');
 
   if (_.isString(message)) {
     this.mailOptions.html = message;
@@ -280,71 +287,50 @@ MandrillWrapper.prototype.send = function(subject, message, callback, callbackFa
     this.mailOptions.subject = subject;
   }
 
-  //Default callback will call in case where 'callback' is empty
-  function defaultCallbackSendMail(info) {
+  // process callback
+  callback = !_.isUndefined(callback) && _.isFunction(callback) ? callback : function(data) {
+    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, info details id : ' + data);
+  };
 
-    logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] - message sent, more info : ' + info);
-  }
-
-  //Default callback will call in case where 'callback' is empty
-  function defaultFailedCallbackSendMail(error) {
-
-    logger.error('[ MandrillWrapper.send.defaultCallBackSendMail ] -  error sending message, more details : ' + error);
-  }
+  // process callback Failed
+  callbackFailed = !_.isUndefined(callbackFailed) && _.isFunction(callbackFailed) ? callbackFailed : function(data) {
+    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, error details id : ' + data);
+  };
 
   //saveContext for deleteMailOptions()
   var context = this;
 
   //Function that delete all params in this.mailOptions expect 'from'
-  function deleteMailOptions() {
+  function deleteMailOptions(context) {
 
-    logger.debug('[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions');
+    context.logger.debug('[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions');
 
     //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
     _.extend(context.mailOptions, context.defaultMailOption);
   }
 
   //Check if somes params are not empty
-  if (!_.isEmpty(this.mandrill_client) && !_.isEmpty(this.mailOptions.to) &&
-  !_.isEmpty(this.mailOptions.from_email)  && !_.isEmpty(this.mailOptions.subject)  &&
-  !_.isEmpty(this.mailOptions.html)) {
+  if (!_.isEmpty(this.mandrill_client) && !_.isEmpty(this.mailOptions.to) && !_.isEmpty(this.mailOptions.from_email)  && !_.isEmpty(this.mailOptions.subject)  && !_.isEmpty(this.mailOptions.html)) {
 
-    return this.mandrill_client.messages.send({ "message": this.mailOptions, "async": false }, function(result) {
+    this.mandrill_client.messages.send({ "message": this.mailOptions, "async": false }, function(result) {
 
       // Success Callback
+      callback(result);
+    } , function(error) {
 
-      //Determine which callback is called
-      if (!_.isFunction(callback)) {
-        defaultCallbackSendMail(result);
-      } else {
-        callback(result);
-      }
-
-      //Delete mail options
-      deleteMailOptions();
-      return true;
-
-    } , function(e) {
       // failed callback
-      //
-      //Determine which callback is called
-      if (!_.isFunction(callbackFailed)) {
-        defaultFailedCallbackSendMail(e);
-      } else {
-        callbackFailed(e);
-      }
-
-      //Delete mail options
-      deleteMailOptions();
-      return false;
+      callbackFailed(error);
     });
-  }
-  //At least one params are empty, so the mail will be not sent
-  logger.error('[ MandrillWrapper.send ] - can\'t send mail, please check configuration.');
 
-  //Delete mail options
-  deleteMailOptions();
-  return false;
+    deleteMailOptions(context);
+
+  } else {
+    //At least one params are empty, so the mail will be not sent
+    this.logger.error('[ MandrillWrapper.send ] - can\'t send mail, please check configuration.');
+
+    //Delete mail options
+    deleteMailOptions(this);
+  }
 };
 
 /**
