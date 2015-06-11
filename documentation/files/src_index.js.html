@@ -88,13 +88,19 @@ var mandrill    = require(&#x27;./modules/mandrill/&#x27;);
 var logger      = require(&#x27;yocto-logger&#x27;);
 var _           = require(&#x27;lodash&#x27;);
 var joi         = require(&#x27;joi&#x27;);
+var promise     = require(&#x27;promise&#x27;);
 
 /**
 * Yocto Mailer
 *
 * This module implements two yocto wrapper, one for nodemailer, the second for mandrill
 *
-*
+** For more details on used dependencies read links below :
+* - yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
+* - LodAsh : https://lodash.com/
+* - joi : https://github.com/hapijs/joi
+* - mandrill-api : https://www.npmjs.com/package/mandrill-api
+* - promise : https://www.promisejs.org/
 * @date : 09/06/2015
 * @author : Cédric BALARD &lt;cedric@yocto.re&gt;
 * @copyright : Yocto SAS, All right reserved
@@ -402,18 +408,41 @@ Mailer.prototype.setConfig = function(conf) {
 
 /**
  * Wrap the send() of mailer
+ * Implements promise to handle success and error
  * @method setConfig
  * @param  {String} subject subject of message
  * @param {String} message content of message in Html
  * @callback {Function} callback success callback
  * @callback {Function} callbackFailed Failed callback
+ * @example
+ * var success = function(value) {
+ * 	 logger.info( &#x27;youhou mail sent&#x27;);
+ *   console.log(value);
+ * };
+ *
+ * var failed = function(error) {
+ *   logger.error( &#x27;oin oin mail not sent&#x27;);
+ *   console.log(error);
+ * };
+ *
+ * mailer.send(&#x27; #321 nodemailer &#x27;, &#x27;&lt;b&gt; test tab &lt;/b&gt;&#x27;).then(success, failed);
  */
-Mailer.prototype.send = function(subject, message, callback, callbackFailed) {
+Mailer.prototype.send = function(subject, message) {
   if (_.isEmpty(this.mailerType)) {
     this.logger.error(&#x27;MailerType is not define, please define your mailer whith use(String) function !&#x27;);
     return;
   }
-  this.mailerType.send(subject, message, callback, callbackFailed);
+  //Save context
+  var context = this;
+
+  //Declare promise
+  return new promise(function(fulfill, reject) {
+    context.mailerType.send(subject, message, function(res) {
+      fulfill(res);
+    } , function(err) {
+      reject(err);
+    });
+  });
 };
 
 /**

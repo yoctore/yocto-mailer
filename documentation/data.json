@@ -82,8 +82,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/index.js",
-            "line": 9,
-            "description": "Yocto Mailer\n\nThis module implements two yocto wrapper, one for nodemailer, the second for mandrill",
+            "line": 10,
+            "description": "Yocto Mailer\n\nThis module implements two yocto wrapper, one for nodemailer, the second for mandrill\n\n* For more details on used dependencies read links below :\n- yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git\n- LodAsh : https://lodash.com/\n- joi : https://github.com/hapijs/joi\n- mandrill-api : https://www.npmjs.com/package/mandrill-api\n- promise : https://www.promisejs.org/",
             "date": ": 09/06/2015",
             "author": ": Cédric BALARD <cedric@yocto.re>",
             "copyright": ": Yocto SAS, All right reserved"
@@ -303,7 +303,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 21,
+            "line": 27,
             "description": "Default unit instance for nodemailer",
             "itemtype": "property",
             "name": "nodemailer",
@@ -312,7 +312,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 29,
+            "line": 35,
             "description": "Default unit instance for mandrill",
             "itemtype": "property",
             "name": "mandrill",
@@ -321,7 +321,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 37,
+            "line": 43,
             "description": "Conatains the wrapper that will be used",
             "itemtype": "property",
             "name": "mailerType",
@@ -329,7 +329,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 44,
+            "line": 50,
             "description": "The wrapper that will be used in sting",
             "itemtype": "property",
             "name": "mailerType",
@@ -338,7 +338,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 52,
+            "line": 58,
             "description": "The logger",
             "itemtype": "property",
             "name": "mailerType",
@@ -346,7 +346,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 60,
+            "line": 66,
             "description": "Default get function",
             "itemtype": "method",
             "name": "get",
@@ -358,7 +358,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 70,
+            "line": 76,
             "description": "Before use a mailer you should define one mailer with ths <br/>\nYou can choose :\n - nodemailer\n - mandrill",
             "itemtype": "method",
             "name": "use",
@@ -373,7 +373,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 101,
+            "line": 107,
             "description": "Add a new recipient or an array of recipient<br/>\nThis will add a new recipient to the array of recipient",
             "itemtype": "method",
             "name": "addRecipient",
@@ -395,7 +395,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 121,
+            "line": 127,
             "description": "Set the expeditor <br/>\nThis param is save in memory",
             "itemtype": "method",
             "name": "setExpeditor",
@@ -414,7 +414,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 146,
+            "line": 152,
             "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will add a new cc to the array of cc",
             "itemtype": "method",
             "name": "addCC",
@@ -436,7 +436,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 172,
+            "line": 178,
             "description": "Add a new BCC recipient or an array of BCC recipient<br/>\nThis will add a new cc to the array of Bcc",
             "itemtype": "method",
             "name": "addBCC",
@@ -458,7 +458,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 198,
+            "line": 204,
             "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into Mailer.mailOptions.<option>",
             "itemtype": "method",
             "name": "processEmailFormat",
@@ -487,7 +487,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 305,
+            "line": 311,
             "description": "Wrap the setconfig() of mailer",
             "itemtype": "method",
             "name": "setConfig",
@@ -502,8 +502,8 @@
         },
         {
             "file": "src/index.js",
-            "line": 320,
-            "description": "Wrap the send() of mailer",
+            "line": 326,
+            "description": "Wrap the send() of mailer\nImplements promise to handle success and error",
             "itemtype": "method",
             "name": "setConfig",
             "params": [
@@ -519,11 +519,14 @@
                 }
             ],
             "callback": "{Function} callbackFailed Failed callback",
+            "example": [
+                "\nvar success = function(value) {\n\t logger.info( 'youhou mail sent');\n  console.log(value);\n};\n\nvar failed = function(error) {\n  logger.error( 'oin oin mail not sent');\n  console.log(error);\n};\n\nmailer.send(' #321 nodemailer ', '<b> test tab </b>').then(success, failed);"
+            ],
             "class": "Mailer"
         },
         {
             "file": "src/index.js",
-            "line": 336,
+            "line": 365,
             "description": "Export Mailer",
             "class": "Mailer"
         },
@@ -553,19 +556,19 @@
         },
         {
             "message": "unknown tag: date",
-            "line": " src/index.js:9"
+            "line": " src/index.js:10"
         },
         {
             "message": "unknown tag: copyright",
-            "line": " src/index.js:9"
+            "line": " src/index.js:10"
         },
         {
             "message": "unknown tag: callback",
-            "line": " src/index.js:320"
+            "line": " src/index.js:326"
         },
         {
             "message": "unknown tag: callback",
-            "line": " src/index.js:320"
+            "line": " src/index.js:326"
         },
         {
             "message": "Missing item type\nExport the wrapper to use it on node",
@@ -577,7 +580,7 @@
         },
         {
             "message": "Missing item type\nExport Mailer",
-            "line": " src/index.js:336"
+            "line": " src/index.js:365"
         },
         {
             "message": "Missing item type\nUnit tests",

@@ -82,7 +82,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_index.js.html#l9"><code>src&#x2F;index.js:9</code></a>
+            Defined in: <a href="../files/src_index.js.html#l10"><code>src&#x2F;index.js:10</code></a>
         </div>
 
 
@@ -92,6 +92,14 @@
 <div class="box intro">
     <p>Yocto Mailer</p>
 <p>This module implements two yocto wrapper, one for nodemailer, the second for mandrill</p>
+<ul>
+<li>For more details on used dependencies read links below :</li>
+<li>yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git</li>
+<li>LodAsh : <a href="https://lodash.com/">https://lodash.com/</a></li>
+<li>joi : <a href="https://github.com/hapijs/joi">https://github.com/hapijs/joi</a></li>
+<li>mandrill-api : <a href="https://www.npmjs.com/package/mandrill-api">https://www.npmjs.com/package/mandrill-api</a></li>
+<li>promise : <a href="https://www.promisejs.org/">https://www.promisejs.org/</a></li>
+</ul>
 
 </div>
 
@@ -208,7 +216,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l172"><code>src&#x2F;index.js:172</code></a>
+        <a href="../files/src_index.js.html#l178"><code>src&#x2F;index.js:178</code></a>
         </p>
 
 
@@ -286,7 +294,7 @@ mailer.nodemailer.addBCC(user);</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l146"><code>src&#x2F;index.js:146</code></a>
+        <a href="../files/src_index.js.html#l152"><code>src&#x2F;index.js:152</code></a>
         </p>
 
 
@@ -364,7 +372,7 @@ mailer.nodemailer.addCC(user);</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l101"><code>src&#x2F;index.js:101</code></a>
+        <a href="../files/src_index.js.html#l107"><code>src&#x2F;index.js:107</code></a>
         </p>
 
 
@@ -436,7 +444,7 @@ mailer.nodemailer.addRecipient(user);</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l60"><code>src&#x2F;index.js:60</code></a>
+        <a href="../files/src_index.js.html#l66"><code>src&#x2F;index.js:66</code></a>
         </p>
 
 
@@ -492,7 +500,7 @@ mailer.nodemailer.addRecipient(user);</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l198"><code>src&#x2F;index.js:198</code></a>
+        <a href="../files/src_index.js.html#l204"><code>src&#x2F;index.js:204</code></a>
         </p>
 
 
@@ -579,7 +587,7 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l305"><code>src&#x2F;index.js:305</code></a>
+        <a href="../files/src_index.js.html#l311"><code>src&#x2F;index.js:311</code></a>
         </p>
 
 
@@ -636,7 +644,7 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l320"><code>src&#x2F;index.js:320</code></a>
+        <a href="../files/src_index.js.html#l326"><code>src&#x2F;index.js:326</code></a>
         </p>
 
 
@@ -644,7 +652,8 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
     </div>
 
     <div class="description">
-        <p>Wrap the send() of mailer</p>
+        <p>Wrap the send() of mailer
+Implements promise to handle success and error</p>
 
     </div>
 
@@ -679,6 +688,22 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
 
 
 
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p>var success = function(value) {
+     logger.info( &#39;youhou mail sent&#39;);
+  console.log(value);
+};</p>
+<p>var failed = function(error) {
+  logger.error( &#39;oin oin mail not sent&#39;);
+  console.log(error);
+};</p>
+<p>mailer.send(&#39; #321 nodemailer &#39;, &#39;<b> test tab </b>&#39;).then(success, failed);</p>
+
+            </div>
+        </div>
 </div>
 <div id="method_setExpeditor" class="method item">
     <h3 class="name"><code>setExpeditor</code></h3>
@@ -704,7 +729,7 @@ Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l121"><code>src&#x2F;index.js:121</code></a>
+        <a href="../files/src_index.js.html#l127"><code>src&#x2F;index.js:127</code></a>
         </p>
 
 
@@ -765,7 +790,7 @@ This param is save in memory</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l70"><code>src&#x2F;index.js:70</code></a>
+        <a href="../files/src_index.js.html#l76"><code>src&#x2F;index.js:76</code></a>
         </p>
 
 
@@ -819,7 +844,7 @@ You can choose :</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l37"><code>src&#x2F;index.js:37</code></a>
+                            <a href="../files/src_index.js.html#l43"><code>src&#x2F;index.js:43</code></a>
                             </p>
                     
                     
@@ -844,7 +869,7 @@ You can choose :</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l44"><code>src&#x2F;index.js:44</code></a>
+                            <a href="../files/src_index.js.html#l50"><code>src&#x2F;index.js:50</code></a>
                             </p>
                     
                     
@@ -869,7 +894,7 @@ You can choose :</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l52"><code>src&#x2F;index.js:52</code></a>
+                            <a href="../files/src_index.js.html#l58"><code>src&#x2F;index.js:58</code></a>
                             </p>
                     
                     
@@ -894,7 +919,7 @@ You can choose :</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l29"><code>src&#x2F;index.js:29</code></a>
+                            <a href="../files/src_index.js.html#l35"><code>src&#x2F;index.js:35</code></a>
                             </p>
                     
                     
@@ -919,7 +944,7 @@ You can choose :</p>
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l21"><code>src&#x2F;index.js:21</code></a>
+                            <a href="../files/src_index.js.html#l27"><code>src&#x2F;index.js:27</code></a>
                             </p>
                     
                     
