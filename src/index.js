@@ -5,13 +5,19 @@ var mandrill    = require('./modules/mandrill/');
 var logger      = require('yocto-logger');
 var _           = require('lodash');
 var joi         = require('joi');
+var promise     = require('promise');
 
 /**
 * Yocto Mailer
 *
 * This module implements two yocto wrapper, one for nodemailer, the second for mandrill
 *
-*
+** For more details on used dependencies read links below :
+* - yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
+* - LodAsh : https://lodash.com/
+* - joi : https://github.com/hapijs/joi
+* - mandrill-api : https://www.npmjs.com/package/mandrill-api
+* - promise : https://www.promisejs.org/
 * @date : 09/06/2015
 * @author : Cédric BALARD <cedric@yocto.re>
 * @copyright : Yocto SAS, All right reserved
@@ -319,18 +325,41 @@ Mailer.prototype.setConfig = function(conf) {
 
 /**
  * Wrap the send() of mailer
+ * Implements promise to handle success and error
  * @method setConfig
  * @param  {String} subject subject of message
  * @param {String} message content of message in Html
  * @callback {Function} callback success callback
  * @callback {Function} callbackFailed Failed callback
+ * @example
+ * var success = function(value) {
+ * 	 logger.info( 'youhou mail sent');
+ *   console.log(value);
+ * };
+ *
+ * var failed = function(error) {
+ *   logger.error( 'oin oin mail not sent');
+ *   console.log(error);
+ * };
+ *
+ * mailer.send(' #321 nodemailer ', '<b> test tab </b>').then(success, failed);
  */
-Mailer.prototype.send = function(subject, message, callback, callbackFailed) {
+Mailer.prototype.send = function(subject, message) {
   if (_.isEmpty(this.mailerType)) {
     this.logger.error('MailerType is not define, please define your mailer whith use(String) function !');
     return;
   }
-  this.mailerType.send(subject, message, callback, callbackFailed);
+  //Save context
+  var context = this;
+
+  //Declare promise
+  return new promise(function(fulfill, reject) {
+    context.mailerType.send(subject, message, function(res) {
+      fulfill(res);
+    } , function(err) {
+      reject(err);
+    });
+  });
 };
 
 /**

@@ -37,18 +37,18 @@ var userTab = [
   }
 ];
 
-var callbackSuccess = function(value) {
+
+var success = function(value) {
 
   logger.info( 'youhou mail sent');
   console.log(value);
 };
 
-var callbackFailed = function(error) {
+var failed = function(error) {
 
   logger.error( 'oin oin mail not sent');
   console.log(error);
 };
-
 
 var smtpConf = {
   host                : "ssl0.ovh.net", // hostname
@@ -56,7 +56,7 @@ var smtpConf = {
   port                : "587", // port for secure SMTP
   auth                : {
     user    : "cedric.balard@yocto.re",
-    pass    : "w9r0WPeCZ2fm"
+    pass    : "mdp"
   }
 };
 
@@ -73,4 +73,4 @@ mailer.addCC(userTab);
 mailer.addBCC(user2);
 
 
-mailer.send(' #500 MANDRILL ', '<b> test tab </b>', callbackSuccess, callbackFailed);
+mailer.send(' #321 nodemailer ', '<b> test tab </b>').then(success, failed);

@@ -54,102 +54,72 @@ var mailOptions = {
 #### Adding a new yocto mailer
 
 ```javascript
- var mailer = require('yocto-mailer');
-```
 
-#### Set the smtp transport
+var dest = 'cedric@yocto.re';
 
- ```javascript
- var smtpConf = {
-     host                : "host", // hostname
-     secureConnection    : true, // use SSL
-     port                : "PORT", // port for secure SMTP
-     auth                : {
-         user    : "user@domain.com",
-         pass    : 'ThisIsMyPassw0rd'
-     }
- };
+var expeditor = 'cedric@yocto.re';
 
- mailer.setConfigSMTP(smtpConf);
- ```
+var user = {
+  name  : 'Cedric Balard',
+  email : dest
+};
 
-#### Add a new recipient
+var user1 = {
+  name  : 'Tata',
+  email : dest
+};
 
- ```javascript
- //for a unique recipient
- var rec = 'toto@yocto.re';
- mailer.addRecipient(rec);
+var user2 = {
+  name  : 'Toto',
+  email : dest
+};
 
- //for mutliple recipient
- var recTab = [
-     'toto@yocto.re',
-     'foo@yocto.re',
-     'bar@yocto.re'
- ];
- mailer.addRecipient(recTab);
- ```
+var userTab = [
+  {
+    name  : 'myName',
+    email : dest
+  },
+  {
+    name  : 'popo',
+    email : dest
+  }
+];
 
-#### Set the expeditor
 
- ```javascript
- //for a unique expeditor
- var rec = 'toto@yocto.re';
- mailer.setExpeditor(rec);
+var success = function(value) {
 
- //for multiple expeditor
- var recTab = [
-     'toto@yocto.re',
-     'foo@yocto.re',
-     'bar@yocto.re'
- ];
- mailer.setExpeditor(recTab);
- ```
+  logger.info( 'youhou mail sent');
+  console.log(value);
+};
 
-#### Set a cc recipient
+var failed = function(error) {
 
- ```javascript
- //for a unique cc recipient
- var rec = 'toto@yocto.re';
- mailer.addCC(rec);
+  logger.error( 'oin oin mail not sent');
+  console.log(error);
+};
 
- //for multiple cc recipient
- var recTab = [
-     'toto@yocto.re',
-     'foo@yocto.re',
-     'bar@yocto.re'
- ];
- mailer.addCC(recTab);
- ```
+var smtpConf = {
+  host                : "ssl0.ovh.net", // hostname
+  secureConnection    : true, // use SSL
+  port                : "587", // port for secure SMTP
+  auth                : {
+    user    : "cedric.balard@yocto.re",
+    pass    : "mdp"
+  }
+};
 
-#### Set a bcc recipient
 
- ```javascript
- //for a unique bcc recipient
- var rec = 'toto@yocto.re';
- mailer.addBCC(rec);
+mailer.use('mandrill');
+mailer.setConfig('K7GkavS-hDh5ZX4D-kiWxg');
 
- //for multiple bcc recipient
- var recTab = [
-     'toto@yocto.re',
-     'foo@yocto.re',
-     'bar@yocto.re'
- ];
- mailer.addBCC(recTab);
- ```
+// mailer.use('nodemailer');
+// mailer.setConfig(smtpConf);
 
-#### Set a bcc recipient
+mailer.setExpeditor(dest);
+mailer.addRecipient(user1);
+mailer.addCC(userTab);
+mailer.addBCC(user2);
 
- ```javascript
- mailer.addBCC('Foo barr <foo.bar@yocto.re>');
- ```
 
-#### sending email
-
- ```javascript
-mailer.send(' My subject ', '<b>my message</b>', function(error, info) {
- // what append here ?
-});
- ```
-=======
-This module implements two yocto wrapper, one for nodemailer, the second for mandrill
->>>>>>> 276ad48e03b05b5b247691e94ba7ddaf80900d82
+mailer.send(' #321 nodemailer ', '<b> test tab </b>').then(success, failed);
+``` 
