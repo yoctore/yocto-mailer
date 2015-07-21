@@ -112,7 +112,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 53,
+            "line": 54,
             "description": "Clone the mailOptions and omit parameter 'from_email'<br/>\nIt used for deleteMailOptions when a mail as sent to reinitialize it<br/>",
             "itemtype": "property",
             "name": "defaultMailOtpion",
@@ -122,7 +122,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 66,
+            "line": 67,
             "description": "Default this.logger properties",
             "itemtype": "property",
             "name": "this.logger",
@@ -131,7 +131,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 75,
+            "line": 76,
             "description": "Set the mandrill client apiKey to connect to mandrill service",
             "itemtype": "method",
             "name": "setMandrillClientAPIKey",
@@ -149,7 +149,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 93,
+            "line": 94,
             "description": "Send the mail with all parameters ( from_email, to, cc , bcc)<br/>\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
@@ -182,7 +182,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 165,
+            "line": 167,
             "description": "Export the wrapper to use it on node",
             "class": "MandrillWrapper"
         },
@@ -487,7 +487,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 311,
+            "line": 310,
             "description": "Wrap the setconfig() of mailer",
             "itemtype": "method",
             "name": "setConfig",
@@ -502,7 +502,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 326,
+            "line": 325,
             "description": "Wrap the send() of mailer\nImplements promise to handle success and error",
             "itemtype": "method",
             "name": "setConfig",
@@ -526,7 +526,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 365,
+            "line": 364,
             "description": "Export Mailer",
             "class": "Mailer"
         },
@@ -564,15 +564,15 @@
         },
         {
             "message": "unknown tag: callback",
-            "line": " src/index.js:326"
+            "line": " src/index.js:325"
         },
         {
             "message": "unknown tag: callback",
-            "line": " src/index.js:326"
+            "line": " src/index.js:325"
         },
         {
             "message": "Missing item type\nExport the wrapper to use it on node",
-            "line": " src/modules/mandrill/index.js:165"
+            "line": " src/modules/mandrill/index.js:167"
         },
         {
             "message": "Missing item type\nExport the wrapper to use it on node",
@@ -580,7 +580,7 @@
         },
         {
             "message": "Missing item type\nExport Mailer",
-            "line": " src/index.js:365"
+            "line": " src/index.js:364"
         },
         {
             "message": "Missing item type\nUnit tests",

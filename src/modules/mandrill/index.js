@@ -47,7 +47,8 @@ function MandrillWrapper() {
   this.mailOptions = {
     from_email  : '', // sender address
     to          : [], // list of receivers
-    subject     : '' // Subject line
+    subject     : '', // Subject line
+    html        : ''
   };
 
   /**
@@ -126,22 +127,25 @@ MandrillWrapper.prototype.send = function(subject, message, callback, callbackFa
     this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, error details id : ' + data);
   };
 
-  //saveContext for deleteMailOptions()
-  var context = this;
 
   //Function that delete all params in this.mailOptions expect 'from'
   function deleteMailOptions(context) {
-
     context.logger.debug('[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions');
 
-    //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
+    //Extend defaultMailOption to remove this mail options : cc, bcc, html, subject
     _.extend(context.mailOptions, context.defaultMailOption);
+
+     //Force delete params 'to' because it's an array
+     context.mailOptions.to      = [];
   }
 
   //Check if somes params are not empty
   if (!_.isEmpty(this.mandrill_client) && !_.isEmpty(this.mailOptions.to) && !_.isEmpty(this.mailOptions.from_email)  && !_.isEmpty(this.mailOptions.subject)  && !_.isEmpty(this.mailOptions.html)) {
 
-    this.mandrill_client.messages.send({ "message": this.mailOptions, "async": false }, function(result) {
+    var newOptions = _.clone(this.mailOptions);
+    deleteMailOptions(this);
+
+    this.mandrill_client.messages.send({ "message": newOptions, "async": false }, function(result) {
 
       // Success Callback
       callback(result);
@@ -150,8 +154,6 @@ MandrillWrapper.prototype.send = function(subject, message, callback, callbackFa
       // failed callback
       callbackFailed(error);
     });
-
-    deleteMailOptions(context);
 
   } else {
     //At least one params are empty, so the mail will be not sent

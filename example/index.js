@@ -62,15 +62,14 @@ var smtpConf = {
 
 
 mailer.use('mandrill');
-mailer.setConfig('K7GkavS-hDh5ZX4D-kiWxg');
+mailer.setConfig('mjy4NVFO5AOZKkWIfJbnHA');
 
 // mailer.use('nodemailer');
 // mailer.setConfig(smtpConf);
 
 mailer.setExpeditor(dest);
 mailer.addRecipient(user1);
-mailer.addCC(userTab);
-mailer.addBCC(user2);
+
 
 
 mailer.send(' #321 nodemailer ', '<b> test tab </b>').then(success, failed);

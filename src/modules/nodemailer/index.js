@@ -182,6 +182,8 @@ NodeMailer.prototype.send = function(subject, message, callback, callbackFailed)
 
     // Extend defaultMailOption to remove this mail options : to, cc, bcc, html
     _.extend(context.mailOptions, context.defaultMailOption);
+
+    // TODO : Véririfié si meme bug qu'avec mandrill : lors d'une boucle les params ne sont pas supprimé a cause de l'async
   }
 
   //Check if somes params are not empty

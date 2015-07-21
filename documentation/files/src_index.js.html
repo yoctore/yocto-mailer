@@ -298,7 +298,6 @@ Mailer.prototype.addBCC = function(bcc) {
 */
 Mailer.prototype.processEmailFormat = function(data, option, option2) {
 
-  console.log( &#x27;---- \n data : &#x27;, data, &#x27;option&#x27;, option);
   if (_.isEmpty(this.mailerType)) {
     this.logger.error(&#x27;MailerType is not define, please define your mailer whith use(String) function !&#x27;);
     return;

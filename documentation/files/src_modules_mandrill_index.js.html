@@ -130,7 +130,8 @@ function MandrillWrapper() {
   this.mailOptions = {
     from_email  : &#x27;&#x27;, // sender address
     to          : [], // list of receivers
-    subject     : &#x27;&#x27; // Subject line
+    subject     : &#x27;&#x27;, // Subject line
+    html        : &#x27;&#x27;
   };
 
   /**
@@ -209,22 +210,25 @@ MandrillWrapper.prototype.send = function(subject, message, callback, callbackFa
     this.logger.info(&#x27;[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, error details id : &#x27; + data);
   };
 
-  //saveContext for deleteMailOptions()
-  var context = this;
 
   //Function that delete all params in this.mailOptions expect &#x27;from&#x27;
   function deleteMailOptions(context) {
-
     context.logger.debug(&#x27;[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions&#x27;);
 
-    //Extend defaultMailOption to remove this mail options : to, cc, bcc, html
+    //Extend defaultMailOption to remove this mail options : cc, bcc, html, subject
     _.extend(context.mailOptions, context.defaultMailOption);
+
+     //Force delete params &#x27;to&#x27; because it&#x27;s an array
+     context.mailOptions.to      = [];
   }
 
   //Check if somes params are not empty
   if (!_.isEmpty(this.mandrill_client) &amp;&amp; !_.isEmpty(this.mailOptions.to) &amp;&amp; !_.isEmpty(this.mailOptions.from_email)  &amp;&amp; !_.isEmpty(this.mailOptions.subject)  &amp;&amp; !_.isEmpty(this.mailOptions.html)) {
 
-    this.mandrill_client.messages.send({ &quot;message&quot;: this.mailOptions, &quot;async&quot;: false }, function(result) {
+    var newOptions = _.clone(this.mailOptions);
+    deleteMailOptions(this);
+
+    this.mandrill_client.messages.send({ &quot;message&quot;: newOptions, &quot;async&quot;: false }, function(result) {
 
       // Success Callback
       callback(result);
@@ -233,8 +237,6 @@ MandrillWrapper.prototype.send = function(subject, message, callback, callbackFa
       // failed callback
       callbackFailed(error);
     });
-
-    deleteMailOptions(context);
 
   } else {
     //At least one params are empty, so the mail will be not sent
