@@ -128,6 +128,7 @@ function MandrillWrapper() {
   *     }
   */
   this.mailOptions = {
+    from_name   : &#x27;&#x27;,
     from_email  : &#x27;&#x27;, // sender address
     to          : [], // list of receivers
     subject     : &#x27;&#x27;, // Subject line
@@ -145,7 +146,7 @@ function MandrillWrapper() {
   *     html    : &#x27;&#x27;,
   *     }
   */
-  this.defaultMailOption = _.omit(_.clone(this.mailOptions), &#x27;from_email&#x27;);
+  this.defaultMailOption = _.omit(_.clone(this.mailOptions), [&#x27;from_email&#x27;, &#x27;from_name&#x27;]);
 
   /**
    * Default this.logger properties

@@ -233,6 +233,29 @@ Mailer.prototype.setExpeditor = function(from) {
 };
 
 /**
+* Set the expeditor name &lt;br/&gt;
+* This param is save in memory
+*
+* @method setExpeditorName
+* @param {String}  fromName name of the expeditor
+* @return {Boolean} true if success, false otherwise
+*/
+Mailer.prototype.setExpeditorName = function(fromName) {
+  // TODO : gérer l&#x27;expiditor name pour le cas de mailer normal
+
+  //From email should be a string
+  if (!_.isString(fromName)) {
+    logger.error(&#x27;Expeditor should be a string email&#x27;);
+    return false;
+  }
+
+  if (this.mailerTypeString === &#x27;mandrill&#x27;) {
+    return this.processEmailFormat(fromName, &#x27;from_name&#x27;);
+  }
+
+};
+
+/**
 * Add a new CC recipient or an array of CC recipient&lt;br/&gt;
 * This will add a new cc to the array of cc
 *
@@ -298,6 +321,7 @@ Mailer.prototype.addBCC = function(bcc) {
 */
 Mailer.prototype.processEmailFormat = function(data, option, option2) {
 
+  //console.log( &#x27;---- \n data : &#x27;, data, &#x27;option&#x27;, option);
   if (_.isEmpty(this.mailerType)) {
     this.logger.error(&#x27;MailerType is not define, please define your mailer whith use(String) function !&#x27;);
     return;
@@ -305,13 +329,17 @@ Mailer.prototype.processEmailFormat = function(data, option, option2) {
 
   this.logger.info(&#x27;[ Mailer.processEmailFormat ] - start  typeof data : &#x27; + typeof data);
 
-  if (option !== &#x27;from_email&#x27; &amp;&amp; option !== &#x27;from&#x27;  &amp;&amp; !_.isObject(data)) {
+  if (option !== &#x27;from_email&#x27; &amp;&amp; option !== &#x27;from&#x27; &amp;&amp;  option !== &#x27;from_name&#x27; &amp;&amp; !_.isObject(data)) {
     this.logger.error(&#x27;[ Mailer.processEmailFormat ] Error &#x27; + option + &#x27; should be on object or array of object&#x27;);
     return false;
   }
 
   //Set a default value
   var result = joi.string().email();
+
+  if (option == &#x27;from_name&#x27;) {
+    result = joi.string().min(1);
+  }
 
   if (_.isObject(data)) {
 

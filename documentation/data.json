@@ -112,7 +112,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 54,
+            "line": 55,
             "description": "Clone the mailOptions and omit parameter 'from_email'<br/>\nIt used for deleteMailOptions when a mail as sent to reinitialize it<br/>",
             "itemtype": "property",
             "name": "defaultMailOtpion",
@@ -122,7 +122,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 67,
+            "line": 68,
             "description": "Default this.logger properties",
             "itemtype": "property",
             "name": "this.logger",
@@ -131,7 +131,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 76,
+            "line": 77,
             "description": "Set the mandrill client apiKey to connect to mandrill service",
             "itemtype": "method",
             "name": "setMandrillClientAPIKey",
@@ -149,7 +149,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 94,
+            "line": 95,
             "description": "Send the mail with all parameters ( from_email, to, cc , bcc)<br/>\nAfter the mail was send this paramater will be remove : to, cc, bcc, subject, message",
             "itemtype": "method",
             "name": "send",
@@ -182,7 +182,7 @@
         },
         {
             "file": "src/modules/mandrill/index.js",
-            "line": 167,
+            "line": 168,
             "description": "Export the wrapper to use it on node",
             "class": "MandrillWrapper"
         },
@@ -297,7 +297,7 @@
         },
         {
             "file": "src/modules/nodemailer/index.js",
-            "line": 212,
+            "line": 214,
             "description": "Export the wrapper to use it on node",
             "class": "NodeMailer"
         },
@@ -415,6 +415,25 @@
         {
             "file": "src/index.js",
             "line": 152,
+            "description": "Set the expeditor name <br/>\nThis param is save in memory",
+            "itemtype": "method",
+            "name": "setExpeditorName",
+            "params": [
+                {
+                    "name": "fromName",
+                    "description": "name of the expeditor",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "true if success, false otherwise",
+                "type": "Boolean"
+            },
+            "class": "Mailer"
+        },
+        {
+            "file": "src/index.js",
+            "line": 175,
             "description": "Add a new CC recipient or an array of CC recipient<br/>\nThis will add a new cc to the array of cc",
             "itemtype": "method",
             "name": "addCC",
@@ -436,7 +455,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 178,
+            "line": 201,
             "description": "Add a new BCC recipient or an array of BCC recipient<br/>\nThis will add a new cc to the array of Bcc",
             "itemtype": "method",
             "name": "addBCC",
@@ -458,7 +477,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 204,
+            "line": 227,
             "description": "Check if object 'data' conatains only email <br/>\nIf it's not case return false and logg an error <br/>\nElse add 'data' into Mailer.mailOptions.<option>",
             "itemtype": "method",
             "name": "processEmailFormat",
@@ -487,7 +506,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 310,
+            "line": 338,
             "description": "Wrap the setconfig() of mailer",
             "itemtype": "method",
             "name": "setConfig",
@@ -502,7 +521,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 325,
+            "line": 353,
             "description": "Wrap the send() of mailer\nImplements promise to handle success and error",
             "itemtype": "method",
             "name": "setConfig",
@@ -526,7 +545,7 @@
         },
         {
             "file": "src/index.js",
-            "line": 364,
+            "line": 392,
             "description": "Export Mailer",
             "class": "Mailer"
         },
@@ -564,23 +583,23 @@
         },
         {
             "message": "unknown tag: callback",
-            "line": " src/index.js:325"
+            "line": " src/index.js:353"
         },
         {
             "message": "unknown tag: callback",
-            "line": " src/index.js:325"
+            "line": " src/index.js:353"
         },
         {
             "message": "Missing item type\nExport the wrapper to use it on node",
-            "line": " src/modules/mandrill/index.js:167"
+            "line": " src/modules/mandrill/index.js:168"
         },
         {
             "message": "Missing item type\nExport the wrapper to use it on node",
-            "line": " src/modules/nodemailer/index.js:212"
+            "line": " src/modules/nodemailer/index.js:214"
         },
         {
             "message": "Missing item type\nExport Mailer",
-            "line": " src/index.js:364"
+            "line": " src/index.js:392"
         },
         {
             "message": "Missing item type\nUnit tests",
