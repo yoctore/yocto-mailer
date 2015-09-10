@@ -82,7 +82,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_index.js.html#l6"><code>src&#x2F;index.js:6</code></a>
+            Defined in: <a href="../files/src_index.js.html#l10"><code>src&#x2F;index.js:10</code></a>
         </div>
 
 
@@ -92,6 +92,14 @@
 <div class="box intro">
     <p>Yocto Mailer</p>
 <p>This module implements two yocto wrapper, one for nodemailer, the second for mandrill</p>
+<ul>
+<li>For more details on used dependencies read links below :</li>
+<li>yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git</li>
+<li>LodAsh : <a href="https://lodash.com/">https://lodash.com/</a></li>
+<li>joi : <a href="https://github.com/hapijs/joi">https://github.com/hapijs/joi</a></li>
+<li>mandrill-api : <a href="https://www.npmjs.com/package/mandrill-api">https://www.npmjs.com/package/mandrill-api</a></li>
+<li>promise : <a href="https://www.promisejs.org/">https://www.promisejs.org/</a></li>
+</ul>
 
 </div>
 
@@ -113,7 +121,43 @@
 
                     <ul class="index-list methods">
                             <li class="index-item method">
+                                <a href="#method_addBCC">addBCC</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_addCC">addCC</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_addRecipient">addRecipient</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_get">get</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method_processEmailFormat">processEmailFormat</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setConfig">setConfig</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setConfig">setConfig</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setExpeditor">setExpeditor</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_setExpeditorName">setExpeditorName</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_use">use</a>
 
                             </li>
                     </ul>
@@ -123,6 +167,18 @@
                     <h3>Properties</h3>
 
                     <ul class="index-list properties">
+                            <li class="index-item property">
+                                <a href="#property_mailerType">mailerType</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_mailerType">mailerType</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_mailerType">mailerType</a>
+
+                            </li>
                             <li class="index-item property">
                                 <a href="#property_mandrill">mandrill</a>
 
@@ -140,6 +196,240 @@
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method_addBCC" class="method item">
+    <h3 class="name"><code>addBCC</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>bcc</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l201"><code>src&#x2F;index.js:201</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add a new BCC recipient or an array of BCC recipient<br/>
+This will add a new cc to the array of Bcc</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">bcc</code>
+                        <span class="type">Object, Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p>var user = {
+ name  : &#39;Foo Bar&#39;,
+ email : &#39;foo@bar.com&#39;
+};
+mailer.nodemailer.addBCC(user);</p>
+
+            </div>
+        </div>
+</div>
+<div id="method_addCC" class="method item">
+    <h3 class="name"><code>addCC</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>cc</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l175"><code>src&#x2F;index.js:175</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add a new CC recipient or an array of CC recipient<br/>
+This will add a new cc to the array of cc</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">cc</code>
+                        <span class="type">Object, Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p>var user = {
+ name  : &#39;Foo Bar&#39;,
+ email : &#39;foo@bar.com&#39;
+};
+mailer.nodemailer.addCC(user);</p>
+
+            </div>
+        </div>
+</div>
+<div id="method_addRecipient" class="method item">
+    <h3 class="name"><code>addRecipient</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>rec</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l107"><code>src&#x2F;index.js:107</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add a new recipient or an array of recipient<br/>
+This will add a new recipient to the array of recipient</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">rec</code>
+                        <span class="type">Object, Array</span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p>var user = {
+ name  : &#39;Foo Bar&#39;,
+ email : &#39;foo@bar.com&#39;
+};
+mailer.nodemailer.addRecipient(user);</p>
+
+            </div>
+        </div>
+</div>
 <div id="method_get" class="method item">
     <h3 class="name"><code>get</code></h3>
 
@@ -158,7 +448,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_index.js.html#l35"><code>src&#x2F;index.js:35</code></a>
+        <a href="../files/src_index.js.html#l66"><code>src&#x2F;index.js:66</code></a>
         </p>
 
 
@@ -183,11 +473,512 @@
 
 
 </div>
+<div id="method_processEmailFormat" class="method item private">
+    <h3 class="name"><code>processEmailFormat</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>data</code>
+                </li>
+                <li class="arg">
+                        <code>option</code>
+                </li>
+                <li class="arg">
+                        <code>option2</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l227"><code>src&#x2F;index.js:227</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Check if object &#39;data&#39; conatains only email <br/>
+If it&#39;s not case return false and logg an error <br/>
+Else add &#39;data&#39; into Mailer.mailOptions.<option></p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">data</code>
+                        <span class="type">String, Array, Object</span>
+
+
+                    <div class="param-description">
+                        <p>that shoul&#39;d be contains email</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">option</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>It&#39;s the name of the property in Mailer.mailOptions</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">option2</code>
+                        <span class="type">Object</span>
+
+
+                    <div class="param-description">
+                        <p>It&#39;s an optional otpion to specify if it&#39;s an cc, bcc</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_setConfig" class="method item">
+    <h3 class="name"><code>setConfig</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>conf</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l338"><code>src&#x2F;index.js:338</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Wrap the setconfig() of mailer</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">conf</code>
+                        <span class="type">String, Ojbect</span>
+
+
+                    <div class="param-description">
+                        <p>The configuration, should be a string for mailchimp (apikey). For nodemailer should be a Object (smtpConf)</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_setConfig" class="method item">
+    <h3 class="name"><code>setConfig</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>subject</code>
+                </li>
+                <li class="arg">
+                        <code>message</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l353"><code>src&#x2F;index.js:353</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Wrap the send() of mailer
+Implements promise to handle success and error</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">subject</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>subject of message</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">message</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>content of message in Html</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p>var success = function(value) {
+     logger.info( &#39;youhou mail sent&#39;);
+  console.log(value);
+};</p>
+<p>var failed = function(error) {
+  logger.error( &#39;oin oin mail not sent&#39;);
+  console.log(error);
+};</p>
+<p>mailer.send(&#39; #321 nodemailer &#39;, &#39;<b> test tab </b>&#39;).then(success, failed);</p>
+
+            </div>
+        </div>
+</div>
+<div id="method_setExpeditor" class="method item">
+    <h3 class="name"><code>setExpeditor</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>from</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l127"><code>src&#x2F;index.js:127</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set the expeditor <br/>
+This param is save in memory</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">from</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>email of the exoeditor</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_setExpeditorName" class="method item">
+    <h3 class="name"><code>setExpeditorName</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>fromName</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Boolean</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l152"><code>src&#x2F;index.js:152</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Set the expeditor name <br/>
+This param is save in memory</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">fromName</code>
+                        <span class="type">String</span>
+
+
+                    <div class="param-description">
+                        <p>name of the expeditor</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Boolean</span>:
+                    <p>true if success, false otherwise</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_use" class="method item">
+    <h3 class="name"><code>use</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Mixed</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_index.js.html#l76"><code>src&#x2F;index.js:76</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Before use a mailer you should define one mailer with ths <br/>
+You can choose :</p>
+<ul>
+<li>nodemailer</li>
+<li>mandrill</li>
+</ul>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Mixed</span>:
+                    <p>wanted property</p>
+
+            </div>
+        </div>
+
+
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <p>mailer.use(nodemailer);</p>
+
+            </div>
+        </div>
+</div>
             </div>
 
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
+                    <div id="property_mailerType" class="property item">
+                        <h3 class="name"><code>mailerType</code></h3>
+                        <span class="type">Unknown</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_index.js.html#l43"><code>src&#x2F;index.js:43</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Conatains the wrapper that will be used</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_mailerType" class="property item">
+                        <h3 class="name"><code>mailerType</code></h3>
+                        <span class="type">String</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_index.js.html#l50"><code>src&#x2F;index.js:50</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The wrapper that will be used in sting</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    <div id="property_mailerType" class="property item">
+                        <h3 class="name"><code>mailerType</code></h3>
+                        <span class="type">Unknown</span>
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_index.js.html#l58"><code>src&#x2F;index.js:58</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The logger</p>
+                    
+                        </div>
+                    
+                    
+                    
+                    </div>
                     <div id="property_mandrill" class="property item">
                         <h3 class="name"><code>mandrill</code></h3>
                         <span class="type">Mandrill</span>
@@ -199,7 +990,7 @@
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l26"><code>src&#x2F;index.js:26</code></a>
+                            <a href="../files/src_index.js.html#l35"><code>src&#x2F;index.js:35</code></a>
                             </p>
                     
                     
@@ -224,7 +1015,7 @@
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_index.js.html#l18"><code>src&#x2F;index.js:18</code></a>
+                            <a href="../files/src_index.js.html#l27"><code>src&#x2F;index.js:27</code></a>
                             </p>
                     
                     

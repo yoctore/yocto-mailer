@@ -85,13 +85,22 @@
 
 var nodemailer  = require(&#x27;./modules/nodemailer/&#x27;);
 var mandrill    = require(&#x27;./modules/mandrill/&#x27;);
+var logger      = require(&#x27;yocto-logger&#x27;);
+var _           = require(&#x27;lodash&#x27;);
+var joi         = require(&#x27;joi&#x27;);
+var promise     = require(&#x27;promise&#x27;);
 
 /**
 * Yocto Mailer
 *
 * This module implements two yocto wrapper, one for nodemailer, the second for mandrill
 *
-*
+** For more details on used dependencies read links below :
+* - yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
+* - LodAsh : https://lodash.com/
+* - joi : https://github.com/hapijs/joi
+* - mandrill-api : https://www.npmjs.com/package/mandrill-api
+* - promise : https://www.promisejs.org/
 * @date : 09/06/2015
 * @author : Cédric BALARD &lt;cedric@yocto.re&gt;
 * @copyright : Yocto SAS, All right reserved
@@ -99,30 +108,368 @@ var mandrill    = require(&#x27;./modules/mandrill/&#x27;);
 */
 function Mailer() {
   /**
-   * Default unit instance for nodemailer
-   *
-   * @property nodemailer
-   * @type nodemailer
-   */
+  * Default unit instance for nodemailer
+  *
+  * @property nodemailer
+  * @type nodemailer
+  */
   this.nodemailer = nodemailer;
 
   /**
-   * Default unit instance for mandrill
-   *
-   * @property mandrill
-   * @type mandrill
-   */
+  * Default unit instance for mandrill
+  *
+  * @property mandrill
+  * @type mandrill
+  */
   this.mandrill = mandrill;
+
+  /**
+  * Conatains the wrapper that will be used
+  *
+  * @property mailerType
+  */
+  this.mailerType   = {};
+
+  /**
+  * The wrapper that will be used in sting
+  *
+  * @property mailerType
+  * @type string
+  */
+  this.mailerTypeString = &#x27;&#x27;;
+
+  /**
+  * The logger
+  *
+  * @property mailerType
+  */
+  this.logger = logger;
 }
 
 /**
- * Default get function
- *
- * @method get
- * @return {Mixed} wanted property
- */
- Mailer.prototype.get = function(name) {
+* Default get function
+*
+* @method get
+* @return {Mixed} wanted property
+*/
+Mailer.prototype.get = function(name) {
   return this[name];
+};
+
+/**
+* Before use a mailer you should define one mailer with ths &lt;br/&gt;
+* You can choose :
+*  - nodemailer
+*  - mandrill
+*
+* @method use
+* @return {Mixed} wanted property
+* @example
+*
+* mailer.use(nodemailer);
+*/
+Mailer.prototype.use = function(mailerType) {
+
+  if (mailerType.toLowerCase() === &#x27;nodemailer&#x27;) {
+    this.mailerType = this.nodemailer;
+    this.mailerTypeString = &#x27;nodemailer&#x27;;
+    return;
+  }
+
+  if (mailerType.toLowerCase() === &#x27;mandrill&#x27;) {
+    this.mailerType = this.mandrill;
+    this.mailerTypeString = &#x27;mandrill&#x27;;
+    return;
+  }
+
+  this.logger.error(&#x27;[ Mailer.use ] - You should use &quot;nodemailer&quot; or &quot;mandrill&quot;&#x27;);
+
+};
+
+
+/**
+* Add a new recipient or an array of recipient&lt;br/&gt;
+* This will add a new recipient to the array of recipient
+*
+* @method addRecipient
+* @param {Object, Array} rec
+* @return {Boolean} true if success, false otherwise
+* @example
+*
+*var user = {
+*  name  : &#x27;Foo Bar&#x27;,
+*  email : &#x27;foo@bar.com&#x27;
+*};
+* mailer.nodemailer.addRecipient(user);
+*/
+Mailer.prototype.addRecipient = function(rec) {
+
+  return this.processEmailFormat(rec, &#x27;to&#x27;);
+};
+
+/**
+* Set the expeditor &lt;br/&gt;
+* This param is save in memory
+*
+* @method setExpeditor
+* @param {String}  from email of the exoeditor
+* @return {Boolean} true if success, false otherwise
+*/
+Mailer.prototype.setExpeditor = function(from) {
+
+  //From email should be a string
+  if (!_.isString(from)) {
+    logger.error(&#x27;Expeditor should be a string email&#x27;);
+    return false;
+  }
+
+  //Option determine in which param the bcc user should be in mailOptions
+  var option = &#x27;from_email&#x27;; // to for mandrill
+  if (this.mailerTypeString === &#x27;nodemailer&#x27;) {
+    option = &#x27;from&#x27;;
+  }
+
+  return this.processEmailFormat(from, (this.mailerTypeString == &#x27;nodemailer&#x27; ? &#x27;from&#x27; : &#x27;from_email&#x27;));
+};
+
+/**
+* Set the expeditor name &lt;br/&gt;
+* This param is save in memory
+*
+* @method setExpeditorName
+* @param {String}  fromName name of the expeditor
+* @return {Boolean} true if success, false otherwise
+*/
+Mailer.prototype.setExpeditorName = function(fromName) {
+  // TODO : gérer l&#x27;expiditor name pour le cas de mailer normal
+
+  //From email should be a string
+  if (!_.isString(fromName)) {
+    logger.error(&#x27;Expeditor should be a string email&#x27;);
+    return false;
+  }
+
+  if (this.mailerTypeString === &#x27;mandrill&#x27;) {
+    return this.processEmailFormat(fromName, &#x27;from_name&#x27;);
+  }
+
+};
+
+/**
+* Add a new CC recipient or an array of CC recipient&lt;br/&gt;
+* This will add a new cc to the array of cc
+*
+* @method addCC
+* @param {Object, Array}  cc
+* @return {Boolean} true if success, false otherwise
+*
+* @example
+*
+*var user = {
+*  name  : &#x27;Foo Bar&#x27;,
+*  email : &#x27;foo@bar.com&#x27;
+*};
+* mailer.nodemailer.addCC(user);
+*/
+Mailer.prototype.addCC = function(cc) {
+  //Option determine in which param the cc user should be in mailOptions
+  var option = &#x27;to&#x27;; // to for mandrill
+  if (this.mailerTypeString === &#x27;nodemailer&#x27;) {
+    option = &#x27;cc&#x27;;
+  }
+
+  return this.processEmailFormat(cc, option, &#x27;cc&#x27;);
+};
+
+/**
+* Add a new BCC recipient or an array of BCC recipient&lt;br/&gt;
+* This will add a new cc to the array of Bcc
+*
+* @method addBCC
+* @param {Object, Array} bcc
+* @return {Boolean} true if success, false otherwise
+*
+* @example
+*
+*var user = {
+*  name  : &#x27;Foo Bar&#x27;,
+*  email : &#x27;foo@bar.com&#x27;
+*};
+* mailer.nodemailer.addBCC(user);
+*/
+Mailer.prototype.addBCC = function(bcc) {
+  //Option determine in which param the bcc user should be in mailOptions
+  var option = &#x27;to&#x27;; // to for mandrill
+  if (this.mailerTypeString === &#x27;nodemailer&#x27;) {
+    option = &#x27;bcc&#x27;;
+  }
+
+  return this.processEmailFormat(bcc, option, &#x27;bcc&#x27;);
+};
+
+/**
+* Check if object &#x27;data&#x27; conatains only email &lt;br/&gt;
+* If it&#x27;s not case return false and logg an error &lt;br/&gt;
+* Else add &#x27;data&#x27; into Mailer.mailOptions.&lt;option&gt;
+*
+* @method processEmailFormat
+* @private
+* @param {String, Array, Object}  data that shoul&#x27;d be contains email
+* @param option It&#x27;s the name of the property in Mailer.mailOptions
+* @param option2 It&#x27;s an optional otpion to specify if it&#x27;s an cc, bcc
+* @return {Boolean} true if success, false otherwise
+*/
+Mailer.prototype.processEmailFormat = function(data, option, option2) {
+
+  //console.log( &#x27;---- \n data : &#x27;, data, &#x27;option&#x27;, option);
+  if (_.isEmpty(this.mailerType)) {
+    this.logger.error(&#x27;MailerType is not define, please define your mailer whith use(String) function !&#x27;);
+    return;
+  }
+
+  this.logger.info(&#x27;[ Mailer.processEmailFormat ] - start  typeof data : &#x27; + typeof data);
+
+  if (option !== &#x27;from_email&#x27; &amp;&amp; option !== &#x27;from&#x27; &amp;&amp;  option !== &#x27;from_name&#x27; &amp;&amp; !_.isObject(data)) {
+    this.logger.error(&#x27;[ Mailer.processEmailFormat ] Error &#x27; + option + &#x27; should be on object or array of object&#x27;);
+    return false;
+  }
+
+  //Set a default value
+  var result = joi.string().email();
+
+  if (option == &#x27;from_name&#x27;) {
+    result = joi.string().min(1);
+  }
+
+  if (_.isObject(data)) {
+
+    //data is an array
+    if (_.isArray(data)) {
+
+      //Add params type to each user
+      _.forEach(data, function(user) {
+
+        user.address = user.email;
+        user.type = (_.isEmpty(option2) ? option : option2) ;
+      });
+
+      //Define joi schema
+      result = joi.array().items(
+        joi.object().keys({
+          email : joi.string().email(),
+          address : joi.string().email(),
+          name  : joi.string(),
+          type  : joi.string()
+        })
+      );
+    } else {
+      // Data is an Object
+      // Add param type in data
+      data = _.merge(data, { type : (_.isEmpty(option2) ? option : option2) });  // add the param &#x27;type&#x27;
+
+      //Add params address to nodemailer
+      data.address = data.email;
+
+      //Define joi schema
+      result = joi.object().keys({
+        email : joi.string().email(),
+        address : joi.string().email(),
+        name  : joi.string(),
+        type  : joi.string()
+
+      });
+    }
+  }
+
+  //Execute the joi vailidation
+  result = result.validate(data);
+
+  //Check if have no error in joi validation
+  if (_.isEmpty(result) || _.isEmpty(result.error)) {
+    this.logger.debug(&#x27;[ MandrillWrapper.processEmailFormat ] - Validation email for field : &#x27; +  (_.isEmpty(option2) ? option : option2));
+
+    //test the type of param in mailOptions
+    if (_.isArray(this.mailerType.mailOptions[option]) &amp;&amp; _.isObject(data)) {
+      //is an array
+
+      //Change result if needed
+      if (_.isArray(data)) {
+
+        //is an array
+        _.forEach(data, function(user) {
+          this.mailerType.mailOptions[option].push(user);
+        } , this);
+        return true;
+      }
+
+      //is an object
+      this.mailerType.mailOptions[option].push(data);
+      return true;
+    }
+
+    //the param is a string
+    this.mailerType.mailOptions[option] = data;
+
+    return true;
+  }
+
+  console.log(result);
+  this.logger.error(&#x27;[ MandrillWrapper.processEmailFormat ] - Validation email failed, at least one string dosen\&#x27;t pass email validation for field : &#x27; + option);
+  return false;
+};
+
+/**
+ * Wrap the setconfig() of mailer
+ * @method setConfig
+ * @param  {String, Ojbect} conf The configuration, should be a string for mailchimp (apikey). For nodemailer should be a Object (smtpConf)
+ */
+Mailer.prototype.setConfig = function(conf) {
+
+  if (_.isEmpty(this.mailerType)) {
+    this.logger.error(&#x27;MailerType is not define, please define your mailer whith use(String) function !&#x27;);
+    return;
+  }
+
+  this.mailerType.setConfig(conf);
+};
+
+/**
+ * Wrap the send() of mailer
+ * Implements promise to handle success and error
+ * @method setConfig
+ * @param  {String} subject subject of message
+ * @param {String} message content of message in Html
+ * @callback {Function} callback success callback
+ * @callback {Function} callbackFailed Failed callback
+ * @example
+ * var success = function(value) {
+ * 	 logger.info( &#x27;youhou mail sent&#x27;);
+ *   console.log(value);
+ * };
+ *
+ * var failed = function(error) {
+ *   logger.error( &#x27;oin oin mail not sent&#x27;);
+ *   console.log(error);
+ * };
+ *
+ * mailer.send(&#x27; #321 nodemailer &#x27;, &#x27;&lt;b&gt; test tab &lt;/b&gt;&#x27;).then(success, failed);
+ */
+Mailer.prototype.send = function(subject, message) {
+  if (_.isEmpty(this.mailerType)) {
+    this.logger.error(&#x27;MailerType is not define, please define your mailer whith use(String) function !&#x27;);
+    return;
+  }
+  //Save context
+  var context = this;
+
+  //Declare promise
+  return new promise(function(fulfill, reject) {
+    context.mailerType.send(subject, message, function(res) {
+      fulfill(res);
+    } , function(err) {
+      reject(err);
+    });
+  });
 };
 
 /**

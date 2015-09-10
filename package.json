@@ -38,6 +38,7 @@
     "moment": "^2.10.3",
     "nodemailer": "latest",
     "nodemailer-smtp-transport": "^1.0.2",
+    "promise": "^7.0.1",
     "yocto-logger": "git+ssh://git@lab.yocto.digital:yocto-node-modules/yocto-logger.git"
   },
   "devDependencies": {
