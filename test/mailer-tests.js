@@ -54,10 +54,9 @@ describe('Mailer() >', function() {
   
   moteur.forEach(function(m) {
 
-    if (_.has(mailer.nodemailer.logger, 'enableConsole')) {
-      mailer[m].logger.enableConsole(enableLog);      
-    }
-
+    
+    mailer[m].logger.enableConsole(enableLog);      
+    
     methods.forEach(function(method) {
         describe(m + '.' + method + '() must return false with invalid data', function() {    
           args.forEach(function(arg) {
