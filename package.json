@@ -5,7 +5,7 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+ssh:://git@lab.yocto.digital:yocto-node-modules/yocto-mailer.git"
+    "url": "git+ssh:://git@gitlab.com:yocto-node-modules/yocto-mailer.git"
   },
   "keywords": [
     "mailer"
@@ -39,7 +39,8 @@
     "nodemailer": "latest",
     "nodemailer-smtp-transport": "^1.0.2",
     "promise": "^7.0.1",
-    "yocto-logger": "git+ssh://git@lab.yocto.digital:yocto-node-modules/yocto-logger.git"
+    "striptags": "^2.0.3",
+    "yocto-logger": "git+ssh://git@gitlab.com:yocto-node-modules/yocto-logger.git"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
@@ -49,6 +50,6 @@
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-contrib-yuidoc": "^0.7.0",
     "grunt-mocha-cli": "^1.13.0",
-    "yocto-utils": "git+ssh://git@lab.yocto.digital:yocto-node-modules/yocto-utils.git"
+    "yocto-utils": "git+ssh://git@gitlab.com:yocto-node-modules/yocto-utils.git"
   }
 }

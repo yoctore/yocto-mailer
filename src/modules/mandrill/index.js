@@ -1,69 +1,74 @@
 'use strict';
 
-var mandrill = require('mandrill-api/mandrill');
-var _        = require('lodash');
-var logger   = require('yocto-logger');
-
+var mandrillapi = require('mandrill-api/mandrill');
+var _           = require('lodash');
+var logger      = require('yocto-logger');
+var striptags   = require('striptags');
+var joi         = require('joi');
+var promise     = require('promise');
+var util        = require('util');
 
 /**
-* Yocto MandrillWrapper
-*
-* This module manage your own mailer
-*
-* This module his a wrapper of mandrill-api for node js package
-*
-* For more details on used dependencies read links below :
-* - yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
-* - LodAsh : https://lodash.com/
-* - joi : https://github.com/hapijs/joi
-* - mandrill-api : https://www.npmjs.com/package/mandrill-api
-*
-* @date : 08/06/2015
-* @author : Cédric BALARD <cedric@yocto.re>
-* @copyright : Yocto SAS, All right reserved
-* @class MandrillWrapper
-*/
-function MandrillWrapper() {
+ * Yocto Mandrill module wrapper
+ *
+ * This module manage your own mandrill mailer api
+ *
+ * For more details on used dependencies read links below :
+ * - yocto-logger : https://gitlab.com:yocto-node-modules/yocto-utils.git
+ * - LodAsh : https://lodash.com/
+ * - joi : https://github.com/hapijs/joi
+ * - mandrill-api : https://www.npmjs.com/package/mandrill-api
+ *
+ * @date : 11/09/2015
+ * @author : Mathieu ROBERT <mathieu@yocto.re>
+ * @copyright : Yocto SAS, All right reserved
+ *
+ * @class Mandrill
+ */
+function Mandrill() {
 
   /**
-  * The mandrill client for sending mail
-  *
-  * @property {Object} mandrill_client
-  * @default empty
-  */
-  this.mandrill_client = {};
+   * The mandrill client for sending mail
+   *
+   * @property {Object} client
+   * @default empty
+   */
+  this.client = {};
 
   /**
-  * Structure of the object that contains all mail options
-  *
-  * @property {Object} mailOptions
-  * @default {
-  * 	  from_email    : '',
-  *     to      : '',
-  *     subject : '',
-  *     html    : ''
-  *     }
-  */
-  this.mailOptions = {
-    from_name   : '',
+   * default configution object that contains all mail options
+   *
+   * @property {Object} options
+   * @default {
+   *    from_name     : '',
+   * 	  from_email    : '',
+   *    to            : '',
+   *    subject       : '',
+   *    html          : '',
+   *    text          : ''
+   * }
+   */
+  this.options = {
+    from_name   : '', // from name to send on mail
     from_email  : '', // sender address
     to          : [], // list of receivers
     subject     : '', // Subject line
-    html        : ''
+    html        : '', // html text
+    text        : ''  // text value
   };
 
   /**
-  * Clone the mailOptions and omit parameter 'from_email'<br/>
-  * It used for deleteMailOptions when a mail as sent to reinitialize it<br/>
-  *
-  * @property {Object} defaultMailOtpion
-  *  @default {
-  *     to      : '',
-  *     subject : '',
-  *     html    : '',
-  *     }
-  */
-  this.defaultMailOption = _.omit(_.clone(this.mailOptions), ['from_email', 'from_name']);
+   * Clone the options and omit parameter 'from_email'<br/>
+   * It used for cleanOptions when a mail was sent<br/>
+   *
+   * @property {Object} defaultOption
+   * @default {
+   *    to            : '',
+   *    subject       : '',
+   *    html          : '',
+   *    text          : ''
+   */
+  this.defaultOption = _.omit(_.clone(this.options), [ 'from_email', 'from_name' ]);
 
   /**
    * Default this.logger properties
@@ -75,97 +80,289 @@ function MandrillWrapper() {
 
 
 /**
-* Set the mandrill client apiKey to connect to mandrill service
-*
-* @method setMandrillClientAPIKey
-* @param {Object}  apiKey The apikey of mandrill service
-* @example example of usage
-*    mailer.mandrill.setMandrillClientAPIKey('JFEKFEa-738dKJFEç-OLN974');
-*/
-MandrillWrapper.prototype.setConfig = function(apiKey) {
+ * Set the mandrill client apiKey to connect to mandrill service
+ *
+ * @method setConfig
+ * @param {String} apiKey The apikey for mandrill service
+ *
+ * @example
+ *    mailer.mandrill.setConfig('YOUR-KEY-HERE');
+ */
+Mandrill.prototype.setConfig = function(apiKey) {
+  // define client with current api key
+  this.client = new mandrillapi.Mandrill(apiKey);
 
-  if (_.isString(apiKey)) {
-    this.mandrill_client = new mandrill.Mandrill(apiKey);
-    return true;
-  }
-  this.logger.error('[ MandrillWrapper.setConfig ] - The api key should be a String');
+  // saved context
+  var context = this;
+
+  // message  
+  logger.debug('[ Mandrill.setConfig ] - Validating api key. Please wait ....');
+
+  // return statement
+  return new promise(function(fulfill, reject) {
+    // check api key state
+    if (! _.isString(apiKey)) {
+      context.logger.error([ '[ Mandrill.setConfig ] -',
+                          'Invalid apiKey given. The api key should be a string and',
+                          (typeof apiKey), 'given'
+                        ].join(' '));
+      // invalid statement
+      reject(false);
+
+    } else {
+      context.client.users.ping2({}, function(response) {
+        // key is correct process
+        context.logger.info('[ Mandrill.setConfig ] - API Key is valid. Use it !');
+        // call callback
+        fulfill(response);
+      } , function(error) {
+        context.logger.error([ '[ Mandrill.setConfig ] -',
+                               'Mandrill API key validation failed',
+                               'Error is :',
+                               error.message,
+                               'with code :',
+                               error.code,
+                               'and code name :',
+                               error.name
+                             ].join(' '));
+
+        // call callback
+        reject(error);
+      });
+    }
+  });
 };
 
+/**
+ * Send the mail with all parameters (from_email, to, cc , bcc)
+ * After the mail was send this paramater will be remove : to, cc, bcc, subject, message
+ *
+ * @method send
+ * @param {String} subject Subject of the email
+ * @param {String} message Html message to send
+ */
+Mandrill.prototype.send = function(subject, message) {
+  // send mail with defined transport object
+  this.logger.debug('[ Mandrill.send ] - Try sending a new email ...');
+
+  // html value
+  this.options.html     = _.isString(message) && !_.isEmpty(message) ? message : '';
+
+  // check if html is empty before process text element
+  if (!_.isEmpty(this.options.html)) {
+    // text value
+    this.options.text     = striptags(message);    
+  }
+
+  // subject value
+  this.options.subject  = _.isString(subject) ? subject : '';
+
+  // save current context for promise
+  var context = this;
+
+  // default statement
+  return new promise(function(fulfill, reject) {
+    // All is ready ?
+    if (!context.isReady()) {
+      // dispatch message
+      context.logger.error("[ Mandrill.send ] - can't send mail, please check configuration.");
+
+      // reject
+      reject("[ Mandrill.send ] - can't send mail, please check configuration.");
+    } else {
+  
+      // clone options for usage
+      var coptions = _.clone(context.options);
+      console.log(coptions);
+
+      // Clean option for the next request
+      context.logger.debug('[ Mandrill.send ] - Cleanning object before send request');
+      context.clean();
+    
+      // is clean and ready to send ?
+      if (!context.clean(false, true)) {
+        context.logger.error("[ Mandrill.send ] - can't send email option object is not properly clean");
+        // failed callback
+        reject("[ Mandrill.send ] - can't send email option object is not properly clean");
+      }
+      // Send message to client
+      context.client.messages.send({ 'message' : coptions, 'async' : false }, function(result) {
+        // Success Callback
+        fulfill(result);
+      } , function(error) {
+        // failed callback
+        reject(error);
+      });
+    }
+  });
+};
 
 /**
-* Send the mail with all parameters ( from_email, to, cc , bcc)<br/>
-* After the mail was send this paramater will be remove : to, cc, bcc, subject, message
-*
-* @method send
-* @param {String} subject Subject of the email
-* @param {String} message Html message to send
-* @param {Function} callback on optional success callback, If is not specied a default callback will be execute
-* @param {Function} callbackFailed on optional failed callback, If is not specied a default callback will be execute
-* @example Obligatory step before call this method
-* 1. require the module like this : var mandrill = require('MandrillWrapper');
-* 2. set a valid mandrill apiKey
-* 3. set an expeditor
-* 4. set at least one recipient
-*     - You can optionaly add CC or BCC receivers
-* 5. call send() with your subject and contents for sending your email
-*/
-MandrillWrapper.prototype.send = function(subject, message, callback, callbackFailed) {
-
-  // send mail with defined transport object
-  this.logger.debug('[ MandrillWrapper.send ] - Try sending a new email');
-
-  // defining default value
-  this.mailOptions.html     = _.isString(message) ? message : '';
-  this.mailOptions.subject  = _.isString(subject) ? subject : '';
-
-  // process callback
-  callback = !_.isUndefined(callback) && _.isFunction(callback) ? callback : function(data) {
-    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, info details id : ' + data);
+ * Set current expeditor
+ *
+ * @param {String} email current email to use for request
+ * @param {String} name current name to use for request
+ * @return {Boolean} return true on success, false otherwise 
+ */
+Mandrill.prototype.setExpeditor = function(email, name) {
+  // define default object for validation
+  var data = { from_email  : email, from_name   : name };
+  
+  // define validation schema
+  var schema = {
+    from_email  : joi.string().email().required().trim(),
+    from_name   : joi.string()
   };
+  
+  // validate
+  var status = joi.validate(data, schema);
+  
+  // has error ?
+  if (!_.isNull(status.error)) {
+    // log message
+    _.each(status.error.details, function(d) {
+      this.logger.error([ '[ Mandrill.addRecipient ] - Cannot add recipient.',
+                          'Error is :',
+                          d.message
+                        ].join(' '));
+    }, this);
 
-  // process callback Failed
-  callbackFailed = !_.isUndefined(callbackFailed) && _.isFunction(callbackFailed) ? callbackFailed : function(data) {
-    this.logger.info('[ MandrillWrapper.send.defaultCallBackSendMail ] -  sending message, error details id : ' + data);
-  };
-
-
-  //Function that delete all params in this.mailOptions expect 'from'
-  function deleteMailOptions(context) {
-    context.logger.debug('[ MandrillWrapper.deleteMailOptions ] - Delete mail otpions');
-
-    //Extend defaultMailOption to remove this mail options : cc, bcc, html, subject
-    _.extend(context.mailOptions, context.defaultMailOption);
-
-     //Force delete params 'to' because it's an array
-     context.mailOptions.to      = [];
+    // invalid statement
+    return false;
   }
 
-  //Check if somes params are not empty
-  if (!_.isEmpty(this.mandrill_client) && !_.isEmpty(this.mailOptions.to) && !_.isEmpty(this.mailOptions.from_email)  && !_.isEmpty(this.mailOptions.subject)  && !_.isEmpty(this.mailOptions.html)) {
+  // assign data
+  _.merge(this.options, data);
 
-    var newOptions = _.clone(this.mailOptions);
-    deleteMailOptions(this);
+  // default statement
+  return true;
+};
 
-    this.mandrill_client.messages.send({ "message": newOptions, "async": false }, function(result) {
+/**
+ * Default clean function for the next item
+ *
+ * @param {Boolean} all true for complete cleaning
+ * @param {Boolean} onlyStatus true if we want only the current status of cleaning state
+ * @return {Boolean} true if all is clean, false otherwise
+ */
+Mandrill.prototype.clean = function(all, onlyStatus) {
 
-      // Success Callback
-      callback(result);
-    } , function(error) {
-
-      // failed callback
-      callbackFailed(error);
-    });
-
+  // process these only is normal process is asked
+  if (!_.isBoolean(onlyStatus) || (_.isBoolean(onlyStatus) && onlyStatus === false)) {
+    // reset text element
+    this.options.subject = this.options.html = this.options.text = '';
+     // reset to items
+    this.options.to      = [];
+    
+    // clean all config ?
+    if (_.isBoolean(all) && all === true) {
+      // re init with default value
+      _.extend(this.options, this.defaultOption);
+    }
   } else {
-    //At least one params are empty, so the mail will be not sent
-    this.logger.error('[ MandrillWrapper.send ] - can\'t send mail, please check configuration.');
-
-    //Delete mail options
-    deleteMailOptions(this);
+    // validate new schema again all must be ok after clean
+    var schema = joi.object().keys({
+      from_name   : joi.string().empty(''),
+      from_email  : joi.string(),
+      to          : joi.array().length(0),
+      subject     : joi.string().empty(''),
+      html        : joi.string().empty(''),
+      text        : joi.string().empty('')
+    });
+    
+    // validate the cleaning state
+    var status = joi.validate(this.options, schema);
+    
+    // has error ?
+    if (!_.isNull(status.error)) {
+      // log message
+      _.each(status.error.details, function(d) {
+        this.logger.error([ '[ Mandrill.clean ] - Cannot clean current object.',
+                               'Error is :',
+                               d.message
+                             ].join(' '));
+      }, this);
+  
+      // invalid statement
+      return false;
+    }
   }
+
+  // default statement
+  return true;
+}
+
+/**
+ * Add a recipient to options list
+ * 
+ * @param {String} email current email to add into list
+ * @param {String} name current email name to add into list
+ * @param {String} type current email type to add into list (to, cc, bcc)
+ * @return {Boolean} return true on success, false otherwise 
+ */
+Mandrill.prototype.addRecipient = function(email, name, type) {
+  // define validation schema
+  var schema = joi.object().keys({
+    email : joi.string().email().required().trim(),
+    name  : joi.string(),
+    type  : joi.string().default('to').allow('to', 'cc', 'bcc')
+  });
+
+  // define type rules
+  var data = { email : email, name : name, type : type };
+
+  // valid recipient
+  var status = joi.validate(data, schema);
+
+  // has error ?
+  if (!_.isNull(status.error)) {
+    // log message
+    _.each(status.error.details, function(d) {
+      this.logger.error([ '[ Mandrill.addRecipient ] - Cannot add recipient.',
+                             'Error is :',
+                             d.message
+                           ].join(' '));
+    }, this);
+
+    // invalid statement
+    return false;
+  }
+
+  // check if email is already in list
+  if (!_.isUndefined(_.find(this.options.to, { email : email }, 'email'))) {
+    this.logger.warning([ '[ Mandrill.addRecipient ] - Cannot add recipient.',
+                        'email already in list.',
+                        email, 'was omit'
+                      ].join(' '));
+    return false;
+  }
+
+  // Add object email to current option
+  this.options.to.push(status.value);
+
+  // log added action
+  this.logger.info([ '[ Mandrill.addRecipient ] - email :',
+                      status.value.email, 'was added into current send list, into [',
+                      status.value.type, '] rules'
+                   ].join(' '));
+
+  // default statement
+  return true;
+};
+
+/**
+ * Get current state usage for mandrill wrapper
+ *
+ * @return {Boolean} return true if is ready, false otherwise
+ */
+Mandrill.prototype.isReady = function() {
+  // default statement
+  return !_.isEmpty(this.client) && !_.isEmpty(this.options.to) && 
+         !_.isEmpty(this.options.from_email) && !_.isEmpty(this.options.subject) && 
+         !_.isEmpty(this.options.html);
 };
 
 /**
 * Export the wrapper to use it on node
 */
-module.exports = new (MandrillWrapper)();
+module.exports = new (Mandrill)();

@@ -1,9 +1,43 @@
-var mailer = require('../src');
+var mailer = require('../src/index2.js');
 var logger = require('yocto-logger');
 
+var choice = 'mandrill';
+var config = 'sAOKe0G7VHcql6jpyHSMIg';
+
+if (mailer.use(choice)) {
+  mailer.setConfig(config).then(function(success) {
+    console.log('config ok')
+    mailer.addRecipient('mathieu@yocto.re');
+    mailer.addRecipient('mathieu@yocto.re', 'Mathieu ROBERT');
+    mailer.addCC('mathieu.robert@yocto.re', 'Mathieu ROBERT', 'cc');
+    mailer.addBCC('contact@yocto.re', 'Mathieu ROBERT', 'bcc');
+    mailer.setExpeditor('mathieu@yocto.re');
+    mailer.send('MY-TEST', '<b>MY-MESSAGE</b>').then(function(success) {
+      console.log(success);
+
+      mailer.setExpeditor('mathieu@yocto.re', 'EXPE NAME');
+      mailer.send('MY-TEST2', '<b>MY-MESSAGE2</b>').then(function(success) {
+        console.log(success);
+        
+      }, function(failed) {
+        console.log(failed);
+      });
+      
+    }, function(failed) {
+      console.log(failed);
+    });
+  }, function(failed) {
+    console.log('error => ' + failed);
+  });
+}
 
 
-console.log('mailer type : ' + mailer.get(mailer.mailerType));
+return false;
+/*mailer.use('fsdfsd');
+mailer.setExpeditor([]);
+return false;
+*/
+//console.log('mailer type : ' + mailer.get(mailer.mailerType));
 
 
 
