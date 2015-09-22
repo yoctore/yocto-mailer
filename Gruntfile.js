@@ -69,5 +69,5 @@ module.exports = function (grunt) {
   grunt.registerTask('tests', 'mochacli');
   grunt.registerTask('build', [ 'hint', 'uglify' ]);
   grunt.registerTask('todo', 'todo');
-  grunt.registerTask('default', [ 'tests', 'build', 'todo' ]);  
+  grunt.registerTask('default', [ 'tests', 'build', 'todo' ]);
 };

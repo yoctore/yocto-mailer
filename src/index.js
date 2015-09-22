@@ -189,13 +189,13 @@ Mailer.prototype.setConfig = function (config) {
                       'Please define your mailer whith use method.' ].join(' ');
       // Dispach Message
       context.logger.error(message);
-      // reject 
+      // reject
       reject(message);
     } else {
       // default statement
-      context.mailer.instance.setConfig(config).then(function(success) {
+      context.mailer.instance.setConfig(config).then(function (success) {
         fulfill(success);
-      }, function(error) {
+      }, function (error) {
         reject(error);
       });
     }

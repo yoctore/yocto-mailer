@@ -303,7 +303,7 @@ NodeMailer.prototype.addRecipient = function (email, name, type) {
 NodeMailer.prototype.addReplyTo = function (email) {
   // define schema
   var schema = joi.string().email().required().trim();
-  
+
   // validate
   var status = joi.validate(email, schema);
 
@@ -326,7 +326,7 @@ NodeMailer.prototype.addReplyTo = function (email) {
 
   // default statement
   return true;
-}
+};
 
 /**
  * Send the mail with all parameters

@@ -39,7 +39,8 @@ function Mandrill (logger) {
    *    to            : '',
    *    subject       : '',
    *    html          : '',
-   *    text          : ''
+   *    text          : '',
+   *    headers       : ''
    * }
    */
   this.options = {
@@ -49,7 +50,7 @@ function Mandrill (logger) {
     subject     : '', // Subject line
     html        : '', // html text
     text        : '', // text value,
-    headers     : {}  // default header to send  
+    headers     : {}  // default header to send
   };
 
   /**
@@ -61,9 +62,10 @@ function Mandrill (logger) {
    *    to            : '',
    *    subject       : '',
    *    html          : '',
-   *    text          : ''
+   *    text          : '',
+   *    headers       : ''
    */
-  this.defaultOption = _.omit(_.clone(this.options), [ 'from_email', 'from_name' ]);
+  this.defaultOption = _.omit(_.clone(this.options), [ 'fromEmail', 'fromName' ]);
 
   /**
    * Default logger instance
@@ -247,13 +249,13 @@ Mandrill.prototype.setExpeditor = function (email, name) {
  */
 Mandrill.prototype.addReplyTo = function (email) {
   // define default object for validation
-  var data   = { "Reply-To" : email };
+  var data   = { 'Reply-To' : email };
 
   // define schema
   var schema = {
-    "Reply-To" : joi.string().email().required().trim()
+    'Reply-To' : joi.string().email().required().trim()
   };
-  
+
   // validate
   var status = joi.validate(data, schema);
 
@@ -276,7 +278,7 @@ Mandrill.prototype.addReplyTo = function (email) {
 
   // default statement
   return true;
-}
+};
 
 /**
  * Default clean function for the next item
