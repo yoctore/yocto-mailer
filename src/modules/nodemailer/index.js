@@ -81,7 +81,37 @@ function NodeMailer (logger) {
    * @property {Object} logger
    */
   this.logger = logger;
+
+  /**
+   * Default status of complete clean before new send
+   *
+   * @property {Boolean} completeClean
+   * @default false
+   */
+  this.completeClean = false;
 }
+
+/**
+ * Change the current state of complete clean before each send
+ *
+ * @param {Boolean} status true if we want to enable complete clean false otherwise
+ * @return {Boolean} true if all is ok false otherwise
+ */
+NodeMailer.prototype.processCompleteClean = function (status) {
+
+  // define status to a correct type
+  if (!_.isUndefined(status) &&
+      !_.isNull(status) && _.isBoolean(status)) {
+    // change status
+    this.completeClean = status;
+    // log message
+    this.logger.info([ '[ NodeMailer.setConfig ] -', (status ? 'Enable' : 'Disable'),
+                       'Complete clean of object.' ].join(' '));
+  }
+
+  // default status
+  return _.isBoolean(this.completeClean);
+};
 
 /**
  * Set the nodemailer configuration
@@ -419,13 +449,22 @@ NodeMailer.prototype.clean = function (all, onlyStatus) {
       // re init with default value
       _.extend(this.options, this.defaultOption);
     }
+
+    // process to a complete clean
+    if (this.completeClean) {
+      // here we need to clean omt var defined at the begining of instance
+      this.options.from = {};
+    }
   } else {
     // validate new schema again all must be ok after clean
     var schema = joi.object().keys({
-      from        : joi.object().keys({
-        address  : joi.string().email().required().trim(),
-        name     : joi.string()
-      }),
+      from        : (this.completeClean ?
+                      joi.object().empty({}) :
+                      joi.object().keys({
+                        address  : joi.string().email().required().trim(),
+                        name     : joi.string()
+                      })
+                    ),
       to          : joi.array().length(0),
       cc          : joi.array().length(0),
       bcc         : joi.array().length(0),

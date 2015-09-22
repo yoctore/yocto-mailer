@@ -15,14 +15,6 @@ var Promise     = require('promise');
  * - mandrill
  * - nodeMailer (TODO)
  *
- * Dependencies :
- *
- * - yocto-logger : https://www.npmjs.com/package/yocto-logger
- * - lodash : https://lodash.com/
- * - joi : https://github.com/hapijs/joi
- * - mandrill-api : https://www.npmjs.com/package/mandrill-api
- * - promise : https://www.promisejs.org/
- *
  * @date : 17/09/2015
  * @author : Mathieu ROBERT <mathieu@yocto.re>
  * @copyright : Yocto SAS, All right reserved
@@ -68,6 +60,45 @@ function Mailer () {
  */
 Mailer.prototype.get = function (name) {
   return this[name];
+};
+
+/**
+ * Enable complete clean before new send for current mailer instance
+ *
+ * @return {Boolean} true if enable succeed false otherwise
+ */
+Mailer.prototype.enableCompleteClean = function () {
+  console.log('la""');
+  // is Instanciate ?
+  if (!this.isInstanciate()) {
+    this.logger.error([ '[ Mailer.enableCompleteClean ] - Cannot enable complete clean function.',
+                        'Mailer instance is not defined.',
+                        'Please choose you mailer instance by "use" method'
+                 ].join(' '));
+    return false;
+  }
+
+  // default statement
+  return this.mailer.instance.processCompleteClean(true);
+};
+
+/**
+ * Disable complete clean before new send for current mailer instance
+ *
+ * @return {Boolean} true if enable succeed false otherwise
+ */
+Mailer.prototype.disableCompleteClean = function () {
+  // is Instanciate ?
+  if (!this.isInstanciate()) {
+    this.logger.error([ '[ Mailer.disableCompleteClean ] - Cannot disable complete clean function.',
+                        'Mailer instance is not defined.',
+                        'Please choose you mailer instance by "use" method'
+                 ].join(' '));
+    return false;
+  }
+
+  // default statement
+  return this.mailer.instance.processCompleteClean(false);
 };
 
 /**

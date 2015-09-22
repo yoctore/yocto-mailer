@@ -46,7 +46,7 @@ var dest = [
 
 var dests = [];
 
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < 2; i++) {
   dests.push(dest[i]);
 }
 
@@ -55,7 +55,11 @@ if (mailer.use(choice)) {
     console.log('==> CONFIG OK')
     mailer.setExpeditor(expeditor.email, expeditor.name);
     mailer.addReplyTo('technique@yocto.re');
+    console.log('ALL IS OK');
+    
+    mailer.enableCompleteClean();
     _.each(dests, function(d) {
+
       mailer.addRecipient(d.to, d.name);
       _.each(d.cc, function(cc) {
         mailer.addCC(cc.email, cc.name);

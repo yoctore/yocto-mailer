@@ -1,3 +1,10 @@
+## 1.1.2 (2015-09-22)
+
+Adding new functions :
+
+- enableCompleteClean : enable a complete clean of object before any request
+- disableCompleteClean : disable a complete clean of object before any request
+
 ## 1.1.1 (2015-09-22)
 
 - Generate builded distribution files

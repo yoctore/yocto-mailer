@@ -73,7 +73,37 @@ function Mandrill (logger) {
    * @property {Object} logger
    */
   this.logger = logger;
+
+  /**
+   * Default status of complete clean before new send
+   *
+   * @property {Boolean} completeClean
+   * @default false
+   */
+  this.completeClean = false;
 }
+
+/**
+ * Change the current state of complete clean before each send
+ *
+ * @param {Boolean} status true if we want to enable complete clean false otherwise
+ * @return {Boolean} true if all is ok false otherwise
+ */
+Mandrill.prototype.processCompleteClean = function (status) {
+
+  // define status to a correct type
+  if (!_.isUndefined(status) &&
+      !_.isNull(status) && _.isBoolean(status)) {
+    // change status
+    this.completeClean = status;
+    // log message
+    this.logger.info([ '[ Mandrill.setConfig ] -', (status ? 'Enable' : 'Disable'),
+                       'Complete clean of object.' ].join(' '));
+  }
+
+  // default status
+  return _.isBoolean(this.completeClean);
+};
 
 /**
  * Set the mandrill client apiKey to connect to mandrill service
@@ -301,11 +331,21 @@ Mandrill.prototype.clean = function (all, onlyStatus) {
       // re init with default value
       _.extend(this.options, this.defaultOption);
     }
+
+    // process to a complete clean
+    if (this.completeClean) {
+      // here we need to clean omt var defined at the begining of instance
+      this.options.fromName = this.options.fromEmail = '';
+    }
   } else {
     // validate new schema again all must be ok after clean
     var schema = joi.object().keys({
-      fromName    : joi.string().empty(''),
-      fromEmail   : joi.string().email().required().trim(),
+      fromName    : (this.completeClean ?
+                      joi.string().empty().allow('') :
+                      joi.string().empty('')),
+      fromEmail   : (this.completeClean ?
+                     joi.string().empty().allow('') :
+                     joi.string().email().required().trim()),
       to          : joi.array().length(0),
       subject     : joi.string().empty(''),
       html        : joi.string().empty(''),
