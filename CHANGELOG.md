@@ -1,3 +1,8 @@
+## 1.1.0 (2015-09-22)
+
+- Adding replyTo options for each wrappper
+- Enable Nodemailer SMTP usage
+
 ## 1.0.0 (2015-09-17)
 
 Major changes on core modules :
