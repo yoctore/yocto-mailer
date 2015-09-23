@@ -325,6 +325,8 @@ Mandrill.prototype.clean = function (all, onlyStatus) {
     this.options.subject = this.options.html = this.options.text = '';
     // reset to items
     this.options.to      = [];
+    // force clean of header
+    this.options.headers = {};
 
     // clean all config ?
     if (_.isBoolean(all) && all === true) {

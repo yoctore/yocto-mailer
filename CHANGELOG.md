@@ -1,3 +1,7 @@
+## 1.1.3 (2015-09-22)
+
+- Adding force clean for headers property for mandrill
+
 ## 1.1.2 (2015-09-22)
 
 Adding new functions :
