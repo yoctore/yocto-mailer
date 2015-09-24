@@ -68,7 +68,6 @@ Mailer.prototype.get = function (name) {
  * @return {Boolean} true if enable succeed false otherwise
  */
 Mailer.prototype.enableCompleteClean = function () {
-  console.log('la""');
   // is Instanciate ?
   if (!this.isInstanciate()) {
     this.logger.error([ '[ Mailer.enableCompleteClean ] - Cannot enable complete clean function.',

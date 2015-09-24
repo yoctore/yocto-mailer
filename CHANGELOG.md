@@ -1,3 +1,7 @@
+## 1.1.4 (2015-09-24)
+
+- Delete a console.log
+
 ## 1.1.3 (2015-09-22)
 
 - Adding force clean for headers property for mandrill
