@@ -1,3 +1,7 @@
+## 1.1.5 (2015-09-27)
+
+- Minor changes on testing var on enableCompleteClean function
+
 ## 1.1.4 (2015-09-24)
 
 - Delete a console.log

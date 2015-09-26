@@ -92,8 +92,7 @@ function Mandrill (logger) {
 Mandrill.prototype.processCompleteClean = function (status) {
 
   // define status to a correct type
-  if (!_.isUndefined(status) &&
-      !_.isNull(status) && _.isBoolean(status)) {
+  if (_.isBoolean(status)) {
     // change status
     this.completeClean = status;
     // log message
