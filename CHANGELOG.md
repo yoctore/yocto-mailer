@@ -45,3 +45,6 @@ Minor changes :
 - Adding CHANGELOG.md
 - Adding Apache 2.0 license file
 
+## < 1.0.0 (???)
+
+- No history
