@@ -1,3 +1,7 @@
+## 1.1.7 (2015-10-01)
+
+- Adding yocto-utils in dependencies
+
 ## 1.1.6 (2015-10-01)
 
 - Adding content on readme.md
