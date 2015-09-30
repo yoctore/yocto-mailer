@@ -1,3 +1,8 @@
+## 1.1.6 (2015-10-01)
+
+- Adding content on readme.md
+- Adding logger instance on module declaration
+
 ## 1.1.5 (2015-09-27)
 
 - Minor changes on testing var on enableCompleteClean function

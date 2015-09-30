@@ -1,45 +1,45 @@
-var mailer = require('../dist/index.js');
 var logger = require('yocto-logger');
+var mailer = require('../dist/index.js')();
 var _      = require('lodash');
 
 var choice = 'mandrill';
 var config = {
   mandrill : 'sAOKe0G7VHcql6jpyHSMIg',
   nodemailer : {
-    host                : 'ssl0.ovh.net',
-    secure    : false,
+    host                : 'YOUR HOST',
+    secure              : false,
     port                : 587,
     auth                : {
-      user    : 'cedric.balard@yocto.re',
-      pass    : 'w9r0WPeCZ2fm'
+      user    : 'email@email.com',
+      pass    : 'YOUR_PASS'
     }
   }
 }
-var expeditor = { name : 'MY CUSTOM EXPEDITOR', email : 'mathieu@yocto.re' } ;
+var expeditor = { name : 'MY CUSTOM EXPEDITOR', email : 'my@email.com' } ;
 
 var dest = [ 
-  { to    : 'mathieu.robert@yocto.re',
-    name  : 'ROBERT Mathieu', 
+  { to    : 'to@email.com',
+    name  : 'YOUR NAME', 
     cc    : [],
     bcc   : []
   },
-  { to    : 'mathieu@yocto.re',
-    name  : 'ROBERT Mathieu', 
+  { to    : 'to@email.com',
+    name  : 'YOUR NAME', 
     cc    : [ {
-      email : 'contact@yocto.re',
-      name  : 'MATHIEU CC'
+      email : 'cc@email.com',
+      name  : 'CC NAME'
     },
      {
-      email : 'technique@yocto.re',
-      name  : 'MATHIEU CC 2'
+      email : 'cc2@email.com',
+      name  : 'CC NAME 2'
     },
     {
-      email : 'contact@yocto.re',
-      name  : 'MATHIEU CC'
+      email : 'cc@email.com',
+      name  : 'CC'
     }],
     bcc    : [ {
-      email : 'mathieu@yocto.re',
-      name  : 'MATHIEU BCC'
+      email : 'bcc@email.com',
+      name  : 'BCC NAME'
     }],
   }
 ];
@@ -54,7 +54,7 @@ if (mailer.use(choice)) {
   mailer.setConfig(config[choice]).then(function(success) {
     console.log('==> CONFIG OK')
     mailer.setExpeditor(expeditor.email, expeditor.name);
-    mailer.addReplyTo('technique@yocto.re');
+    mailer.addReplyTo('no-reply@email.com');
     console.log('ALL IS OK');
     
     mailer.enableCompleteClean();

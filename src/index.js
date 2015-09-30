@@ -1,8 +1,6 @@
 'use strict';
 
 var logger      = require('yocto-logger');
-var nodemailer  = require('./modules/nodemailer')(logger);
-var mandrill    = require('./modules/mandrill')(logger);
 var _           = require('lodash');
 var Promise     = require('promise');
 
@@ -21,7 +19,7 @@ var Promise     = require('promise');
  *
  * @class Mailer
  */
-function Mailer () {
+function Mailer (logger) {
   /**
   * The logger
   *
@@ -38,13 +36,13 @@ function Mailer () {
   this.mailers = [
     // nodemailer definition
     {
-      instance  : nodemailer,
+      instance  : require('./modules/nodemailer')(logger),
       name      : 'nodemailer',
 
     },
     // mandrill definition
     {
-      instance    : mandrill,
+      instance    : require('./modules/mandrill')(logger),
       name        : 'mandrill'
     }
   ];
@@ -302,6 +300,15 @@ Mailer.prototype.isInstanciate = function () {
 };
 
 /**
-* Export Mailer
-*/
-module.exports = new (Mailer)();
+ * Export Mailer
+ */
+module.exports = function (l) {
+  // is a valid logger ?
+  if (_.isUndefined(l) || _.isNull(l)) {
+    logger.warning('[ Mailer.constructor ] - Invalid logger given. Use internal logger');
+    // assign
+    l = logger;
+  }
+  // default statement
+  return new (Mailer)(l);
+};

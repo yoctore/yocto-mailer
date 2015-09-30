@@ -1,124 +1,94 @@
-# Yocto Mailer
+## Overview
 
-This module manage your own mailer, based on nodemailer module package
+This module is a part of yocto node modules for NodeJS.
 
-## Dependencies
+Please see [our NPM repository](https://www.npmjs.com/~yocto) for complete list of available tools (completed day after day).
 
-For more details on used dependencies read links below :
- - yocto-logger : git+ssh://lab.yocto.digital:yocto-node-modules/yocto-utils.git
- - loadAsh : https://lodash.com/
- - joi : https://github.com/hapijs/joi
- - nodemailer : https://github.com/andris9/Nodemailer
- - nodemailer-smtp-transport : https://github.com/andris9/nodemailer-smtp-transport
+This module provide in one tool a connector for Nodemailer (SMTP) and Mandrill API.
 
+## Motivation
 
-## Options format
+Our main motivation for this module is, create and provide a generic & very simple mailer connector for Mandrill et Nodemailer (SMTP Transport) in the same tool.
 
-Each email that you will sent is based on an object called 'mailOptions'.
-This object contains all parameters, and this is his structure :
+## Methods
 
-### Examples :
+- use(connectorName) : select a connector from given name
+- setExpeditor(email, name) : define en expeditor
+- addReplyTo (email) : add a reply to
+- mailer.addRecipient(email, name) : add a recipient 
+- mailer.addCC(email, name) : add a recipient on cc field
+- mailer.addBCC(email, name) : add a recipient on bcc field
 
-``` javascript
-var mailOptions = {
-    from    : '', // sender address
-    to      : '', // list of receivers
-    subject : '', // Subject line
-    html    : '', // html body
-    cc      : '', // cc receivers
-    bcc     : ''  // receivers
-};
-```
-
-
-*The property `from` will be save in memory, but the other will be deleted automatically after the email will be sent.*
-
-## Adding a new yocto mailer
-
-`cc` and `bcc` are two optionally properties. If an error occur when trying validating `cc` and `bcc`, the mail will be sent anyway.
-
-### mandatory steps for sending a email
-
- 1. require the yocto-mailer
- 2. set a valid SMTP transport
- 3. set an expeditor
- 4. set at least one recipient
-    * You can also add CC or BCC receivers (optional)
- 5. call send() with your subject and contents for sending your email
-
-
-### Examples :
-
-
-#### Adding a new yocto mailer
+## How To use
 
 ```javascript
+var mailer = require('yocto-mailer')();
+// Set expeditor config
+var expeditor = {
+  email : 'email@expeditor.com',
+  name  : 'Expeditor NAME'
+};  
 
-var dest = 'cedric@yocto.re';
+// Mandrill Config
+var connector = 'mandrill';
+var config    = 'YOUR API KEY';
 
-var expeditor = 'cedric@yocto.re';
+// NodeMailer SMTP Config
+var connector = 'nodemailer';
+var config    = {}; // your config object see nodemailer SMTP config
 
-var user = {
-  name  : 'Cedric Balard',
-  email : dest
-};
+// Process
+// select your connector
+if (mailer.use(connector)) {
+  
+  // set your config
+  mailer.setConfig(config).then(function(success) {
+    console.log('==> CONFIG OK');
+    
+    // set your expeditor
+    mailer.setExpeditor(expeditor.email, expeditor.name);
+    
+    // add reply to if needed
+    mailer.addReplyTo('no-reply@email.com');
+    
+    // add a recipient
+    mailer.addRecipient('to@email.com', 'TO NAME');
+    // add CC
+    mailer.addCC('cc@email.com', 'CC NAME');
+    // add BCC
+    mailer.addBCC('bcc@email.com', 'BCC NAME');
 
-var user1 = {
-  name  : 'Tata',
-  email : dest
-};
+    // send
+    mailer.send('MY-TEST', '<b>MY-MESSAGE</b>').then(function(success) {
+      console.log(success);
+    }, function(failed) {
+      console.log(failed);
+    });
+  }, function(failed) {
+    console.log('error => ' + failed);
+  });
+}
+```
 
-var user2 = {
-  name  : 'Toto',
-  email : dest
-};
+## Logging in tool
 
-var userTab = [
-  {
-    name  : 'myName',
-    email : dest
-  },
-  {
-    name  : 'popo',
-    email : dest
-  }
-];
+By Default this module include [yocto-logger](https://www.npmjs.com/package/yocto-logger) for logging.
+It's possible to inject in your mailer instance your current logger instance if is another `yocto-logger` instance.
 
+For example : 
 
-var success = function(value) {
+```javascript 
+var logger = require('yocto-logger');
+// EXTRA CODE HERE FOR YOUR APP
+// AGAIN & AGAIN
+var mailer = require('yocto-mailer')(logger);
+```
 
-  logger.info( 'youhou mail sent');
-  console.log(value);
-};
+## Tricks
 
-var failed = function(error) {
+In some case we need to clean complete send object and config before the next send request, that's why you can use `enableCompleteClean` method to enable this function.
 
-  logger.error( 'oin oin mail not sent');
-  console.log(error);
-};
+## Next Step
 
-var smtpConf = {
-  host                : "ssl0.ovh.net", // hostname
-  secureConnection    : true, // use SSL
-  port                : "587", // port for secure SMTP
-  auth                : {
-    user    : "cedric.balard@yocto.re",
-    pass    : "mdp"
-  }
-};
-
-
-mailer.use('mandrill');
-mailer.setConfig('K7GkavS-hDh5ZX4D-kiWxg');
-
-// mailer.use('nodemailer');
-// mailer.setConfig(smtpConf);
-
-mailer.setExpeditor(dest);
-mailer.addRecipient(user1);
-mailer.addCC(userTab);
-mailer.addBCC(user2);
-
-
-mailer.send(' #321 nodemailer ', '<b> test tab </b>').then(success, failed);
-``` 
+- Add Attachement process
+- Changing promise usage from PromiseJS to Q (Migration was processed in a version 2.0.0)

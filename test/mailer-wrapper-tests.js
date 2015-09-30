@@ -1,4 +1,4 @@
-var mailer = require('../src/index.js');
+var mailer = require('../dist/index.js')();
 var assert = require('assert');
 var _      = require('lodash');
 var utils  = require('yocto-utils');

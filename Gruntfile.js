@@ -34,40 +34,18 @@ module.exports = function (grunt) {
       },
       all     : [ 'test/*.js' ]
     },
-
-    /**
-    * Todo process
-    */
-    todo      : {
-      options : {
-        marks       : [
-          { name : 'TODO', pattern : /TODO/, color : 'yellow' },
-          { name : 'FIXME', pattern : /FIXME/, color : 'red' },
-          { name : 'NOTE', pattern : /NOTE/, color : 'blue' }
-        ],
-        file        : 'REPORT.md',
-        githubBoxes : true,
-        colophon    : true,
-        usePackage  : true
-      },
-      src     : [
-        'src/*'
-      ]
-    },
     yoctohint : {
-      all : [ 'Gruntfile.js', 'src/index.js', 'src/modules/*/*.js' ]
+      all : [ 'Gruntfile.js', 'src/**/*.js' ]
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha-cli');
   grunt.loadNpmTasks('yocto-hint');
-  grunt.loadNpmTasks('grunt-todo');
 
   // register tasks
   grunt.registerTask('hint', 'yoctohint');
   grunt.registerTask('tests', 'mochacli');
   grunt.registerTask('build', [ 'hint', 'uglify' ]);
-  grunt.registerTask('todo', 'todo');
-  grunt.registerTask('default', [ 'tests', 'build', 'todo' ]);
+  grunt.registerTask('default', [ 'build', 'tests' ]);
 };
