@@ -41,7 +41,9 @@
     "mandrill",
     "connector",
     "wrapper",
-    "email"
+    "email",
+    "utility",
+    "tool"
   ],
   "files": [
     "dist",
