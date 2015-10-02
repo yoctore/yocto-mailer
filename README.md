@@ -92,3 +92,7 @@ In some case we need to clean complete send object and config before the next se
 
 - Add Attachement process
 - Changing promise usage from PromiseJS to Q (Migration was processed in a version 2.0.0)
+
+## Changelog
+
+All history is [here](https://gitlab.com/yocto-node-modules/yocto-mailer/blob/master/CHANGELOG.md)

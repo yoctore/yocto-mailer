@@ -57,7 +57,7 @@ if (mailer.use(choice)) {
     mailer.addReplyTo('no-reply@email.com');
     console.log('ALL IS OK');
     
-    mailer.enableCompleteClean();
+    //mailer.enableCompleteClean();
     _.each(dests, function(d) {
 
       mailer.addRecipient(d.to, d.name);

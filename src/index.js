@@ -248,7 +248,7 @@ Mailer.prototype.send = function (subject, message) {
   // Return promise statement
   return new Promise(function (fulfill, reject) {
     // check if mail is ready to use
-    if (false || !context.isInstanciate()) {
+    if (!context.isInstanciate()) {
       var emessage =  [ '[ Mailer.send ] - mailer is not instanciate.',
                        'please configure your mailer before use send method.'
                      ].join(' ');
