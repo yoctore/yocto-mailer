@@ -1,3 +1,7 @@
+## 1.1.9 (2015-10-12)
+
+- Update dependencies version
+
 ## 1.1.8 (2015-10-01)
 
 - Remove a condition for test in send function
