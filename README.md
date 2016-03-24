@@ -81,6 +81,15 @@ if (mailer.use(connector)) {
 It's possible to use mandrill subaccount. To use it just add on *third* args of your send function,
 the id of subaccount.
 
+```javascript
+  // send
+  mailer.send('MY-TEST', '<b>MY-MESSAGE</b>', 'test').then(function(success) {
+    console.log(success);
+  }, function(failed) {
+    console.log(failed);
+  });
+````
+
 ## Logging in tool
 
 By Default this module include [yocto-logger](https://www.npmjs.com/package/yocto-logger) for logging.
