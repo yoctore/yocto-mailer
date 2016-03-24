@@ -122,9 +122,6 @@ NodeMailer.prototype.processCompleteClean = function (status) {
  * <code>mailer.mandrill.setConfig({});</code>
  */
 NodeMailer.prototype.setConfig = function (config) {
-  // save current context
-  var context = this;
-
   // default statement
   return new Promise(function (fullfil, reject) {
     // validation schema
@@ -152,25 +149,25 @@ NodeMailer.prototype.setConfig = function (config) {
 
     // check if have error on previous validation
     if (!_.isEmpty(result) && !_.isEmpty(result.error)) {
-      context.logger.error('[ NodeMailer.setConfig ] - Setting smtp getting errors :');
+      this.logger.error('[ NodeMailer.setConfig ] - Setting smtp getting errors :');
 
       // Log each error
       _.each(result.error.details, function (d) {
-        context.logger.error([ '[ NodeMailer.setConfig ] -', d.message ].join(' '));
-      });
+        this.logger.error([ '[ NodeMailer.setConfig ] -', d.message ].join(' '));
+      }.bind(this));
 
       reject('[ NodeMailer.setConfig ] - Error Occurs. Please check given configuration');
     } else {
       // assign validation value to config for default value
       config = result.value;
       // utility message
-      context.logger.info('[ NodeMailer.setConfig ] - STMP Config seems to be valid.');
-      context.logger.debug('[ NodeMailer.setConfig ] - Creating transport');
+      this.logger.info('[ NodeMailer.setConfig ] - STMP Config seems to be valid.');
+      this.logger.debug('[ NodeMailer.setConfig ] - Creating transport');
       // create transport
-      context.transport = nodemailer.createTransport(smtpTransport(config));
+      this.transport = nodemailer.createTransport(smtpTransport(config));
 
       // Start test of connection & login
-      context.logger.info('[ NodeMailer.setConfig ] - Testing SMTP Connection');
+      this.logger.info('[ NodeMailer.setConfig ] - Testing SMTP Connection');
 
       // Build custom var
       var tConnect   = _.omit(_.clone(config), 'auth');
@@ -182,16 +179,16 @@ NodeMailer.prototype.setConfig = function (config) {
       connection.on('error', function (err) {
         message = [ '[ NodeMailer.setConfig ] - Cannot connect to provided host.', err ].join(' ');
         // log message
-        context.logger.error(message);
+        this.logger.error(message);
         // broadcast message
         reject(message);
         // quit connection
         connection.quit();
-      });
+      }.bind(this));
 
       // Connect Event ?
       connection.on('connect', function () {
-        context.logger.info([ '[ NodeMailer.setConfig ] - Connect on SMTP success.',
+        this.logger.info([ '[ NodeMailer.setConfig ] - Connect on SMTP success.',
                               'Try to use given credidentials.' ].join(' '));
 
         // can login ?
@@ -201,7 +198,7 @@ NodeMailer.prototype.setConfig = function (config) {
             message =  [ '[ NodeMailer.setConfig ] - Invalid credidentials.',
                          'SMTP error is :', err.response ].join(' ');
             // log
-            context.logger.error(message);
+            this.logger.error(message);
             // broadcast message
             reject(message);
           } else {
@@ -209,13 +206,13 @@ NodeMailer.prototype.setConfig = function (config) {
           }
           // quit connection
           connection.quit();
-        });
-      });
+        }.bind(this));
+      }.bind(this));
 
       // run connection
       connection.connect();
     }
-  });
+  }.bind(this));
 };
 
 /**
@@ -381,38 +378,35 @@ NodeMailer.prototype.send = function (subject, message) {
   // subject value
   this.options.subject  = _.isString(subject) ? subject : '';
 
-  // save current context for promise
-  var context = this;
-
   // default statement
   return new Promise(function (fulfill, reject) {
     // All is ready ?
-    if (!context.isReady(true)) {
+    if (!this.isReady(true)) {
       // dispatch message
-      context.logger.error('[ NodeMailer.send ] - can\'t send mail, invalid configuration.');
+      this.logger.error('[ NodeMailer.send ] - can\'t send mail, invalid configuration.');
 
       // reject
       reject('[ NodeMailer.send ] - can\'t send mail, invalid configuration.');
     } else {
       // clone options for usage
-      var coptions = _.clone(context.options);
+      var coptions = _.clone(this.options);
 
       // Clean option for the next request
-      context.logger.debug('[ NodeMailer.send ] - Cleanning object before send request');
-      context.clean();
+      this.logger.debug('[ NodeMailer.send ] - Cleanning object before send request');
+      this.clean();
 
       // is clean and ready to send ?
-      if (!context.clean(false, true)) {
-        context.logger.error([ '[ NodeMailer.send ] - can\'t send email',
+      if (!this.clean(false, true)) {
+        this.logger.error([ '[ NodeMailer.send ] - can\'t send email',
                                'option object is not properly clean' ].join(' '));
         // failed callback
         reject('[ NodeMailer.send ] - can\'t send email option object is not properly clean');
       }
 
       // log message
-      context.logger.info('[ NodeMailer.send ] - Sending a new email ...');
+      this.logger.info('[ NodeMailer.send ] - Sending a new email ...');
       // Send email
-      context.transport.sendMail(coptions, function (err, info) {
+      this.transport.sendMail(coptions, function (err, info) {
         if (err) {
           // error callback
           reject(err);
@@ -422,7 +416,7 @@ NodeMailer.prototype.send = function (subject, message) {
         }
       });
     }
-  });
+  }.bind(this));
 };
 
 /**

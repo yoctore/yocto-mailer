@@ -1,5 +1,5 @@
 var logger = require('yocto-logger');
-var mailer = require('../dist/index.js')();
+var mailer = require('../src/index.js')();
 var _      = require('lodash');
 
 var choice = 'mandrill';
@@ -15,16 +15,18 @@ var config = {
     }
   }
 }
-var expeditor = { name : 'MY CUSTOM EXPEDITOR', email : 'my@email.com' } ;
 
-var dest = [ 
+var expeditor = { name : 'MY CUSTOM EXPEDITOR', email : 'technique@yocto.re' } ;
+
+var dest = [
   { to    : 'to@email.com',
     name  : 'YOUR NAME', 
     cc    : [],
-    bcc   : []
+    bcc   : [],
+    sub : 'test'
   },
   { to    : 'to@email.com',
-    name  : 'YOUR NAME', 
+    name  : 'YOUR NAME',
     cc    : [ {
       email : 'cc@email.com',
       name  : 'CC NAME'
@@ -68,7 +70,7 @@ if (mailer.use(choice)) {
         mailer.addCC(bcc.email, bcc.name);
       });
 
-      mailer.send('MY-TEST', '<b>MY-MESSAGE</b>').then(function(success) {
+      mailer.send('MY-TEST', '<b>MY-MESSAGE</b>', d.sub).then(function(success) {
         console.log(success);
       }, function(failed) {
         console.log(failed);

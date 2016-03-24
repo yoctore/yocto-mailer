@@ -117,9 +117,6 @@ Mandrill.prototype.setConfig = function (apiKey) {
   // define client with current api key
   this.client = new mandrillapi.Mandrill(apiKey);
 
-  // saved context
-  var context = this;
-
   // message
   this.logger.debug('[ Mandrill.setConfig ] - Validating api key. Please wait ....');
 
@@ -127,22 +124,25 @@ Mandrill.prototype.setConfig = function (apiKey) {
   return new Promise(function (fulfill, reject) {
     // check api key state
     if (!_.isString(apiKey)) {
+      // build message
       var message = [ '[ Mandrill.setConfig ] -',
                       'Invalid apiKey given. The api key should be a string and',
                       (typeof apiKey), 'given'
                     ].join(' ');
-      context.logger.error(message);
+      this.logger.error(message);
       // invalid statement
       reject(message);
 
     } else {
-      context.client.users.ping2({}, function (response) {
+      // check if api is enable
+      this.client.users.ping2({}, function (response) {
         // key is correct process
-        context.logger.info('[ Mandrill.setConfig ] - API Key is valid. Use it !');
+        this.logger.info('[ Mandrill.setConfig ] - API Key is valid. Use it !');
         // call callback
         fulfill(response);
-      } , function (error) {
-        context.logger.error([ '[ Mandrill.setConfig ] -',
+      }.bind(this) , function (error) {
+        // log error
+        this.logger.error([ '[ Mandrill.setConfig ] -',
                                'Mandrill API key validation failed',
                                'Error is :',
                                error.message,
@@ -151,61 +151,65 @@ Mandrill.prototype.setConfig = function (apiKey) {
                                'and code name :',
                                error.name
                              ].join(' '));
-
         // call callback
         reject(error);
-      });
+      }.bind(this));
     }
-  });
+  }.bind(this));
 };
 
 /**
  * Send the mail with all parameters (from_email, to, cc , bcc)
  * After the mail was send this paramater will be remove : to, cc, bcc, subject, message
  *
- * @method send
  * @param {String} subject Subject of the email
  * @param {String} message Html message to send
+ * @param {String} subaccount subaccount identifier if it set
  */
-Mandrill.prototype.send = function (subject, message) {
+Mandrill.prototype.send = function (subject, message, subaccount) {
   // send mail with defined transport object
   this.logger.debug('[ Mandrill.send ] - Try sending a new email ...');
 
   // html value
-  this.options.html     = _.isString(message) && !_.isEmpty(message) ? message : '';
+  this.options.html = _.isString(message) && !_.isEmpty(message) ? message : '';
 
   // check if html is empty before process text element
   if (!_.isEmpty(this.options.html)) {
     // text value
-    this.options.text     = striptags(message);
+    this.options.text = striptags(message);
   }
 
   // subject value
   this.options.subject  = _.isString(subject) ? subject : '';
 
-  // save current context for promise
-  var context = this;
+  // subaccount is defined ?
+  if (_.isString(subaccount)) {
+    // set subaccount
+    this.options.subaccount = subaccount;
+  }
 
   // default statement
   return new Promise(function (fulfill, reject) {
     // All is ready ?
-    if (!context.isReady(true)) {
+    if (!this.isReady(true)) {
       // dispatch message
-      context.logger.error('[ Mandrill.send ] - can\'t send mail, invalid configuration.');
+      this.logger.error('[ Mandrill.send ] - can\'t send mail, invalid configuration.');
 
       // reject
       reject('[ Mandrill.send ] - can\'t send mail, invalid configuration.');
     } else {
       // clone options for usage
-      var coptions = _.clone(context.options);
+      var coptions = _.clone(this.options);
 
+      // log message
+      this.logger.debug('[ Mandrill.send ] - Cleanning object before send request');
       // Clean option for the next request
-      context.logger.debug('[ Mandrill.send ] - Cleanning object before send request');
-      context.clean();
+      this.clean();
 
       // is clean and ready to send ?
-      if (!context.clean(false, true)) {
-        context.logger.error([ '[ Mandrill.send ] - can\'t send email',
+      if (!this.clean(false, true)) {
+        // log
+        this.logger.error([ '[ Mandrill.send ] - can\'t send email',
                                'option object is not properly clean' ].join(' '));
         // failed callback
         reject('[ Mandrill.send ] - can\'t send email option object is not properly clean');
@@ -216,9 +220,12 @@ Mandrill.prototype.send = function (subject, message) {
       coptions = utils.obj.renameKey(coptions, 'fromEmail', 'from_email');
 
       // log message
-      context.logger.info('[ Mandrill.send ] - Sending a new email ...');
+      this.logger.info([ '[ Mandrill.send ] - Sending a new email',
+        _.has(coptions, 'subaccount') ?
+          [ 'for subsaccount [', coptions.subaccount, ']' ].join(' ') : '',
+        '...' ].join(' '));
       // Send message to client
-      context.client.messages.send({ 'message' : coptions, 'async' : false }, function (result) {
+      this.client.messages.send({ 'message' : coptions, 'async' : false }, function (result) {
         // Success Callback
         fulfill(result);
       } , function (error) {
@@ -226,7 +233,7 @@ Mandrill.prototype.send = function (subject, message) {
         reject(error);
       });
     }
-  });
+  }.bind(this));
 };
 
 /**
@@ -253,6 +260,7 @@ Mandrill.prototype.setExpeditor = function (email, name) {
   if (!_.isNull(status.error)) {
     // log message
     _.each(status.error.details, function (d) {
+      // log message
       this.logger.error([ '[ Mandrill.setExpeditor ] - Cannot set expeditor.',
                           'Error is :',
                           d.message
@@ -292,6 +300,7 @@ Mandrill.prototype.addReplyTo = function (email) {
   if (!_.isNull(status.error)) {
     // log message
     _.each(status.error.details, function (d) {
+      // log error
       this.logger.error([ '[ Mandrill.addReplyTo ] - Cannot add a reply-to.',
                           'Error is :',
                           d.message
@@ -331,6 +340,12 @@ Mandrill.prototype.clean = function (all, onlyStatus) {
     if (_.isBoolean(all) && all === true) {
       // re init with default value
       _.extend(this.options, this.defaultOption);
+    }
+
+    // has subaccount property ?
+    if (_.has(this.options, 'subaccount')) {
+      // we need to delete subaccount property
+      delete this.options.subaccount;
     }
 
     // process to a complete clean
@@ -402,6 +417,7 @@ Mandrill.prototype.addRecipient = function (email, name, type) {
   if (!_.isNull(status.error)) {
     // log message
     _.each(status.error.details, function (d) {
+      // log error
       this.logger.error([ '[ Mandrill.addRecipient ] - Cannot add recipient.',
                              'Error is :',
                              d.message
@@ -466,6 +482,7 @@ Mandrill.prototype.isReady = function (showError) {
     if (!_.isNull(status.error)) {
       // log message
       _.each(status.error.details, function (d) {
+        // log error
         this.logger.error([ '[ Mandrill.isReady ] - Invalid items error is :',
                             d.message
                           ].join(' '));
@@ -481,5 +498,6 @@ Mandrill.prototype.isReady = function (showError) {
  * Export the wrapper to use it on node
  */
 module.exports = function (logger) {
+  // default instance
   return new (Mandrill)(logger);
 };

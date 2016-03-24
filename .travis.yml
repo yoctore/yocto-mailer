@@ -1,0 +1,23 @@
+language: node_js
+node_js:
+- 4.3.1
+env:
+- CXX=g++-4.8
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+  code_climate:
+    repo_token: 85ad1733fb94ea0c5735f0a677376e3444c63d3444ff6099a4e86e35a5c81d9c
+deploy:
+  provider: npm
+  email: technique@yocto.re
+  api_key:
+    secure: NwuvfsI3nihDYOm4N1mmWPRmFqxIly7dC7Zrdd87tdgi4C+2O0HY9JtSGrg1gcGPQaWQmZXPHNX8CIzrMEeLhg3Lo/Dgu7QiHFurbpEA4iqxQ8KFz0K8GFAoNMMwwhuy1jCxOkpCvQMprfPY1+yuj1ZxEaikrf2jUjmHWnHtRovjCcg+5WLj7sG2v9sjATQErwh2Wo0hcruzSA7rEwuEfOviwxE9zonSWGJ6mndgoXpg3uH+wUWPnKmfP+iHcrEtiKMSMcex5Ehj/NtsyQlhZsAR3hLWXBa0q3CRk9mATaezyrKHlQYBhffpiqqG0ADyQiWcUXntvfI6t8BqXcAhljw2u45yqgOf88zkeTHLG8jUzp9VL4xMfP4ko+Lz0ajmhVvyUmyAq14Dncqur9tqrXTvF5yg0AcPlCr8CFWouPLWA8q6yMojbUs618MY/cFis/lx9pypFjtpj0j+m93NHHtCuw6VnaBXilM6DtIaW1RdIZeXPMzMjPXL/2KZNvYt4O8VDgyo6d3Vtdyrd4Kwmga/GOEZ14mN1I9ko1NSi1gFcRnguFriKQqBqWH0U8bkU4yB/3lwzKZBp/HyWRu0bMQ/DoPYVILl1fJ+/1NoirKxHX60bXbbyT90PGh3wLU8DWhGvqmSJAV3yIwT52a1PFVzX03QNBlXNgR5WEOxSJQ=
+  on:
+    tags: true
+    repo: yoctore/yocto-mailer
+before_install: npm install -g grunt-cli
+install: npm install

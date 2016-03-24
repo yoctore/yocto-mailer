@@ -1,4 +1,8 @@
-![alt text](https://david-dm.org/yoctore/yocto-daemon.svg "Dependencies Status")
+![alt text](https://david-dm.org/yoctore/yocto-mailer.svg "Dependencies Status")
+[![Code Climate](https://codeclimate.com/github/yoctore/yocto-mailer/badges/gpa.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
+[![Test Coverage](https://codeclimate.com/github/yoctore/yocto-mailer/badges/coverage.svg)](https://codeclimate.com/github/yoctore/yocto-mailer/coverage)
+[![Issue Count](https://codeclimate.com/github/yoctore/yocto-mailer/badges/issue_count.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
+[![Build Status](https://travis-ci.org/yoctore/yocto-mailer.svg?branch=master)](https://travis-ci.org/yoctore/yocto-mailer)
 
 ## Overview
 
@@ -71,6 +75,11 @@ if (mailer.use(connector)) {
   });
 }
 ```
+
+## Use mandrill subacccount
+
+It's possible to use mandrill subaccount. To use it just add on *third* args of your send function,
+the id of subaccount.
 
 ## Logging in tool
 

@@ -1,3 +1,8 @@
+## 1.2.0 (2016-03-24)
+
+- Remove unnecessary context value. use javascript bind
+- Add subaccount key on send method to provide subaccount usage for mandrill
+
 ## 1.1.9 (2015-10-12)
 
 - Update dependencies version

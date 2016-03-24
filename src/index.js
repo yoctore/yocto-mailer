@@ -206,28 +206,25 @@ Mailer.prototype.setExpeditor = function (email, name) {
  * @return {Boolean|Object} return a promise object for async validaiton. For Mandril we validate the apikey directly on config usage
  */
 Mailer.prototype.setConfig = function (config) {
-  // save current context
-  var context = this;
-
   // Return promise statement
   return new Promise(function (fulfill, reject) {
     // check if mailer is defined correctly
-    if (!context.isInstanciate()) {
+    if (!this.isInstanciate()) {
       var message = [ '[ Mailer.setConfig ] - mailer is not define,',
                       'Please define your mailer whith use method.' ].join(' ');
       // Dispach Message
-      context.logger.error(message);
+      this.logger.error(message);
       // reject
       reject(message);
     } else {
       // default statement
-      context.mailer.instance.setConfig(config).then(function (success) {
+      this.mailer.instance.setConfig(config).then(function (success) {
         fulfill(success);
       }, function (error) {
         reject(error);
       });
     }
-  });
+  }.bind(this));
 };
 
 /**
@@ -236,36 +233,41 @@ Mailer.prototype.setConfig = function (config) {
  * @method send
  * @param {String} subject current subject of message
  * @param {String} message content of message in Html, text property was auto processed
+ * @param {String} subaccount subaccount to use on send
  *
  * @return {Object} current promise to use
- * @example
- *  mailer.send('MY-SUBJECT', '<b>MY-HTML-MESSAGE</b>').then(function(success) {}, function(error) {});
  */
-Mailer.prototype.send = function (subject, message) {
-  // Save current context
-  var context = this;
-
+Mailer.prototype.send = function (subject, message, subaccount) {
   // Return promise statement
   return new Promise(function (fulfill, reject) {
     // check if mail is ready to use
-    if (!context.isInstanciate()) {
+    if (!this.isInstanciate()) {
       var emessage =  [ '[ Mailer.send ] - mailer is not instanciate.',
                        'please configure your mailer before use send method.'
                      ].join(' ');
       // dispatch message
-      context.logger.error(emessage);
+      this.logger.error(emessage);
 
       // reject
       reject(emessage);
     }
 
+    // build default arfs
+    var args = [subject, message];
+
+    // subaccount is defined ?
+    if (_.isString(subaccount)) {
+      // push it
+      args.push(subaccount);
+    }
+
     // process send request
-    context.mailer.instance.send(subject, message).then(function (response) {
+    this.mailer.instance.send.apply(this.mailer.instance, args).then(function (response) {
       fulfill(response);
     } , function (error) {
       reject(error);
     });
-  });
+  }.bind(this));
 };
 
 /**
