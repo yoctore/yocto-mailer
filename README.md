@@ -1,8 +1,11 @@
+[![NPM](https://nodei.co/npm/yocto-mailer.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/yocto-mailer/)
+
 ![alt text](https://david-dm.org/yoctore/yocto-mailer.svg "Dependencies Status")
 [![Code Climate](https://codeclimate.com/github/yoctore/yocto-mailer/badges/gpa.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
 [![Test Coverage](https://codeclimate.com/github/yoctore/yocto-mailer/badges/coverage.svg)](https://codeclimate.com/github/yoctore/yocto-mailer/coverage)
 [![Issue Count](https://codeclimate.com/github/yoctore/yocto-mailer/badges/issue_count.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
 [![Build Status](https://travis-ci.org/yoctore/yocto-mailer.svg?branch=master)](https://travis-ci.org/yoctore/yocto-mailer)
+
 
 ## Overview
 
@@ -92,13 +95,13 @@ the id of subaccount.
 
 ## Logging in tool
 
-By Default this module include [yocto-logger](https://www.npmjs.com/package/yocto-logger) for logging.
-It's possible to inject in your mailer instance your current logger instance if is another `yocto-logger` instance.
+By Default this module include [yocto-mailer](https://www.npmjs.com/package/yocto-mailer) for logging.
+It's possible to inject in your mailer instance your current logger instance if is another `yocto-mailer` instance.
 
 For example : 
 
 ```javascript 
-var logger = require('yocto-logger');
+var logger = require('yocto-mailer');
 // EXTRA CODE HERE FOR YOUR APP
 // AGAIN & AGAIN
 var mailer = require('yocto-mailer')(logger);
