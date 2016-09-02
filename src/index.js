@@ -249,7 +249,7 @@ Mailer.prototype.send = function (subject, message, subaccount) {
       this.logger.error(emessage);
 
       // reject
-      reject(emessage);
+      return reject(emessage);
     }
 
     // build default arfs

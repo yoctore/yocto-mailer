@@ -1,3 +1,6 @@
+## 1.2.3 (2016-09-02)
+-  Add missiging return statements for promise
+
 ## 1.2.0 (2016-03-24)
 
 - Remove unnecessary context value. use javascript bind
@@ -57,7 +60,7 @@ Major changes on core modules :
 - New implementation of mandrill connector
 - Disabled nodemailer usage
 
-Minor changes : 
+Minor changes :
 
 - Add CHANGELOG.md
 - Add Apache 2.0 license file

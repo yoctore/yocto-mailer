@@ -196,7 +196,7 @@ Mandrill.prototype.send = function (subject, message, subaccount) {
       this.logger.error('[ Mandrill.send ] - can\'t send mail, invalid configuration.');
 
       // reject
-      reject('[ Mandrill.send ] - can\'t send mail, invalid configuration.');
+      return reject('[ Mandrill.send ] - can\'t send mail, invalid configuration.');
     } else {
       // clone options for usage
       var coptions = _.clone(this.options);
@@ -212,7 +212,7 @@ Mandrill.prototype.send = function (subject, message, subaccount) {
         this.logger.error([ '[ Mandrill.send ] - can\'t send email',
                                'option object is not properly clean' ].join(' '));
         // failed callback
-        reject('[ Mandrill.send ] - can\'t send email option object is not properly clean');
+        return reject('[ Mandrill.send ] - can\'t send email option object is not properly clean');
       }
 
       // Rename key for mandrill api
