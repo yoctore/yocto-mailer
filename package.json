@@ -1,6 +1,6 @@
 {
   "name": "yocto-mailer",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Generic & Simple mailer connector for Mandrill et Nodemailer (SMTP Transport)",
   "scripts": {
     "test": "grunt test"
@@ -63,7 +63,7 @@
     "nodemailer-smtp-transport": "^2.4.1",
     "promise": "^7.1.1",
     "smtp-connection": "^2.3.1",
-    "striptags": "^2.1.1",
+    "striptags": "2.1.1",
     "yocto-logger": "^1.1.5",
     "yocto-utils": "^1.2.8"
   },
