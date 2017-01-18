@@ -1,3 +1,7 @@
+## 1.2.4 (2017-01-18)
+-  Fix module version in package.json because new version of module was not compatible with node v4.x
+  - "striptags": "2.1.1"
+
 ## 1.2.3 (2016-09-02)
 -  Add missiging return statements for promise
 
