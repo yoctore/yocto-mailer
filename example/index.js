@@ -1,5 +1,5 @@
 var logger = require('yocto-logger');
-var mailer = require('../src/index.js')();
+var mailer = require('../src/index-old.js')();
 var _      = require('lodash');
 
 var choice = 'mandrill';

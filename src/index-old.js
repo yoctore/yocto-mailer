@@ -5,14 +5,15 @@ var _           = require('lodash');
 var Promise     = require('promise');
 
 /**
- * 
+ * yocto-mailer core interface
+ *
  * This module implements wrappers for mailer api's.
  *
  * Implemented api :
  * - mandrill
- * - nodeMailer
+ * - nodeMailer (TODO)
  *
- * @date : 19/07/2015
+ * @date : 17/09/2015
  * @author : Mathieu ROBERT <mathieu@yocto.re>
  * @copyright : Yocto SAS, All right reserved
  *

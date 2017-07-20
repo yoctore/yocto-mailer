@@ -403,6 +403,9 @@ NodeMailer.prototype.send = function (subject, message) {
         reject('[ NodeMailer.send ] - can\'t send email option object is not properly clean');
       }
 
+
+      console.log(coptions);
+
       // log message
       this.logger.info('[ NodeMailer.send ] - Sending a new email ...');
       // Send email
