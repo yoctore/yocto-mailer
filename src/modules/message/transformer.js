@@ -2,22 +2,22 @@
 
 var logger      = require('yocto-logger');
 var _           = require('lodash');
-var joi         = require('joi');
 var striptags   = require('striptags');
 var path        = require('path');
 var fs          = require('fs');
 var mime        = require('mime');
+var uuid        = require('uuid');
 
 /**
  * Default schema validator class
  *
  * @param {Object} logger default logger to use on current instance
  */
-function Transformer(logger) {
+function Transformer (logger) {
   /**
    * Default logger
    */
-   this.logger = logger;
+  this.logger = logger;
 }
 
 /**
@@ -34,7 +34,7 @@ Transformer.prototype.toAddressObject = function (value) {
 };
 
 /**
- * A transformer to change given value to an address array 
+ * A transformer to change given value to an address array
  *
  * @return {Array} array need with given value
  */
@@ -74,8 +74,19 @@ Transformer.prototype.attachementsToArray = function (value) {
     filename      : path.basename(value),
     content       : fs.readFileSync(value).toString('base64'),
     contentType   : mime.lookup(value),
-    encoding      : 'base64'
+    encoding      : 'base64',
+    cid           : uuid.v4()
   });
+};
+
+/**
+ * A transformer to change given value to correct format object for headers properties
+ *
+ * @return {Object} object needed with given value
+ */
+Transformer.prototype.toHeaderObject = function (value) {
+  // default statement
+  return _.set({}, value.key, value.value);
 };
 
 /**

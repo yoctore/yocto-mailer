@@ -1,58 +1,69 @@
 'use strict';
 
-var logger = require('yocto-logger');
-var _      = require('lodash');
-var joi    = require('joi');
+var logger  = require('yocto-logger');
+var _       = require('lodash');
+var joi     = require('joi');
+var moment  = require('moment');
 
 /**
  * Default schema validator class
  *
  * @param {Object} logger default logger to use on current instance
  */
-function SchemaValidator(logger) {
+function SchemaValidator (logger) {
   /**
    * Default logger
    */
-   this.logger = logger;
+  this.logger = logger;
 
   /**
    * Default schema list
    */
   this.schemas = {
     // default from schema for from
-    'from'    : joi.alternatives().try(
+    'from'          : joi.alternatives().try(
       joi.object().required().keys({
-        address : joi.string().required().empty(),
+        address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().required().empty()
     ),
-    'to'      : joi.alternatives().try(
+    'to'            : joi.alternatives().try(
       joi.object().required().keys({
-        address : joi.string().required().empty(),
+        address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().required().empty()
     ),
-    'cc'      : joi.alternatives().try(
+    'cc'            : joi.alternatives().try(
       joi.object().required().keys({
-        address : joi.string().required().empty(),
+        address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().required().empty()
     ),
-    'bcc'     : joi.alternatives().try(
+    'bcc'           : joi.alternatives().try(
       joi.object().required().keys({
-        address : joi.string().required().empty(),
+        address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().required().empty()
     ),
-    'subject' : joi.string().required().empty(),
-    'html'    : joi.string().required().empty(),
-    'text'    : joi.string().required().empty(),
-    'attachements' : joi.string().required().empty(),
-    'alternatives' : joi.string().required().empty()
+    'subject'       : joi.string().required().empty(),
+    'html'          : joi.string().required().empty(),
+    'text'          : joi.string().required().empty(),
+    'attachements'  : joi.string().required().empty(),
+    'alternatives'  : joi.string().required().empty(),
+    'replyTo'       : joi.string().email().required().empty(),
+    'inReplyTo'     : joi.string().required().empty(),
+    'priority'      : joi.string().required().valid([ 'low', 'normal', 'high' ]),
+    'headers'       : joi.object().required().keys({
+      key     : joi.string().required().empty(),
+      value   : joi.string().required().empty()
+    }),
+    'date'          : joi.date().optional().min('now').max('now').default(moment().toString()),
+    // Specific Mandrill schema
+    'subaccount'    : joi.string().required().empty()
   };
 }
 
@@ -72,7 +83,7 @@ SchemaValidator.prototype.get = function (name) {
  *
  * @param {String} name key name to use for get method
  * @param {Mixed} value value to use on validator
- * @return true is case of success, false otherwise
+ * @return {Object|Boolean} true is case of success, false otherwise
  */
 SchemaValidator.prototype.validate = function (name, value) {
   // try to get schema
@@ -85,7 +96,7 @@ SchemaValidator.prototype.validate = function (name, value) {
     // has no error ?
     if (_.isNull(result.error)) {
       // return valid statement
-      return true;
+      return result.value;
     }
 
     // if we are here we must log the error because process is invalid

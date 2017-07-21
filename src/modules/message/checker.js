@@ -2,7 +2,6 @@
 
 var logger      = require('yocto-logger');
 var _           = require('lodash');
-var path        = require('path');
 var fs          = require('fs');
 
 /**
@@ -10,11 +9,11 @@ var fs          = require('fs');
  *
  * @param {Object} logger default logger to use on current instance
  */
-function Checker(logger) {
+function Checker (logger) {
   /**
    * Default logger
    */
-   this.logger = logger;
+  this.logger = logger;
 }
 
 /**
