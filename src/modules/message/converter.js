@@ -136,13 +136,16 @@ Converter.prototype.convert = function (key) {
       }
     }.bind(this));
   } else {
-    // log a warning message
-    this.logger.warning([ '[ Converter.convert ] - cannot process convertion to [', key,
-      '] format. Rules are not defined or is empty' ].join(' '));
+    // is not not mailer ?
+    if (key !== this.sender.NODEMAILER_TYPE) {
+      // log a warning message
+      this.logger.warning([ '[ Converter.convert ] - cannot process convertion to [', key,
+        '] format. Rules are not defined or is empty' ].join(' '));
+    }
   }
 
   // default statement
-  return _.isEmpty(cloned) ? false : this.sender.store(cloned, key);
+  return this.sender.store(cloned, key);
 };
 
 /**

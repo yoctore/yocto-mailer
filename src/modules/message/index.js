@@ -48,7 +48,7 @@ Message.prototype.set = function (key, value, transformer, checker) {
   value = this.schema.validate(key, value);
 
   // if valid ?
-  if (value) {
+  if (value !== false) {
     // checker is given ?
     if (_.isFunction(this.checker[checker])) {
       // alternative invalid statement
@@ -255,13 +255,13 @@ Message.prototype.setPriorityToLow = function () {
 };
 
 /**
- * Set a delivery priority to low for current message object
+ * Set a delivery priority to normal for current message object
  *
  * @return {Boolean} true in case of success, false otherwise
  */
-Message.prototype.setPriorityToLow = function () {
+Message.prototype.setPriorityToNormal = function () {
   // defaut statement
-  return this.set('priority', 'low');
+  return this.set('priority', 'normal');
 };
 
 /**

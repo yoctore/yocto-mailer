@@ -26,28 +26,28 @@ function SchemaValidator (logger) {
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
-      joi.string().required().empty()
+      joi.string().email().required().empty()
     ),
     'to'            : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
-      joi.string().required().empty()
+      joi.string().email().required().empty()
     ),
     'cc'            : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
-      joi.string().required().empty()
+      joi.string().email().required().empty()
     ),
     'bcc'           : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
-      joi.string().required().empty()
+      joi.string().email().required().empty()
     ),
     'subject'       : joi.string().required().empty(),
     'html'          : joi.string().required().empty(),
