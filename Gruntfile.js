@@ -52,17 +52,6 @@ module.exports = function (grunt) {
     },
     yoctohint : {
       all : [ 'Gruntfile.js', 'src/**/*.js' ]
-    },
-    conventionalChangelog: {
-      options: {
-        changelogOpts: {
-          // conventional-changelog options go here 
-          preset: 'angular'
-        }
-      },
-      release: {
-        src: 'CHANGELOG.md'
-      }
     }
   });
 
@@ -70,12 +59,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-mocha-cli');
   //grunt.loadNpmTasks('yocto-hint');
-  grunt.loadNpmTasks('grunt-conventional-changelog');
 
   // register tasks
   grunt.registerTask('hint', 'yoctohint');
   grunt.registerTask('test', 'mochacli');
-  grunt.registerTask('changelog', 'conventionalChangelog');
   grunt.registerTask('build', [ 'uglify', 'copy' ]);
   grunt.registerTask('default', [ 'build', 'test' ]);
 };

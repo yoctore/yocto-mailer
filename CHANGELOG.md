@@ -1,13 +1,3 @@
-<a name="2.0.0"></a>
-# [2.0.0](https://github.com/yoctore/yocto-mailer/compare/v1.2.4...v2.0.0) (2017-07-26)
-
-
-
-<a name="2.0.0"></a>
-# [2.0.0](https://github.com/yoctore/yocto-mailer/compare/v1.2.4...v2.0.0) (2017-07-26)
-
-
-
 ## 2.0.0 (2017-07-25)
 
 - Rewrite all source code to use a new workflow
