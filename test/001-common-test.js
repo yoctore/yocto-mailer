@@ -30,7 +30,7 @@ describe('Message ()', function() {
       'addBCC',
       'setSubject',
       'setMessage',
-      'addAttachement',
+      'addAttachment',
       'addAlternative',
       'setReplyTo',
       'setHeader',
@@ -100,7 +100,7 @@ describe('Message ()', function() {
       { name : 'setSubject', args : [ 'My Subject' ], result : true, count : 1, property : 'subject' },
       { name : 'setMessage', args : [ 'My Message' ], result : true, count : 1, property : 'text' },
       { name : 'setMessage', args : [ '<b>My Message </b>' ], result : true, count : 1, property : 'html' },
-      { name : 'addAttachement', args : [ './README.md' ], result : true, count : 1, property : 'attachements' },
+      { name : 'addAttachment', args : [ './README.md' ], result : true, count : 1, property : 'attachments' },
       { name : 'addAlternative', args : [ './Gruntfile.js' ], result : true, count : 1,  property : 'alternatives' },
       { name : 'setReplyTo', args : [ 'reply-to@test.com' ], result : true, count : 1,  property : 'replyTo' },
       { name : 'setHeader', args : [ { key : 'X-HEADER-1', value : 'X-HEADER-1-VALUE' } ], result : true, count : 1,  property : 'headers' },
@@ -157,7 +157,7 @@ describe('Message ()', function() {
       'subject',
       'text',
       'html',
-      'attachements',
+      'attachments',
       'alternatives',
       'replyTo',
       'headers',
@@ -180,7 +180,7 @@ describe('Message ()', function() {
       'subject',
       'text',
       'html',
-      'attachements',
+      'attachments',
       'headers',
       'headers.Reply-To',
       'priority',
@@ -214,11 +214,13 @@ describe('Message ()', function() {
       // try to send
       var prepared = m.prepare().toNodeMailer().send(options).then(function (success) {
         success.should.be.an('object');
-        success.should.have.property('accepted');
-        success.should.have.property('rejected');
         success.should.have.property('response');
-        success.should.have.property('envelope');
-        success.should.have.property('messageId');
+        success.should.have.property('stats');
+        success.should.have.nested.property('response.accepted');
+        success.should.have.nested.property('response.rejected');
+        success.should.have.nested.property('response.response');
+        success.should.have.nested.property('response.envelope');
+        success.should.have.nested.property('response.messageId');
         done();
       }).catch(function(error) {
         assert.isNotOk(false, 'Cannot connect on current server' + error);
@@ -233,8 +235,9 @@ describe('Message ()', function() {
 
       // try to send
       var prepared = m.prepare().toMandrill().send(options).then(function (success) {
-        success.should.be.an('array');
-        success.should.be.not.empty;
+        success.should.be.an('object');
+        success.should.have.property('response');
+        success.should.have.property('stats');
         done();
       }).catch(function(error) {
         assert.isNotOk(false, 'Cannot connect on current server' + error);

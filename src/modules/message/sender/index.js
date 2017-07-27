@@ -130,6 +130,36 @@ Sender.prototype.createTransport = function (options) {
 };
 
 /**
+ * Update current message status and append stats on given response
+ *
+ * @param {Integer} start process.hrtime value to use for ending time
+ * @param {Object} response default response to use on default statement
+ * @param {String} status status to use to update current message
+ * @return {Object} end object to use an store on response
+ */
+Sender.prototype.updateAndBuildStats = function (start, response, status) {
+  // get end time value to show execution time
+  var end = process.hrtime(start);
+
+  // log debug messsage
+  this.logger.debug([ '[ Sender.send ] - sending email was take :',
+      end[0], 'secondes and', (end[1] / 1000000), 'milliseconds'
+  ].join(' '));
+
+  // update current state
+  this.updateState(status);
+
+  // default statement
+  return {
+    response  : response,
+    stats     : {
+      seconds       : end[0],
+      milliseconds  : end[1]
+    }
+  };
+};
+
+/**
  * Send current message with given options
  *
  * @param {Object|String} options options to use for current message
@@ -159,20 +189,15 @@ Sender.prototype.send = function (options) {
           // get end time value to show execution time
           var end = process.hrtime(start);
 
-          // log debug messsage
-          this.logger.debug([ '[ Sender.send ] - sending email was take :',
-              end[0], 'secondes and', (end[1] / 1000000), 'milliseconds'
-          ].join(' '));
+          // Update state and get new success object
+         success = this.updateAndBuildStats(start, success, this.STATE_SUCCESS);
 
           // on the other case we resolve the promise
           return deferred.resolve(success);
         }.bind(this)).catch(function (error) {
-          // get end time value to show execution time
-          var end = process.hrtime(start);
-          // log debug messsage
-          this.logger.debug([ '[ Sender.send ] - Sending email was take :',
-              end[0], 'secondes and', (end[1] / 1000000), 'milliseconds'
-          ].join(' '));
+
+          // Update state and get new success object
+          error = this.updateAndBuildStats(start, success, this.STATE_ERROR);
 
           // reject with error
           deferred.reject(error);

@@ -185,9 +185,9 @@ Message.prototype.setMessage = function (value) {
  * @param {String} value path value for current object
  * @return {Boolean} true in case of success, false otherwise
  */
-Message.prototype.addAttachement = function (value) {
+Message.prototype.addAttachment = function (value) {
   // defaut statement
-  return this.set('attachements', value, 'attachementsToArray', 'isFile');
+  return this.set('attachments', value, 'attachementsToArray', 'isFile');
 };
 
 /**

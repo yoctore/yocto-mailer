@@ -52,7 +52,7 @@ function SchemaValidator (logger) {
     'subject'       : joi.string().required().empty(),
     'html'          : joi.string().required().empty(),
     'text'          : joi.string().required().empty(),
-    'attachements'  : joi.string().required().empty(),
+    'attachments'   : joi.string().required().empty(),
     'alternatives'  : joi.string().required().empty(),
     'replyTo'       : joi.string().email().required().empty(),
     'inReplyTo'     : joi.string().required().empty(),

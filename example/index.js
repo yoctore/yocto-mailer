@@ -3,22 +3,24 @@ var message = require('../src')(logger);
 
 var mandrill = false;
 
+// Define your nodemailer configuration
 var nOptions = {
-  host: 'smtp.tipimail.com',
-  port: 587,
-  secure: false, // secure:true for port 465, secure:false for port 587
-  auth: {
-      user: '9f86d081884c7d659a2feaa0c55ad015',
-      pass: '79b98156b2ed35ecb07ee0f115846924'
+  host    : process.env.SMTP_HOST,
+  port    : process.env.SMTP_PORT,
+  secure  : false,
+  auth    : {
+      user  : process.env.SMTP_AUTH_USER,
+      pass  : process.env.SMTP_AUTH_PASS
   }
 };
 
-var mOptions = 'sAOKe0G7VHcql6jpyHSMIg';
+// define your mandrill API KEY
+var mOptions = process.env.MANDRILL_API_KEY;
 var options  = mandrill ? mOptions : nOptions;
 
 // create a new message
 var m = message.new();
-//m.setFrom('from1@test.com', 'enveloppeFrom1@domain.com');
+
 m.setFrom({ address : 'from@from.com', name : 'from' });
 m.addTo({ address : 'mathieu@yocto.re', name : 'to' });
 m.addTo('to2222@to.com');
@@ -28,7 +30,7 @@ m.addBCC({ address : 'bcc1@test.com', name : 'bcc1' });
 m.addBCC('bcc2@test.com');
 m.setSubject('My subject');
 m.setMessage('<b>My subject</b>');
-m.addAttachement('./README.md');
+m.addAttachment('./README.md');
 m.addAlternative('./Gruntfile.js');
 m.setReplyTo('noreply@domain.com');
 m.setPriorityToHigh();
@@ -36,11 +38,9 @@ m.setPriorityToLow();
 m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
 m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
 m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
-/*
-  console.log('======== NodeMailer format =========');
-  console.log(m.prepare().toNodeMailer());
-  console.log('======== MANDRILL format ==========');
-*/
+
+console.log(m.prepare().toNodeMailer().toObject());
+// is mandrill needed ?
 if (mandrill) {
   m.prepare().toMandrill().send(options).then(function (success) {
     console.log('success =>', success);
@@ -54,5 +54,6 @@ if (mandrill) {
     console.log('error =>', error);
   });
 }
+
 
 
