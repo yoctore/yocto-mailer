@@ -1,6 +1,6 @@
 {
   "name": "yocto-mailer",
-  "version": "1.2.4",
+  "version": "2.0.0",
   "description": "Generic & Simple mailer connector for Mandrill et Nodemailer (SMTP Transport)",
   "scripts": {
     "test": "grunt test"
@@ -34,7 +34,7 @@
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "engines": {
-    "node": ">=4.3.1"
+    "node": ">=6.11.1"
   },
   "keywords": [
     "mailer",
@@ -53,24 +53,25 @@
     "README.md"
   ],
   "dependencies": {
-    "chai": "^3.5.0",
-    "email-existence": "^0.1.5",
-    "joi": "^8.0.5",
-    "lodash": "^3.10.1",
+    "joi": "^10.6.0",
+    "lodash": "^4.17.4",
     "mandrill-api": "^1.0.45",
-    "moment": "^2.12.0",
-    "nodemailer": "^2.3.0",
-    "nodemailer-smtp-transport": "^2.4.1",
-    "promise": "^7.1.1",
-    "smtp-connection": "^2.3.1",
-    "striptags": "2.1.1",
-    "yocto-logger": "^1.1.5",
+    "mime": "^1.3.6",
+    "moment": "^2.18.1",
+    "nodemailer": "^4.0.1",
+    "q": "^1.5.0",
+    "striptags": "^3.0.1",
+    "uuid": "^3.1.0",
+    "yocto-logger": "^2.0.0",
     "yocto-utils": "^1.2.8"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-uglify": "^1.0.1",
-    "grunt-mocha-cli": "^2.0.0",
+    "chai": "^4.1.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-uglify": "^3.0.1",
+    "grunt-conventional-changelog": "^6.1.0",
+    "grunt-mocha-cli": "^3.0.0",
     "yocto-hint": "^1.3.7"
   }
 }

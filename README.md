@@ -6,7 +6,6 @@
 [![Issue Count](https://codeclimate.com/github/yoctore/yocto-mailer/badges/issue_count.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
 [![Build Status](https://travis-ci.org/yoctore/yocto-mailer.svg?branch=master)](https://travis-ci.org/yoctore/yocto-mailer)
 
-
 ## Overview
 
 This module is a part of yocto node modules for NodeJS.
