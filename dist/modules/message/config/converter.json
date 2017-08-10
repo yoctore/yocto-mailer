@@ -12,6 +12,6 @@
     { "sourcePath" : "replyTo", "destinationPath" : "headers.Reply-To" },
     { "sourcePath" : "priority", "destinationPath" : "important", "customiser" : "mandrillImportantFormat" },
     { "sourcePath" : "subaccount", "destinationPath" : "subaccount" },
-    { "sourcePath" : "attachments", "destinationPath" : "attachements", "customiser" : "mandrillAttachementFormat" }
+    { "sourcePath" : "attachments", "destinationPath" : "attachments", "customiser" : "mandrillAttachementFormat" }
   ]
 }
