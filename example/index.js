@@ -1,7 +1,7 @@
 var logger  = require('yocto-logger');
 var message = require('../src')(logger);
 
-var mandrill = false;
+var mandrill = true;
 
 // Define your nodemailer configuration
 var nOptions = {
@@ -31,7 +31,11 @@ m.addBCC('bcc2@test.com');
 m.setSubject('My subject');
 m.setMessage('<b>My subject</b>');
 m.addAttachment('./README.md');
-m.addAlternative('./Gruntfile.js');
+//m.addAlternative('./Gruntfile.js');
+m.addAttachment('/Users/mrobert/Documents/Projets/Yocto/yocto-nodes-modules/yocto-mailer/example/Fichier_1.pdf');
+m.addAttachment('/Users/mrobert/Documents/Projets/Yocto/yocto-nodes-modules/yocto-mailer/example/Fichier_1.pdf');
+m.addAttachment('/Users/mrobert/Documents/Projets/Yocto/yocto-nodes-modules/yocto-mailer/example/Fichier_1.pdf');
+m.addAttachment('/Users/mrobert/Documents/Projets/Yocto/yocto-nodes-modules/yocto-mailer/example/Fichier_1.pdf');
 m.setReplyTo('noreply@domain.com');
 m.setPriorityToHigh();
 m.setPriorityToLow();
@@ -39,15 +43,17 @@ m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
 m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
 m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
 
-console.log(m.prepare().toNodeMailer().toObject());
+
 // is mandrill needed ?
 if (mandrill) {
+  console.log(m.prepare().toMandrill().toObject());
   m.prepare().toMandrill().send(options).then(function (success) {
     console.log('success =>', success);
   }).catch(function(error) {
     console.log('error =>', error);
   });
 } else {
+  console.log(m.prepare().toNodeMailer().toObject());
   m.prepare().toNodeMailer().send(options).then(function(success) {
     console.log('success =>', success);
   }).catch(function(error) {
