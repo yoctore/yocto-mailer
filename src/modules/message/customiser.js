@@ -49,7 +49,6 @@ Customiser.prototype.mandrillImportantFormat = function (key, value) {
  * @return {Object} object needed with given value
  */
 Customiser.prototype.mandrillAttachementFormat = function (key, value) {
-
   // defaut statement
   return _.map(value, function (v) {
     return {
