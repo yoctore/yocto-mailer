@@ -1,120 +1,35 @@
 [![NPM](https://nodei.co/npm/yocto-mailer.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/yocto-mailer/)
 
-![alt text](https://david-dm.org/yoctore/yocto-mailer.svg "Dependencies Status")
-[![Code Climate](https://codeclimate.com/github/yoctore/yocto-mailer/badges/gpa.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
-[![Test Coverage](https://codeclimate.com/github/yoctore/yocto-mailer/badges/coverage.svg)](https://codeclimate.com/github/yoctore/yocto-mailer/coverage)
-[![Issue Count](https://codeclimate.com/github/yoctore/yocto-mailer/badges/issue_count.svg)](https://codeclimate.com/github/yoctore/yocto-mailer)
+[![Node Required version](https://img.shields.io/badge/node-%3E%3D6.11.2-brightgreen.svg)]()
 [![Build Status](https://travis-ci.org/yoctore/yocto-mailer.svg?branch=master)](https://travis-ci.org/yoctore/yocto-mailer)
+
 
 ## Overview
 
 This module is a part of yocto node modules for NodeJS.
+This module provide in one tool a connector for :
 
-Please see [our NPM repository](https://www.npmjs.com/~yocto) for complete list of available tools (completed day after day).
-
-This module provide in one tool a connector for Nodemailer (SMTP) and Mandrill API.
+ - Nodemailer (SMTP)
+ - Mandrill API (/messages)
+ - Mailjet API (/messages) (COMMING SOON)
 
 ## Motivation
 
-Our main motivation for this module is, create and provide a generic & very simple mailer connector for Mandrill et Nodemailer (SMTP Transport) in the same tool.
+Our main motivation for this module is create and provide a generic & very simple mailer connector for the 3 main mail provider on the internet.
+ 
+## Available methods
 
-## Methods
-
-- use(connectorName) : select a connector from given name
-- setExpeditor(email, name) : define en expeditor
-- addReplyTo (email) : add a reply to
-- mailer.addRecipient(email, name) : add a recipient 
-- mailer.addCC(email, name) : add a recipient on cc field
-- mailer.addBCC(email, name) : add a recipient on bcc field
 
 ## How To use
 
-```javascript
-var mailer = require('yocto-mailer')();
-// Set expeditor config
-var expeditor = {
-  email : 'email@expeditor.com',
-  name  : 'Expeditor NAME'
-};  
+See example directory for example code
 
-// Mandrill Config
-var connector = 'mandrill';
-var config    = 'YOUR API KEY';
+## And mandrill subacccount ?
 
-// NodeMailer SMTP Config
-var connector = 'nodemailer';
-var config    = {}; // your config object see nodemailer SMTP config
+It's possible to use mandrill subaccount. for this use the method `setSubAccount(accountName)` to set your subaccount. 
 
-// Process
-// select your connector
-if (mailer.use(connector)) {
-  
-  // set your config
-  mailer.setConfig(config).then(function(success) {
-    console.log('==> CONFIG OK');
-    
-    // set your expeditor
-    mailer.setExpeditor(expeditor.email, expeditor.name);
-    
-    // add reply to if needed
-    mailer.addReplyTo('no-reply@email.com');
-    
-    // add a recipient
-    mailer.addRecipient('to@email.com', 'TO NAME');
-    // add CC
-    mailer.addCC('cc@email.com', 'CC NAME');
-    // add BCC
-    mailer.addBCC('bcc@email.com', 'BCC NAME');
+## Breaking Changes
 
-    // send
-    mailer.send('MY-TEST', '<b>MY-MESSAGE</b>').then(function(success) {
-      console.log(success);
-    }, function(failed) {
-      console.log(failed);
-    });
-  }, function(failed) {
-    console.log('error => ' + failed);
-  });
-}
-```
+This module was completely rewrite and update to the latest version of each used dependencies.
 
-## Use mandrill subacccount
-
-It's possible to use mandrill subaccount. To use it just add on *third* args of your send function,
-the id of subaccount.
-
-```javascript
-  // send
-  mailer.send('MY-TEST', '<b>MY-MESSAGE</b>', 'test').then(function(success) {
-    console.log(success);
-  }, function(failed) {
-    console.log(failed);
-  });
-````
-
-## Logging in tool
-
-By Default this module include [yocto-mailer](https://www.npmjs.com/package/yocto-mailer) for logging.
-It's possible to inject in your mailer instance your current logger instance if is another `yocto-mailer` instance.
-
-For example : 
-
-```javascript 
-var logger = require('yocto-mailer');
-// EXTRA CODE HERE FOR YOUR APP
-// AGAIN & AGAIN
-var mailer = require('yocto-mailer')(logger);
-```
-
-## Tricks
-
-In some case we need to clean complete send object and config before the next send request, that's why you can use `enableCompleteClean` method to enable this function.
-
-## Next Step
-
-- Add Attachement process
-- Changing promise usage from PromiseJS to Q (Migration was processed in a version 2.0.0)
-
-## Changelog
-
-All history is [here](https://gitlab.com/yocto-node-modules/yocto-mailer/blob/master/CHANGELOG.md)
+ 

@@ -20,50 +20,48 @@ function SchemaValidator (logger) {
    * Default schema list
    */
   this.schemas = {
-    // default from schema for from
-    'from'          : joi.alternatives().try(
+    alternatives : joi.string().required().empty(),
+    attachments  : joi.string().required().empty(),
+    bcc          : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().email().required().empty()
     ),
-    'to'            : joi.alternatives().try(
+    cc : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().email().required().empty()
     ),
-    'cc'            : joi.alternatives().try(
+    date : joi.date().optional().min('now').max('now').default(moment().toString()),
+    from : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))
       }),
       joi.string().email().required().empty()
     ),
-    'bcc'           : joi.alternatives().try(
-      joi.object().required().keys({
-        address : joi.string().email().required().empty(),
-        name    : joi.string().optional().default(joi.ref('address'))
-      }),
-      joi.string().email().required().empty()
-    ),
-    'subject'       : joi.string().required().empty(),
-    'html'          : joi.string().required().empty(),
-    'text'          : joi.string().required().empty(),
-    'attachments'   : joi.string().required().empty(),
-    'alternatives'  : joi.string().required().empty(),
-    'replyTo'       : joi.string().email().required().empty(),
-    'inReplyTo'     : joi.string().required().empty(),
-    'priority'      : joi.string().required().valid([ 'low', 'normal', 'high' ]),
-    'headers'       : joi.object().required().keys({
-      key     : joi.string().required().empty(),
-      value   : joi.string().required().empty()
+    headers : joi.object().required().keys({
+      key   : joi.string().required().empty(),
+      value : joi.string().required().empty()
     }),
-    'date'          : joi.date().optional().min('now').max('now').default(moment().toString()),
-    // Specific Mandrill schema
-    'subaccount'    : joi.string().required().empty()
+    html       : joi.string().required().empty(),
+    inReplyTo  : joi.string().required().empty(),
+    priority   : joi.string().required().valid([ 'low', 'normal', 'high' ]),
+    replyTo    : joi.string().email().required().empty(),
+    subaccount : joi.string().required().empty(),
+    subject    : joi.string().required().empty(),
+    text       : joi.string().required().empty(),
+    to         : joi.alternatives().try(
+      joi.object().required().keys({
+        address : joi.string().email().required().empty(),
+        name    : joi.string().optional().default(joi.ref('address'))
+      }),
+      joi.string().email().required().empty()
+    )
   };
 }
 
@@ -74,7 +72,7 @@ function SchemaValidator (logger) {
  * @return {Object|Boolean} an object in case of success, false otherwise
  */
 SchemaValidator.prototype.get = function (name) {
-  // so try to get it or return false
+  // So try to get it or return false
   return _.has(this.schemas, name) ? _.get(this.schemas, name) : false;
 };
 
@@ -86,44 +84,50 @@ SchemaValidator.prototype.get = function (name) {
  * @return {Object|Boolean} true is case of success, false otherwise
  */
 SchemaValidator.prototype.validate = function (name, value) {
-  // try to get schema
+  // Try to get schema
   var schema = this.get(name);
-  // try to get schemas
+
+  // Try to get schemas
+
   if (!_.isBoolean(schema)) {
-    // if we are here we need to apply validation
+    // If we are here we need to apply validation
     var result = joi.validate(value, schema);
 
-    // has no error ?
+    // Has no error ?
     if (_.isNull(result.error)) {
-      // return valid statement
+      // Return valid statement
       return result.value;
     }
 
-    // if we are here we must log the error because process is invalid
+    // If we are here we must log the error because process is invalid
     this.logger.warning([ '[ SchemaValidator.validate ] - Cannot validate schema for given name [',
       name, ']. Error is : ', result.error ].join(' '));
   } else {
-    // if we are here someting were wrong so log it
+    // If we are here someting were wrong so log it
     this.logger.warning([ '[ SchemaValidator.validate ] - No schema was founded for given name : [',
       name, ']' ].join(' '));
   }
 
-  // default statement
+  // Default statement
   return false;
 };
 
 /**
  * Default export
+ *
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main Schema class to use on main process
  */
 module.exports = function (l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ SchemaValidator.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (SchemaValidator)(l);
+  // Default statement
+  return new SchemaValidator(l);
 };

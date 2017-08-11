@@ -1,7 +1,11 @@
 'use strict';
 
-var _       = require('lodash');
-var uuid    = require('uuid');
+var _           = require('lodash');
+var uuid        = require('uuid');
+var schema      = require('./schema');
+var checker     = require('./checker');
+var converter   = require('./converter');
+var transformer = require('./transformer');
 
 /**
  * Main message object.
@@ -13,26 +17,31 @@ function Message (logger) {
    * Default logger
    */
   this.logger = logger;
+
   /**
    * Default message
    */
-  this.message        = {};
+  this.message = {};
+
   /**
    * Default schema validator
    */
-  this.schema         = require('./schema')(this.logger);
+  this.schema = schema(this.logger);
+
   /**
    * Default transformer module
    */
-  this.transformers   = require('./transformer')(this.logger);
+  this.transformers = transformer(this.logger);
+
   /**
    * Default checker module
    */
-  this.checker        = require('./checker')(this.logger);
+  this.checker = checker(this.logger);
+
   /**
    * Default checker module
    */
-  this.converter        = require('./converter')(this.message, this.logger);
+  this.converter = converter(this.message, this.logger);
 }
 
 /**
@@ -41,34 +50,35 @@ function Message (logger) {
  * @param {String} key property value to use on current message
  * @param {Mixed} value value to use with current key on current message
  * @param {String} transformer if this value is given, we use this value
+ * @param {String} checker rule to use on checker
  * @return {Boolean} true in case of success false otherwise
  */
 Message.prototype.set = function (key, value, transformer, checker) {
-  // validate schema first
+  // Validate schema first
   value = this.schema.validate(key, value);
 
-  // if valid ?
+  // If valid ?
   if (value !== false) {
-    // checker is given ?
+    // Checker is given ?
     if (_.isFunction(this.checker[checker])) {
-      // alternative invalid statement
+      // Alternative invalid statement
       if (!this.checker[checker](value)) {
-        // if we here we can continue
+        // If we here we can continue
         return false;
       }
     }
 
-    // transformers is given ?
+    // Transformers is given ?
     if (_.isFunction(this.transformers[transformer])) {
-      // alternative invalid statement
+      // Alternative invalid statement
       transformer = this.transformers[transformer](value);
     }
 
-    // default valid statement
+    // Default valid statement
     return this.addKey(key, transformer || value);
   }
 
-  // default statement
+  // Default statement
   return false;
 };
 
@@ -80,36 +90,41 @@ Message.prototype.set = function (key, value, transformer, checker) {
  * @return {Boolean} true in case of success false otherwise
  */
 Message.prototype.addKey = function (key, value) {
-  // this message already have value for this key ?
+  // This message already have value for this key ?
   if (_.has(this.message, key)) {
-    // get exists value
+    // Get exists value
     var exists = _.get(this.message, key);
-    // try to process array and object case
+
+    // Try to process array and object case
+
     if (_.isArray(exists) || _.isObject(exists)) {
-      // is array ?
+      // Is array ?
       if (_.isArray(exists)) {
-        // in this case apprend data to current array
+        // In this case apprend data to current array
         exists.push(value);
-        // and flatten exists object to keep array to the correct format
+
+        // And flatten exists object to keep array to the correct format
         exists = _.flatten(exists);
       }
-      // is object ?
+
+      // Is object ?
       if (_.isObject(exists) && !_.isArray(exists)) {
-        // in this case we try to merge data to replace it
+        // In this case we try to merge data to replace it
         _.merge(exists, value);
       }
     } else {
-      // in all other case we replace exits value with current
+      // In all other case we replace exits value with current
       exists = value;
     }
-    // and assign new value
-    value = exists;
 
+    // And assign new value
+    value = exists;
   }
-  // set value
+
+  // Set value
   _.set(this.message, key, value);
 
-  // and return if value if correctly append
+  // And return if value if correctly append
   return _.has(this.message, key);
 };
 
@@ -120,7 +135,7 @@ Message.prototype.addKey = function (key, value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setFrom = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('from', value, 'toAddressObject');
 };
 
@@ -131,7 +146,7 @@ Message.prototype.setFrom = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.addTo = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('to', value, 'toAddressArray');
 };
 
@@ -142,7 +157,7 @@ Message.prototype.addTo = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.addCC = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('cc', value, 'toAddressArray');
 };
 
@@ -153,7 +168,7 @@ Message.prototype.addCC = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.addBCC = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('bcc', value, 'toAddressArray');
 };
 
@@ -164,7 +179,7 @@ Message.prototype.addBCC = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setSubject = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('subject', value);
 };
 
@@ -175,7 +190,7 @@ Message.prototype.setSubject = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setMessage = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('html', value) && this.set('text', value, 'htmlToText');
 };
 
@@ -186,7 +201,7 @@ Message.prototype.setMessage = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.addAttachment = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('attachments', value, 'attachementsToArray', 'isFile');
 };
 
@@ -197,7 +212,7 @@ Message.prototype.addAttachment = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.addAlternative = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('alternatives', value, 'attachementsToArray', 'isFile');
 };
 
@@ -208,7 +223,7 @@ Message.prototype.addAlternative = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setReplyTo = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('replyTo', value) && this.set('inReplyTo', uuid.v4());
 };
 
@@ -219,7 +234,7 @@ Message.prototype.setReplyTo = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setHeader = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('headers', value, 'toHeaderObject');
 };
 
@@ -230,7 +245,7 @@ Message.prototype.setHeader = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setPriority = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('priority', value);
 };
 
@@ -240,7 +255,7 @@ Message.prototype.setPriority = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setPriorityToHigh = function () {
-  // defaut statement
+  // Defaut statement
   return this.set('priority', 'high');
 };
 
@@ -250,7 +265,7 @@ Message.prototype.setPriorityToHigh = function () {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setPriorityToLow = function () {
-  // defaut statement
+  // Defaut statement
   return this.set('priority', 'low');
 };
 
@@ -260,7 +275,7 @@ Message.prototype.setPriorityToLow = function () {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setPriorityToNormal = function () {
-  // defaut statement
+  // Defaut statement
   return this.set('priority', 'normal');
 };
 
@@ -270,7 +285,7 @@ Message.prototype.setPriorityToNormal = function () {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.prepareLastOperations = function () {
-  // set last need opration need value
+  // Set last need opration need value
   // last header for message id
   // and the date of message. For security reason this value can not be override
   return this.setHeader({
@@ -287,9 +302,10 @@ Message.prototype.prepareLastOperations = function () {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.raw = function (value) {
-  // set message
+  // Set message
   _.merge(this.message, value);
-  // default statement
+
+  // Default statement
   return true;
 };
 
@@ -302,7 +318,7 @@ Message.prototype.raw = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.setSubAccount = function (value) {
-  // defaut statement
+  // Defaut statement
   return this.set('subaccount', value);
 };
 
@@ -312,11 +328,13 @@ Message.prototype.setSubAccount = function (value) {
  * @return {Object} true in case of success
  */
 Message.prototype.prepare = function () {
-  // do last operation
+  // Do last operation
   this.prepareLastOperations();
-  // set current message to be immutable
+
+  // Set current message to be immutable
   Object.freeze(this.message);
-  // default statement
+
+  // Default statement
   return this.converter.update(this.message);
 };
 
