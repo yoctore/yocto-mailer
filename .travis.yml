@@ -1,6 +1,7 @@
 language: node_js
 node_js:
 - 6.11.1
+- 6.11.2
 env:
   global:
   - CXX=g++-4.8
@@ -17,13 +18,18 @@ addons:
     - g++-4.8
   code_climate:
     repo_token: 85ad1733fb94ea0c5735f0a677376e3444c63d3444ff6099a4e86e35a5c81d9c
-deploy:
-  provider: npm
-  email: technique@yocto.re
-  api_key:
-    secure: tW7e2UAYrio1C3D6ZrpssjCruZMAy6V7ZJhb79W39r5tvsYdKsPKIe6g8q2ofaNdlpJR1nC02HMYZHcuYRnbohb2g8zbCXpjZ2Ja1TTo6aQZYfkN0zJRivKE/Q+p8NBrh7Jxfn+nOgXxRlAFtOCZs4HqKXFd7gVKLGqepX52nHdaOJ9UZ1UO8uXD+08+LjVmk5/+fPD1YvKBnaSlP+Mfo9myEk5YLoOq1pv6RBo7UjISx0S9u/9A2ZxLNvS+YUoqOs1BGM/bp7pyPBE63cDgKaVWgKTWvBqMPq352fZZFDm+48Re8219xiQFqzP9ZYEhImIO679D6DoMzAYEataYOxnA+SAeXo7N8CXXyKfAcvjtHv5R37jMOABRADifLr1HmpxTv3q39f8QXVW1Y9ZzVsl/UD3g+p0h6xjL5Y79D12j9BCC5zdMpnf333b6XBkIiQQly6UdKwVCImWV/MGlfyd7PZkdjQl1AGB+9oz1d1wqFusFPfugyWpQWEYU9Tt/RBLQNONuMflX+LcHgFnCkl/g03m8awNxMA+guVuW9dLZ8vexN3K1sFaRjdY7prpzXlBj4b799hFbCR2PVtdSas8yngvO3IUm5DLiYlgfxEmb/ehIkXnmJjxW3Gohi5tYjGGas7JPCQkBdVugpaewApegf6pgW2h04rljE94x2Rk=
-  on:
-    tags: true
-    repo: yoctore/yocto-mailer
 before_install: npm install -g grunt-cli
 install: npm install
+jobs:
+  include:
+    - stage: deploy
+      node_js: 6.11.2
+      deploy:
+        provider: npm
+        email: technique@yocto.re
+        api_key:
+          secure: tW7e2UAYrio1C3D6ZrpssjCruZMAy6V7ZJhb79W39r5tvsYdKsPKIe6g8q2ofaNdlpJR1nC02HMYZHcuYRnbohb2g8zbCXpjZ2Ja1TTo6aQZYfkN0zJRivKE/Q+p8NBrh7Jxfn+nOgXxRlAFtOCZs4HqKXFd7gVKLGqepX52nHdaOJ9UZ1UO8uXD+08+LjVmk5/+fPD1YvKBnaSlP+Mfo9myEk5YLoOq1pv6RBo7UjISx0S9u/9A2ZxLNvS+YUoqOs1BGM/bp7pyPBE63cDgKaVWgKTWvBqMPq352fZZFDm+48Re8219xiQFqzP9ZYEhImIO679D6DoMzAYEataYOxnA+SAeXo7N8CXXyKfAcvjtHv5R37jMOABRADifLr1HmpxTv3q39f8QXVW1Y9ZzVsl/UD3g+p0h6xjL5Y79D12j9BCC5zdMpnf333b6XBkIiQQly6UdKwVCImWV/MGlfyd7PZkdjQl1AGB+9oz1d1wqFusFPfugyWpQWEYU9Tt/RBLQNONuMflX+LcHgFnCkl/g03m8awNxMA+guVuW9dLZ8vexN3K1sFaRjdY7prpzXlBj4b799hFbCR2PVtdSas8yngvO3IUm5DLiYlgfxEmb/ehIkXnmJjxW3Gohi5tYjGGas7JPCQkBdVugpaewApegf6pgW2h04rljE94x2Rk=
+        on:
+          tags: true
+          repo: yoctore/yocto-mailer
+

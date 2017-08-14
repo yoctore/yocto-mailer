@@ -3,6 +3,7 @@
 var logger      = require('yocto-logger');
 var _           = require('lodash');
 var Q           = require('q');
+var factory     = require('./factory');
 
 /**
  * Process send request on correct message type
@@ -23,8 +24,12 @@ function Sender (logger) {
   /**
    * Constant to use for sender
    */
-  this.NODEMAILER_TYPE  = 'nodemailer'; // For nodemailer process
-  this.MANDRILL_TYPE    = 'mandrill'; // For mandrill process
+
+  // For nodemailer process
+  this.NODEMAILER_TYPE = 'nodemailer';
+
+  // For mandrill process
+  this.MANDRILL_TYPE = 'mandrill';
 
   /**
    * Default type of mailer module
@@ -34,36 +39,51 @@ function Sender (logger) {
   /**
    * Constant for state list
    */
-  this.STATE_PENDING = 'pending'; // send is waiting for sending
-  this.STATE_SUCCESS = 'success'; // sender successfuly send the message
-  this.STATE_ERROR   = 'error'; // sender is on error
-  this.STATE_READY   = 'ready'; // sender is ready
+
+  // Send is waiting for sending
+  this.STATE_PENDING = 'pending';
+
+  // Sender successfuly send the message
+  this.STATE_SUCCESS = 'success';
+
+  // Sender is on error
+  this.STATE_ERROR = 'error';
+
+  // Sender is ready
+  this.STATE_READY = 'ready';
 
   /**
    * Current state object
    */
   this.state = {
-    code      : 'pending',
-    message   : null
+    code    : 'pending',
+    message : null
   };
 
   /**
    * Internal factory to build correct transporter
    */
-  this.factory = require('./factory')(this.logger);
+  this.factory = factory(this.logger);
 }
 
 /**
  * Store current message before sending.
+ *
+ * @param {String} message object message to save before sent
+ * @param {String} type current message type to sending process
+ * @return {Object} current instance
  */
 Sender.prototype.store = function (message, type) {
-  // store current message
+  // Store current message
   this.message = message;
-  // freeze object
+
+  // Freeze object
   Object.freeze(this.message);
-  // store current type of message
-  this.type    = type;
-  // default statement
+
+  // Store current type of message
+  this.type = type;
+
+  // Default statement
   return this;
 };
 
@@ -73,7 +93,7 @@ Sender.prototype.store = function (message, type) {
  * @return {Object} current message representation
  */
 Sender.prototype.toObject = function () {
-  // default statement
+  // Default statement
   return this.message;
 };
 
@@ -85,12 +105,13 @@ Sender.prototype.toObject = function () {
  * @return {Boolean} true in case of success false otherwise
  */
 Sender.prototype.updateState = function (code, message) {
-  // set code
+  // Set code
   this.state.code = code || this.STATE_PENDING;
-  // set message
+
+  // Set message
   this.state.message = message || null;
 
-  // default statement
+  // Default statement
   return _.has(this.state, 'code') && _.has(this.state, 'message') &&
     this.state.code === code && this.state.message === message;
 };
@@ -102,30 +123,31 @@ Sender.prototype.updateState = function (code, message) {
  * @return {Sender} current sender instance
  */
 Sender.prototype.createTransport = function (options) {
-  // current transport
+  // Current transport
   var transport = false;
 
-  // is nodemailer ?
+  // Is nodemailer ?
   if (this.type === this.NODEMAILER_TYPE) {
-    // set transport
+    // Set transport
     transport = this.factory.createNodeMailerTransporter(options);
   }
 
-  // is mandrill ?
+  // Is mandrill ?
   if (this.type === this.MANDRILL_TYPE) {
-    // set transport
+    // Set transport
     transport = this.factory.createMandrillTransporter(options);
   }
 
-  // set state
+  // Set state
   this.updateState(transport ?
     this.STATE_READY : this.STATE_ERROR,
-      transport ? 'Transport is ready' : 'Cannot create transport');
+  transport ? 'Transport is ready' : 'Cannot create transport');
+
   // Update state
   this.updateState(transport ? this.STATE_READY : this.STATE_ERROR,
     transport ? 'Transport is ready' : 'Cannot create transport');
 
-  // default statement
+  // Default statement
   return transport;
 };
 
@@ -138,23 +160,23 @@ Sender.prototype.createTransport = function (options) {
  * @return {Object} end object to use an store on response
  */
 Sender.prototype.updateAndBuildStats = function (start, response, status) {
-  // get end time value to show execution time
+  // Get end time value to show execution time
   var end = process.hrtime(start);
 
-  // log debug messsage
+  // Log debug messsage
   this.logger.debug([ '[ Sender.send ] - sending email was take :',
-      end[0], 'secondes and', (end[1] / 1000000), 'milliseconds'
+    end[0], 'secondes and', end[1] / 1000000, 'milliseconds'
   ].join(' '));
 
-  // update current state
+  // Update current state
   this.updateState(status);
 
-  // default statement
+  // Default statement
   return {
-    response  : response,
-    stats     : {
-      seconds       : end[0],
-      milliseconds  : end[1]
+    response : response,
+    stats    : {
+      milliseconds : end[1],
+      seconds      : end[0]
     }
   };
 };
@@ -166,69 +188,73 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
  * @return {Promise} promise to catch
  */
 Sender.prototype.send = function (options) {
-  // create deferred process
+  // Create deferred process
   var deferred = Q.defer();
-  // define here time when process start
+
+  // Define here time when process start
   var start = process.hrtime();
-  // message is invalid ?
+
+  // Message is invalid ?
+
   if (_.isEmpty(this.message)) {
-    // invalid statement
+    // Invalid statement
     deferred.reject('Message in empty. Build your messsage before send.');
   } else {
-    // sender is valid ?
+    // Sender is valid ?
     var transport = this.createTransport(options);
 
-    // transport is ready ?
+    // Transport is ready ?
     if (this.state.code === this.STATE_READY) {
-      // try to send message
+      // Try to send message
       transport.isReady().then(function () {
-        // do a debug message
+        // Do a debug message
         this.logger.debug([ '[ Sender.send ] -', this.type, 'Connector is ready' ].join(' '));
-        // if we are here we need to send the message
+
+        // If we are here we need to send the message
         transport.send(this.message).then(function (success) {
-          // get end time value to show execution time
-          var end = process.hrtime(start);
-
           // Update state and get new success object
-         success = this.updateAndBuildStats(start, success, this.STATE_SUCCESS);
+          success = this.updateAndBuildStats(start, success, this.STATE_SUCCESS);
 
-          // on the other case we resolve the promise
+          // On the other case we resolve the promise
           return deferred.resolve(success);
         }.bind(this)).catch(function (error) {
-
           // Update state and get new success object
           error = this.updateAndBuildStats(start, success, this.STATE_ERROR);
 
-          // reject with error
+          // Reject with error
           deferred.reject(error);
         }.bind(this));
       }.bind(this)).catch(function (error) {
-        // reject with error
+        // Reject with error
         deferred.reject(error);
       });
     } else {
-      // reject too ..
+      // Reject too ..
       deferred.reject([ 'Transport is on an invalid state. state must be on',
         this.STATE_READY, 'state before sending' ].join(' '));
     }
   }
 
-  // default statement
+  // Default statement
   return deferred.promise;
 };
 
 /**
  * Default export
+ *
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main Sender class to use on main process
  */
 module.exports = function (l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ Sender.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (Sender)(l);
+  // Default statement
+  return new Sender(l);
 };

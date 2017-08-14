@@ -17,25 +17,31 @@ function FMessage (logger) {
 
   /**
    * Internal method to create a new message object
+   *
+   * @return {Object} a new instance of message object
    */
   this.new = function () {
-    // default statement
+    // Default statement
     return new Message(this.logger);
   }.bind(this);
 }
 
 /**
  * Default export
+ *
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main message class to use on main process
  */
 module.exports = function (l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ FMessage.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (FMessage)(l);
+  // Default statement
+  return new FMessage(l);
 };

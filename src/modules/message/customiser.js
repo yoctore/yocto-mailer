@@ -19,11 +19,12 @@ function Customiser (logger) {
 /**
  * A transformer to change given value to the correct format for mandrill TO property
  *
+ * @param {String} key current key to use for current customiser
+ * @param {Mixed} value data to use for current customiser
  * @return {Object} object needed with given value
  */
 Customiser.prototype.mandrillToFormat = function (key, value) {
-
-  // defaut statement
+  // Defaut statement
   return _.map(value, function (v) {
     return {
       email : v.address,
@@ -36,20 +37,24 @@ Customiser.prototype.mandrillToFormat = function (key, value) {
 /**
  * A transformer to change given value to the correct format for IMPORTANT mandrill property
  *
+ * @param {String} key current key to use for current customiser
+ * @param {Mixed} value data to use for current customiser
  * @return {Object} object needed with given value
  */
 Customiser.prototype.mandrillImportantFormat = function (key, value) {
-  // default statement
+  // Default statement
   return value === 'high';
 };
 
 /**
  * A transformer to change given value to the correct format for mandrill attachements property
  *
+ * @param {String} key current key to use for current customiser
+ * @param {Mixed} value data to use for current customiser
  * @return {Object} object needed with given value
  */
 Customiser.prototype.mandrillAttachementFormat = function (key, value) {
-  // defaut statement
+  // Defaut statement
   return _.map(value, function (v) {
     return {
       content : v.content,
@@ -61,16 +66,20 @@ Customiser.prototype.mandrillAttachementFormat = function (key, value) {
 
 /**
  * Default export
+ *
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main Checker class to use on main process
  */
 module.exports = function (l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ Customiser.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (Customiser)(l);
+  // Default statement
+  return new Customiser(l);
 };

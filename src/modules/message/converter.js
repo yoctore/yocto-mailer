@@ -2,6 +2,10 @@
 
 var logger      = require('yocto-logger');
 var _           = require('lodash');
+var customiser  = require('./customiser');
+var sender      = require('./sender');
+var fs          = require('fs');
+var path        = require('path');
 
 /**
  * Process some verification test
@@ -23,17 +27,19 @@ function Converter (message, logger) {
   /**
    * Customier module to transform data
    */
-  this.customiser = require('./customiser')(this.logger);
+  this.customiser = customiser(this.logger);
 
   /**
-   * sender module to send data
+   * Sender module to send data
    */
-  this.sender = require('./sender')(this.logger);
+  this.sender = sender(this.logger);
 
   /**
-   * internal rules content
+   * Internal rules content
    */
-  this.rules = require('./config/converter.json');
+  this.rules = JSON.parse(fs.readFileSync(path.resolve([
+    __dirname, './config/converter.json'
+  ].join('/'))));
 }
 
 /**
@@ -43,9 +49,10 @@ function Converter (message, logger) {
  * @return {Object} current instance of converter to use chain process
  */
 Converter.prototype.update = function (value) {
-  // update current message
+  // Update current message
   this.message = value;
-  // default statement
+
+  // Default statement
   return this;
 };
 
@@ -55,7 +62,7 @@ Converter.prototype.update = function (value) {
  * @return {String} current message on string representation
  */
 Converter.prototype.toString = function () {
-  // default statement
+  // Default statement
   return JSON.stringify(this.message);
 };
 
@@ -65,7 +72,7 @@ Converter.prototype.toString = function () {
  * @return {Object} current message on object representation
  */
 Converter.prototype.toNodeMailer = function () {
-  // default statement
+  // Default statement
   return this.convert(this.sender.NODEMAILER_TYPE);
 };
 
@@ -75,7 +82,7 @@ Converter.prototype.toNodeMailer = function () {
  * @return {Object} current message on object representation
  */
 Converter.prototype.toMandrill = function () {
-  // default statement
+  // Default statement
   return this.convert(this.sender.MANDRILL_TYPE);
 };
 
@@ -86,80 +93,88 @@ Converter.prototype.toMandrill = function () {
  * @return {Object} re-mapped message
  */
 Converter.prototype.convert = function (key) {
-
-  // we need first clone deep this current message
+  // We need first clone deep this current message
   var cloned = key === this.sender.NODEMAILER_TYPE ? this.message : {};
 
   // Try to get rules
   var rules = _.get(this.rules, key);
 
-  // rules is array and not empty ?
+  // Rules is array and not empty ?
   if (key !== this.sender.NODEMAILER_TYPE && _.isArray(rules) && !_.isEmpty(rules)) {
-    // process maps
+    // Process maps
     _.map(rules, function (rule) {
-      // try to get current value
+      // Try to get current value
       var value = !_.isFunction(this.customiser[rule.customiser]) ?
         _.get(this.message, rule.sourcePath) :
-          this.customiser[rule.customiser](rule.sourcePath, _.get(this.message, rule.sourcePath));
+        this.customiser[rule.customiser](rule.sourcePath, _.get(this.message, rule.sourcePath));
 
-      // this message already have value for this key ?
+      // This message already have value for this key ?
       if (_.has(cloned, rule.destinationPath)) {
-        // get exists value
+        // Get exists value
         var exists = _.get(cloned, rule.destinationPath);
-        // try to process array and object case
+
+        // Try to process array and object case
+
         if (_.isArray(exists) || _.isObject(exists)) {
-          // is array ?
+          // Is array ?
           if (_.isArray(exists)) {
-            // in this case apprend data to current array
+            // In this case apprend data to current array
             exists.push(value);
-            // and flatten exists object to keep array to the correct format
+
+            // And flatten exists object to keep array to the correct format
             exists = _.flatten(exists);
           }
 
-          // is object ?
+          // Is object ?
           if (_.isObject(exists) && !_.isArray(exists)) {
-            // in this case we try to merge data to replace it
+            // In this case we try to merge data to replace it
             _.merge(exists, value);
           }
         } else {
-          // in all other case we replace exits value with current
+          // In all other case we replace exits value with current
           exists = value;
         }
-        // and assign new value
+
+        // And assign new value
         value = exists;
       }
 
-      // set value on if is not undefined
+      // Set value on if is not undefined
       if (!_.isUndefined(value)) {
-        // set value
+        // Set value
         _.set(cloned, rule.destinationPath, value);
       }
     }.bind(this));
   } else {
-    // is not not mailer ?
+    // Is not not mailer ?
     if (key !== this.sender.NODEMAILER_TYPE) {
-      // log a warning message
+      // Log a warning message
       this.logger.warning([ '[ Converter.convert ] - cannot process convertion to [', key,
         '] format. Rules are not defined or is empty' ].join(' '));
     }
   }
 
-  // default statement
+  // Default statement
   return this.sender.store(cloned, key);
 };
 
 /**
  * Default export
+ *
+ * @param {Object} message current messae object to convert 
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main Converter class to use on main process
  */
 module.exports = function (message, l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ Converter.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (Converter)(message, l);
+  // Default statement
+  return new Converter(message, l);
 };

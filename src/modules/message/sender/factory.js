@@ -26,60 +26,64 @@ function SenderFactory (logger) {
  * @return {Boolean|Object} generic transport instance to use for sending
  */
 SenderFactory.prototype.createMandrillTransporter = function (options) {
-  // default schema for mandrill
+  // Default schema for mandrill
   var schema = joi.string().required().empty();
 
-  // try to validate current schema
+  // Try to validate current schema
   var result = joi.validate(options || {}, schema);
 
-  // has error ?
+  // Has error ?
   if (_.isNull(result.error)) {
-    // default schema for mandrill
+    // Default schema for mandrill
     var transport = new mandrill.Mandrill(result.value);
 
-    // normalize an isReady function
+    // Normalize an isReady function
     transport.isReady = function () {
-      // create deferred process
+      // Create deferred process
       var deferred = Q.defer();
 
-      // default verify process
+      // Default verify process
       this.users.ping({}, function (success) {
-        // on the other case we resolve the promise
+        // On the other case we resolve the promise
         return deferred.resolve(success);
       }, function (error) {
-        // reject in this case
+        // Reject in this case
         return deferred.reject(error);
       });
 
-      // default statement
+      // Default statement
       return deferred.promise;
     }.bind(transport);
 
-    // normalize an send function
+    // Normalize an send function
     transport.send = function (message) {
-      // create deferred process
+      // Create deferred process
       var deferred = Q.defer();
 
-      // default send method
-      this.messages.send({ message : message }, function (success) {
-        // on the other case we resolve the promise
+      // Default send method
+      this.messages.send({
+        message : message
+      }, function (success) {
+        // On the other case we resolve the promise
         return deferred.resolve(success);
       }, function (error) {
-        // reject in this case
+        // Reject in this case
         return deferred.reject(error);
       });
 
-      // default statement
+      // Default statement
       return deferred.promise;
     }.bind(transport);
 
-    // default statement
+    // Default statement
     return transport;
   }
-  // log error
+
+  // Log error
   this.logger.error([ '[ Sender.createTransport ] - Cannot create transport for mandrill.',
     'Error is :', result.error ].join(' '));
-  // return the error
+
+  // Return the error
   return false;
 };
 
@@ -90,89 +94,96 @@ SenderFactory.prototype.createMandrillTransporter = function (options) {
  * @return {Boolean|Object} generic transport instance to use for sending
  */
 SenderFactory.prototype.createNodeMailerTransporter = function (options) {
-  // default validation schema
+  // Default validation schema
   var schema = joi.object().required().keys({
+    auth : joi.object().optional().keys({
+      pass : joi.string().required().empty(),
+      user : joi.string().required().empty()
+    }),
     host            : joi.string().required().empty(),
     port            : joi.number().required().min(0),
     secure          : joi.boolean().optional().default(false),
-    auth            : joi.object().optional().keys({
-      user : joi.string().required().empty(),
-      pass : joi.string().required().empty()
-    }),
     streamTransport : joi.boolean().optional().default(false)
   });
 
-  // try to validate current schema
+  // Try to validate current schema
   var result = joi.validate(options || {}, schema);
 
-  // has error ?
+  // Has error ?
   if (_.isNull(result.error)) {
-    // set transport
+    // Set transport
     var transport = nodemailer.createTransport(result.value);
 
-    // normalize an isReady function
+    // Normalize an isReady function
     transport.isReady = function () {
-      // create deferred process
+      // Create deferred process
       var deferred = Q.defer();
 
-      // default verify process
+      // Default verify process
       this.verify(function (error, success) {
-        // has an error ?
+        // Has an error ?
         if (error) {
-          // reject
+          // Reject
           return deferred.reject(error);
         }
 
-        // on the other case we resolve the promise
+        // On the other case we resolve the promise
         return deferred.resolve(success);
       });
 
-      // default statement
+      // Default statement
       return deferred.promise;
     }.bind(transport);
 
-    // normalize an send function
+    // Normalize an send function
     transport.send = function (message) {
-      // create deferred process
+      // Create deferred process
       var deferred = Q.defer();
 
-      // default send method
+      // Default send method
       this.sendMail(message, function (error, success) {
-        // has an error ?
+        // Has an error ?
         if (error) {
-          // reject
+          // Reject
           return deferred.reject(error);
         }
-        // on the other case we resolve the promise
+
+        // On the other case we resolve the promise
         return deferred.resolve(success);
       });
 
-      // default statement
+      // Default statement
       return deferred.promise;
     }.bind(transport);
 
-    // default statement
+    // Default statement
     return transport;
   }
-  // log error
+
+  // Log error
   this.logger.error([ '[ Sender.createTransport ] - Cannot create transport for nodemailer.',
     'Error is :', result.error ].join(' '));
-  // return the error
+
+  // Return the error
   return false;
 };
 
 /**
  * Default export
+ *
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main Factory class to use on main process
  */
 module.exports = function (l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ SenderFactory.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (SenderFactory)(l);
+  // Default statement
+  return new SenderFactory(l);
 };

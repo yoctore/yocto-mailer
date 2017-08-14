@@ -23,34 +23,38 @@ function Checker (logger) {
  * @return {Boolean} true if case of success, false otherwise
  */
 Checker.prototype.isFile = function (value) {
-  // do it in try catch
+  // Do it in try catch
   try {
-    // try to get stats value
+    // Try to get stats value
     var stats = fs.statSync(value);
 
-    // default valid statement
+    // Default valid statement
     return stats.isFile();
   } catch (e) {
-    // log error
+    // Log error
     this.logger.error([ '[ Checker.isFile ] - given path not exits :', e ].join(' '));
   }
 
-  // default statement
+  // Default statement
   return false;
 };
 
 /**
  * Default export
+ *
+ * @param {Object} l logger instance to use on main module
+ * @return {Object} main Checker class to use on main process
  */
 module.exports = function (l) {
-  // is a valid logger ?
+  // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
-    // log a warning message
+    // Log a warning message
     logger.warning('[ Checker.constructor ] - Invalid logger given. Use internal logger');
-    // assign
+
+    // Assign
     l = logger;
   }
 
-  // default statement
-  return new (Checker)(l);
+  // Default statement
+  return new Checker(l);
 };
