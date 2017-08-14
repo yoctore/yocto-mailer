@@ -44,5 +44,4 @@ It's possible to use mandrill subaccount. for this use the method `setSubAccount
 ## Breaking Changes
 
 This module was completely rewrite and update to the latest version of each used dependencies.
-
- 
+There is no compatibility between v1.x.x and v2.x.x
