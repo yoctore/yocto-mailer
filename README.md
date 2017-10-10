@@ -17,6 +17,8 @@ Our main motivation for this module is create and provide a generic & very simpl
  
 ## Available methods
 
+### default method
+
 - setFrom : Set from property on message to send
 - addTo : Set to property on message to send
 - addCC : Set cc property on message to send
@@ -33,15 +35,27 @@ Our main motivation for this module is create and provide a generic & very simpl
 - setPriorityToNormal  : force priority to normal
 - raw : set a message on raw mode, for this you need to use the provider format to set properly your message object (see provider docs)
 
+### mandrill additional methods
+
+- setSubAccount(accountName) to set your subaccount on mandrill process
+
+### mailjet additional methods
+
+
 ## How To use
 
 See example directory for example code
 
-## And mandrill subacccount ?
+## Need to test in a sandbox mode ?
 
-It's possible to use mandrill subaccount. for this use the method `setSubAccount(accountName)` to set your subaccount. 
+- enableSandbox : enable sandbox mode for whole provider (All requests was not sent to remote api)
+- enableRemoteSandbox : enable sandbox mode for whole provider (But here request was sent to remote api)
 
 ## Breaking Changes
 
+### v1.x.x to v2.x.x
+
 This module was completely rewrite and update to the latest version of each used dependencies.
 There is no compatibility between v1.x.x and v2.x.x
+
+### v2.x.x to v3.x.x

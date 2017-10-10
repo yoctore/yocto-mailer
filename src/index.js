@@ -1,28 +1,37 @@
 'use strict';
 
-var logger  = require('yocto-logger');
-var Message = require('./modules/message');
-var _       = require('lodash');
+var logger        = require('yocto-logger');
+var Transactional = require('./modules/transactional');
+var Marketing     = require('./modules/marketing');
+var _             = require('lodash');
 
 /**
  * A little factory to create a new message to send
  *
  * @param {Object} logger current logger instance
  */
-function FMessage (logger) {
+function MailerTools (logger) {
   /**
    * Internal logger
    */
   this.logger = logger;
 
   /**
-   * Internal method to create a new message object
+   * Internal method to create a new transactionnal message
    *
    * @return {Object} a new instance of message object
    */
-  this.new = function () {
+  this.transactional = function () {
     // Default statement
-    return new Message(this.logger);
+    return new Transactional(this.logger);
+  }.bind(this);
+
+  /**
+   * Internal method to create a marketing process
+   */
+  this.marketing = function () {
+    // Default statement
+    return new Marketing(this.logger);
   }.bind(this);
 }
 
@@ -36,12 +45,12 @@ module.exports = function (l) {
   // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
     // Log a warning message
-    logger.warning('[ FMessage.constructor ] - Invalid logger given. Use internal logger');
+    logger.warning('[ MailerTools.constructor ] - Invalid logger given. Use internal logger');
 
     // Assign
     l = logger;
   }
 
   // Default statement
-  return new FMessage(l);
+  return new MailerTools(l);
 };

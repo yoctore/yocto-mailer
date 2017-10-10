@@ -73,7 +73,7 @@ Converter.prototype.toString = function () {
  */
 Converter.prototype.toNodeMailer = function () {
   // Default statement
-  return this.convert(this.sender.NODEMAILER_TYPE);
+  return this.convert(this.sender.factory.NODEMAILER_TYPE);
 };
 
 /**
@@ -83,7 +83,17 @@ Converter.prototype.toNodeMailer = function () {
  */
 Converter.prototype.toMandrill = function () {
   // Default statement
-  return this.convert(this.sender.MANDRILL_TYPE);
+  return this.convert(this.sender.factory.MANDRILL_TYPE);
+};
+
+/**
+ * Return current message for mailjet reprensentation
+ *
+ * @return {Object} current message on object representation
+ */
+Converter.prototype.toMailjet = function () {
+  // Default statement
+  return this.convert(this.sender.factory.MAILJET_TYPE);
 };
 
 /**
@@ -94,13 +104,13 @@ Converter.prototype.toMandrill = function () {
  */
 Converter.prototype.convert = function (key) {
   // We need first clone deep this current message
-  var cloned = key === this.sender.NODEMAILER_TYPE ? this.message : {};
+  var cloned = key === this.sender.factory.NODEMAILER_TYPE ? this.message : {};
 
   // Try to get rules
   var rules = _.get(this.rules, key);
 
   // Rules is array and not empty ?
-  if (key !== this.sender.NODEMAILER_TYPE && _.isArray(rules) && !_.isEmpty(rules)) {
+  if (key !== this.sender.factory.NODEMAILER_TYPE && _.isArray(rules) && !_.isEmpty(rules)) {
     // Process maps
     _.map(rules, function (rule) {
       // Try to get current value
@@ -147,7 +157,7 @@ Converter.prototype.convert = function (key) {
     }.bind(this));
   } else {
     // Is not not mailer ?
-    if (key !== this.sender.NODEMAILER_TYPE) {
+    if (key !== this.sender.factory.NODEMAILER_TYPE) {
       // Log a warning message
       this.logger.warning([ '[ Converter.convert ] - cannot process convertion to [', key,
         '] format. Rules are not defined or is empty' ].join(' '));

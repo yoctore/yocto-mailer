@@ -16,6 +16,10 @@ function Customiser (logger) {
   this.logger = logger;
 }
 
+/******************************************************************************************
+ * Mandrill customiser part. Do not defined other provider method is this block please !
+ ******************************************************************************************/
+
 /**
  * A transformer to change given value to the correct format for mandrill TO property
  *
@@ -62,6 +66,63 @@ Customiser.prototype.mandrillAttachementFormat = function (key, value) {
       type    : v.contentType
     };
   });
+};
+
+/******************************************************************************************
+ * mailjet customiser part. Do not defined other provider method is this block please !
+ ******************************************************************************************/
+
+/**
+ * A transformer to change given value to the correct format for mailjet From property
+ *
+ * @param {String} key current key to use for current customiser
+ * @param {Mixed} value data to use for current customiser
+ * @return {Object} object needed with given value
+ */
+Customiser.prototype.mailjetFromToCcBccFormat = function (key, value) {
+  // Defaut statement
+  return _.isArray(value) ? _.map(value, function (v) {
+    return {
+      'Email' : v.address,
+      'Name'  : v.name 
+    };
+  }) : {
+    'Email' : value.address,
+    'Name'  : value.name
+  };
+};
+
+/**
+ * A transformer to change given value to the correct format for mailjet attachements property
+ *
+ * @param {String} key current key to use for current customiser
+ * @param {Mixed} value data to use for current customiser
+ * @return {Object} object needed with given value
+ */
+Customiser.prototype.mailjetAttachementFormat = function (key, value) {
+  // Defaut statement
+  return _.map(value, function (v) {
+    return {
+      'Base64Content' : v.content,
+      'Filename'      : v.filename,
+      'ContentType'   : v.contentType
+    };
+  });
+};
+
+/**
+ * A transformer to change given value to the correct format for IMPORTANT mailjet property
+ *
+ * @param {String} key current key to use for current customiser
+ * @param {Mixed} value data to use for current customiser
+ * @return {Object} object needed with given value
+ */
+Customiser.prototype.mailjetImportantFormat = function (key, value) {
+  // Default statement
+  return _.get({
+    'low'   : 0,
+    'high'  : 2
+  }, value) || 2;
 };
 
 /**

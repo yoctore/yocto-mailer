@@ -13,5 +13,19 @@
     { "sourcePath" : "priority", "destinationPath" : "important", "customiser" : "mandrillImportantFormat" },
     { "sourcePath" : "subaccount", "destinationPath" : "subaccount" },
     { "sourcePath" : "attachments", "destinationPath" : "attachments", "customiser" : "mandrillAttachementFormat" }
+  ],
+  "mailjet" : [
+    { "sourcePath" : "html", "destinationPath" : "HTMLPart" },
+    { "sourcePath" : "text", "destinationPath" : "TextPart" },
+    { "sourcePath" : "subject", "destinationPath" : "Subject" },
+    { "sourcePath" : "from", "destinationPath" : "From", "customiser" : "mailjetFromToCcBccFormat" },
+    { "sourcePath" : "to", "destinationPath" : "To", "customiser" : "mailjetFromToCcBccFormat" }, 
+    { "sourcePath" : "cc", "destinationPath" : "Cc", "customiser" : "mailjetFromToCcBccFormat" },
+    { "sourcePath" : "bcc", "destinationPath" : "Bcc", "customiser" : "mailjetFromToCcBccFormat" },
+    { "sourcePath" : "headers", "destinationPath" : "Headers" },
+    { "sourcePath" : "attachments", "destinationPath" : "Attachments", "customiser" : "mailjetAttachementFormat" },
+    { "sourcePath" : "sandbox", "destinationPath" : "SandboxMode" },
+    { "sourcePath" : "priority", "destinationPath" : "Priority", "customiser" : "mailjetImportantFormat" }
   ]
 }
+

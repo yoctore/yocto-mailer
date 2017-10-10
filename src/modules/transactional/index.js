@@ -309,19 +309,6 @@ Message.prototype.raw = function (value) {
   return true;
 };
 
-// From here we are in specific mandrill wrapper method
-
-/**
- * Set a subaccount for current message object (Specific Mandrill)
- *
- * @param {String} value subaccount value for current object
- * @return {Boolean} true in case of success, false otherwise
- */
-Message.prototype.setSubAccount = function (value) {
-  // Defaut statement
-  return this.set('subaccount', value);
-};
-
 /**
  * Get the current prepared message
  *
@@ -337,6 +324,39 @@ Message.prototype.prepare = function () {
   // Default statement
   return this.converter.update(this.message);
 };
+
+/******************************************************************************************
+ * From here we are in specific mandrill wrapper method
+ ******************************************************************************************/
+
+/**
+ * Set a subaccount for current message object (Specific Mandrill)
+ *
+ * @param {String} value subaccount value for current object
+ * @return {Boolean} true in case of success, false otherwise
+ */
+Message.prototype.setSubAccount = function (value) {
+  // Defaut statement
+  return this.set('subaccount', value);
+};
+
+
+/******************************************************************************************
+ * From here we are in specific mailjet wrapper method
+ ******************************************************************************************/
+
+/**
+ * Set a subaccount for current message object (Specific Mandrill)
+ *
+ * @param {String} value subaccount value for current object
+ * @return {Boolean} true in case of success, false otherwise
+ */
+Message.prototype.enableSandbox = function () {
+  // Defaut statement
+  return this.set('sandbox', true);
+};
+
+
 
 /**
  * Default export

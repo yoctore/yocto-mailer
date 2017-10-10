@@ -17,24 +17,19 @@ function Sender (logger) {
   this.logger = logger;
 
   /**
+   * Internal factory to build correct transporter
+   */
+  this.factory = factory(this.logger);
+
+  /**
    * Message save and ready to send
    */
   this.message = {};
 
   /**
-   * Constant to use for sender
-   */
-
-  // For nodemailer process
-  this.NODEMAILER_TYPE = 'nodemailer';
-
-  // For mandrill process
-  this.MANDRILL_TYPE = 'mandrill';
-
-  /**
    * Default type of mailer module
    */
-  this.type = this.NODEMAILER_TYPE;
+  this.type = this.factory.NODEMAILER_TYPE;
 
   /**
    * Constant for state list
@@ -59,11 +54,6 @@ function Sender (logger) {
     code    : 'pending',
     message : null
   };
-
-  /**
-   * Internal factory to build correct transporter
-   */
-  this.factory = factory(this.logger);
 }
 
 /**
@@ -124,19 +114,7 @@ Sender.prototype.updateState = function (code, message) {
  */
 Sender.prototype.createTransport = function (options) {
   // Current transport
-  var transport = false;
-
-  // Is nodemailer ?
-  if (this.type === this.NODEMAILER_TYPE) {
-    // Set transport
-    transport = this.factory.createNodeMailerTransporter(options);
-  }
-
-  // Is mandrill ?
-  if (this.type === this.MANDRILL_TYPE) {
-    // Set transport
-    transport = this.factory.createMandrillTransporter(options);
-  }
+  var transport = this.factory.createTransporter(this.type, options);
 
   // Set state
   this.updateState(transport ?
@@ -195,7 +173,6 @@ Sender.prototype.send = function (options) {
   var start = process.hrtime();
 
   // Message is invalid ?
-
   if (_.isEmpty(this.message)) {
     // Invalid statement
     deferred.reject('Message in empty. Build your messsage before send.');

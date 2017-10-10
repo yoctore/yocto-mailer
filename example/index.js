@@ -1,25 +1,33 @@
 var logger  = require('yocto-logger');
+var _       = require('lodash');
 var message = require('../src')(logger);
 
-var mandrill = true;
+var provider = 'mailjet'; // mandrill or mailjet or nodemailer
+var method   = [ 'to', _.upperFirst(provider) ].join('');
 
 // Define your nodemailer configuration
-var nOptions = {
-  host    : process.env.SMTP_HOST,
-  port    : process.env.SMTP_PORT,
-  secure  : false,
-  auth    : {
-      user  : process.env.SMTP_AUTH_USER,
-      pass  : process.env.SMTP_AUTH_PASS
+var options = {
+  nodemailer : {
+    host    : process.env.SMTP_HOST,
+    port    : process.env.SMTP_PORT,
+    secure  : false,
+    auth    : {
+        user  : process.env.SMTP_AUTH_USER,
+        pass  : process.env.SMTP_AUTH_PASS
+    }
+  },
+  mandrill : process.env.MANDRILL_API_KEY || '',
+  mailjet : {
+    MJ_APIKEY_PUBLIC : process.env.MJ_APIKEY_PUBLIC || '',
+    MJ_APIKEY_PRIVATE : process.env.MJ_APIKEY_PRIVATE || ''
   }
 };
 
-// define your mandrill API KEY
-var mOptions = process.env.MANDRILL_API_KEY;
-var options  = mandrill ? mOptions : nOptions;
+// Get correct options
+options  = _.get(options, provider);
 
 // create a new message
-var m = message.new();
+var m = message.transactional();
 
 m.setFrom({ address : 'from@from.com', name : 'from' });
 m.addTo({ address : 'mathieu@yocto.re', name : 'to' });
@@ -34,29 +42,16 @@ m.addAttachment('./README.md');
 m.addAlternative('./README.md');
 m.addAttachment('./Fichier_1.pdf');
 m.setReplyTo('noreply@domain.com');
-m.setPriorityToHigh();
-m.setPriorityToLow();
+//m.setPriorityToHigh();
+//m.setPriorityToLow();
 m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
 m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
 m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
-
-
-// is mandrill needed ?
-if (mandrill) {
-  console.log(m.prepare().toMandrill().toObject());
-  m.prepare().toMandrill().send(options).then(function (success) {
-    console.log('success =>', success);
-  }).catch(function(error) {
-    console.log('error =>', error);
-  });
-} else {
-  console.log(m.prepare().toNodeMailer().toObject());
-  m.prepare().toNodeMailer().send(options).then(function(success) {
-    console.log('success =>', success);
-  }).catch(function(error) {
-    console.log('error =>', error);
-  });
-}
-
-
+m.enableSandbox();
+console.log(m.prepare()[method]().toObject());
+/*m.prepare()[method]().send(options).then(function (success) {
+  console.log('success =>', success);
+}).catch(function(error) {
+  console.log('error =>', error);
+});*/
 

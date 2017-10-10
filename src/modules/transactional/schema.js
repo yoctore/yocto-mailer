@@ -52,8 +52,9 @@ function SchemaValidator (logger) {
     inReplyTo  : joi.string().required().empty(),
     priority   : joi.string().required().valid([ 'low', 'normal', 'high' ]),
     replyTo    : joi.string().email().required().empty(),
+    sandbox    : joi.boolean().optional().default(false),
     subaccount : joi.string().required().empty(),
-    subject    : joi.string().required().empty(),
+    subject    : joi.string().required().empty().max(255),
     text       : joi.string().required().empty(),
     to         : joi.alternatives().try(
       joi.object().required().keys({

@@ -27,6 +27,7 @@ function Transformer (logger) {
  * @return {Object} object needed with given value
  */
 Transformer.prototype.toAddressObject = function (value) {
+  
   // Default statement
   return _.isString(value) ? {
     address : value,
