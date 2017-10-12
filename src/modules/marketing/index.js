@@ -1,7 +1,8 @@
 'use strict';
 
-var _       = require('lodash');
-var contact = require('./contacts');
+var _         = require('lodash');
+var contact   = require('./contacts');
+var campaigns = require('./campaigns');
 
 /**
  * Main Marketing object.
@@ -18,6 +19,11 @@ function Marketing (logger) {
    * Default contact instance
    */
   this.contact = contact(this.logger);
+
+  /**
+   * Default campagins instance
+   */
+  this.campaigns = campaigns(this.logger);
 }
 
 /**

@@ -2,12 +2,12 @@ var logger  = require('yocto-logger');
 var _       = require('lodash');
 var message = require('../src')(logger);
 
-var provider = 'mailjet'; // mandrill or mailjet or nodemailer
+var provider = 'mailjet'; // mandrill or mailjet or nodeMailer
 var method   = [ 'to', _.upperFirst(provider) ].join('');
 
 // Define your nodemailer configuration
 var options = {
-  nodemailer : {
+  nodeMailer : {
     host    : process.env.SMTP_HOST,
     port    : process.env.SMTP_PORT,
     secure  : false,
@@ -29,29 +29,30 @@ options  = _.get(options, provider);
 // create a new message
 var m = message.transactional();
 
-m.setFrom({ address : 'from@from.com', name : 'from' });
+m.setFrom({ address : 'demo@yocto.re', name : 'from' });
 m.addTo({ address : 'mathieu@yocto.re', name : 'to' });
-m.addTo('to2222@to.com');
+/*m.addTo('to2222@to.com');
 m.addCC({ address : 'cc1@test.com', name : 'cc1' });
 m.addCC('cc2@test.com');
 m.addBCC({ address : 'bcc1@test.com', name : 'bcc1' });
 m.addBCC('bcc2@test.com');
+*/
 m.setSubject('My subject');
-m.setMessage('<b>My subject</b>');
-m.addAttachment('./README.md');
-m.addAlternative('./README.md');
+m.setMessage('<b>My aaaaaa</b>');
+m.addAttachment('../README.md');
+m.addAlternative('../README.md');
 m.addAttachment('./Fichier_1.pdf');
-m.setReplyTo('noreply@domain.com');
+//m.setReplyTo('noreply@domain.com');
 //m.setPriorityToHigh();
 //m.setPriorityToLow();
-m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
-m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
-m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
-m.enableSandbox();
-console.log(m.prepare()[method]().toObject());
-/*m.prepare()[method]().send(options).then(function (success) {
+//m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
+//m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
+//m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
+//m.enableSandbox();
+//console.log(m.prepare()[method]().toObject());
+m.prepare()[method]().send(options).then(function (success) {
   console.log('success =>', success);
 }).catch(function(error) {
   console.log('error =>', error);
-});*/
+});
 

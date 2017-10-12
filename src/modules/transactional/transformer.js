@@ -27,7 +27,6 @@ function Transformer (logger) {
  * @return {Object} object needed with given value
  */
 Transformer.prototype.toAddressObject = function (value) {
-  
   // Default statement
   return _.isString(value) ? {
     address : value,
@@ -79,7 +78,7 @@ Transformer.prototype.attachementsToArray = function (value) {
   return this.toArray({
     cid         : uuid.v4(),
     content     : fs.readFileSync(value).toString('base64'),
-    contentType : mime.lookup(value),
+    contentType : mime.getType(value),
     encoding    : 'base64',
     filename    : path.basename(value)
   });

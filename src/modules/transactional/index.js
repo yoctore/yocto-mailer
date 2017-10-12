@@ -325,7 +325,7 @@ Message.prototype.prepare = function () {
   return this.converter.update(this.message);
 };
 
-/******************************************************************************************
+/** ****************************************************************************************
  * From here we are in specific mandrill wrapper method
  ******************************************************************************************/
 
@@ -341,21 +341,25 @@ Message.prototype.setSubAccount = function (value) {
 };
 
 
-/******************************************************************************************
- * From here we are in specific mailjet wrapper method
+/** ****************************************************************************************
+ * From here we are in utility method
  ******************************************************************************************/
 
 /**
- * Set a subaccount for current message object (Specific Mandrill)
+ * Set a sandbox flag for current message object (Specific Mailjet or for sandbox all your request)
  *
- * @param {String} value subaccount value for current object
+ * @param {Boolean} localOnly if true all requests will response success, otherwise keep the normal sandbox process (only for mailjet transactional)
  * @return {Boolean} true in case of success, false otherwise
  */
-Message.prototype.enableSandbox = function () {
+Message.prototype.enableSandbox = function (localOnly) {
+  // localOnly is needed
+  if (localOnly) {
+    this.set('localSandbox', true);
+  }
+
   // Defaut statement
   return this.set('sandbox', true);
 };
-
 
 
 /**

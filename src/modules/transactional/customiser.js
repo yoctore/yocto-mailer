@@ -16,7 +16,7 @@ function Customiser (logger) {
   this.logger = logger;
 }
 
-/******************************************************************************************
+/** ****************************************************************************************
  * Mandrill customiser part. Do not defined other provider method is this block please !
  ******************************************************************************************/
 
@@ -68,8 +68,8 @@ Customiser.prototype.mandrillAttachementFormat = function (key, value) {
   });
 };
 
-/******************************************************************************************
- * mailjet customiser part. Do not defined other provider method is this block please !
+/** ****************************************************************************************
+ * Mailjet customiser part. Do not defined other provider method is this block please !
  ******************************************************************************************/
 
 /**
@@ -80,16 +80,22 @@ Customiser.prototype.mandrillAttachementFormat = function (key, value) {
  * @return {Object} object needed with given value
  */
 Customiser.prototype.mailjetFromToCcBccFormat = function (key, value) {
+  // value is not undefined true ?
+  if (_.isUndefined(value)) {
+    // default invalid statement
+    return value;
+  }
+
   // Defaut statement
   return _.isArray(value) ? _.map(value, function (v) {
     return {
-      'Email' : v.address,
-      'Name'  : v.name 
+      Email : v.address,
+      Name  : v.name
     };
   }) : {
-    'Email' : value.address,
-    'Name'  : value.name
-  };
+    Email : value.address,
+    Name  : value.name
+  }
 };
 
 /**
@@ -103,9 +109,9 @@ Customiser.prototype.mailjetAttachementFormat = function (key, value) {
   // Defaut statement
   return _.map(value, function (v) {
     return {
-      'Base64Content' : v.content,
-      'Filename'      : v.filename,
-      'ContentType'   : v.contentType
+      Base64Content : v.content,
+      ContentType   : v.contentType,
+      Filename      : v.filename
     };
   });
 };
@@ -120,9 +126,25 @@ Customiser.prototype.mailjetAttachementFormat = function (key, value) {
 Customiser.prototype.mailjetImportantFormat = function (key, value) {
   // Default statement
   return _.get({
-    'low'   : 0,
-    'high'  : 2
+    high : 2,
+    low  : 0
   }, value) || 2;
+};
+
+/**
+ * Transform the final mailjet message to a correct format
+ *
+ * @param {Object} message the current message to send
+ * @return {Object} formatted message
+ */
+Customiser.prototype.postFormatTransactionnalMessage = function (message) {
+  // default FormattedMessage
+  var formattedMessage = _.set({}, 'Messages',[ _.omit(message, 'SandboxMode') ]);
+  // replace sandbox because we need it 
+  _.set(formattedMessage, 'SandboxMode', _.get(message, 'SandboxMode') || false);
+
+  // default statement
+  return formattedMessage;
 };
 
 /**

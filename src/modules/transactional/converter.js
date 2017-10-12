@@ -3,7 +3,7 @@
 var logger      = require('yocto-logger');
 var _           = require('lodash');
 var customiser  = require('./customiser');
-var sender      = require('./sender');
+var sender      = require('../sender');
 var fs          = require('fs');
 var path        = require('path');
 
@@ -110,9 +110,10 @@ Converter.prototype.convert = function (key) {
   var rules = _.get(this.rules, key);
 
   // Rules is array and not empty ?
-  if (key !== this.sender.factory.NODEMAILER_TYPE && _.isArray(rules) && !_.isEmpty(rules)) {
+  if (key !== this.sender.factory.NODEMAILER_TYPE && !_.isEmpty(rules) &&
+    _.has(rules, 'prerules') && _.isArray(rules.prerules) ) {
     // Process maps
-    _.map(rules, function (rule) {
+    _.map(rules.prerules, function (rule) {
       // Try to get current value
       var value = !_.isFunction(this.customiser[rule.customiser]) ?
         _.get(this.message, rule.sourcePath) :
@@ -124,7 +125,6 @@ Converter.prototype.convert = function (key) {
         var exists = _.get(cloned, rule.destinationPath);
 
         // Try to process array and object case
-
         if (_.isArray(exists) || _.isObject(exists)) {
           // Is array ?
           if (_.isArray(exists)) {
@@ -155,6 +155,17 @@ Converter.prototype.convert = function (key) {
         _.set(cloned, rule.destinationPath, value);
       }
     }.bind(this));
+
+    // has post rules ?
+    if (_.has(rules, 'postrules')) {
+      // parse postrules
+      _.map(rules.postrules, function (rule) {
+        // Try to get current value
+        if (_.isFunction(this.customiser[rule.customiser])) {
+          cloned = this.customiser[rule.customiser](cloned);
+        }
+      }.bind(this));
+    }
   } else {
     // Is not not mailer ?
     if (key !== this.sender.factory.NODEMAILER_TYPE) {

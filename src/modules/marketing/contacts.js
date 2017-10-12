@@ -12,14 +12,14 @@ function Contact (logger) {
    * Default logger
    */
   this.logger = logger;
-  
-  this.lists    = [];
+
+  this.lists = [];
   this.contacts = [];
 }
 
 Contact.prototype.createLists = function (name) {
   if (!_.isEmpty(name)) {
-    this.lists.push(name);
+    this.lists.push();
   }
 };
 

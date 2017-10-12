@@ -4,6 +4,8 @@ var logger      = require('yocto-logger');
 var _           = require('lodash');
 var Q           = require('q');
 var factory     = require('./factory');
+var sandbox     = require('../sandbox');
+var debuger     = require('../debugger');
 
 /**
  * Process send request on correct message type
@@ -11,10 +13,18 @@ var factory     = require('./factory');
  * @param {Object} logger default logger to use on current instance
  */
 function Sender (logger) {
+  // default debut state to display full printed message (request / response)
+  this.debug = process.env.DEBUG || false;
+
   /**
    * Default logger
    */
   this.logger = logger;
+
+  /**
+   * Default debugger instance
+   */
+   this.debuger = debuger(logger);
 
   /**
    * Internal factory to build correct transporter
@@ -54,6 +64,11 @@ function Sender (logger) {
     code    : 'pending',
     message : null
   };
+
+  /**
+   * Default sandbox instance
+   */
+  this.sandbox = sandbox(this.logger);
 }
 
 /**
@@ -187,6 +202,9 @@ Sender.prototype.send = function (options) {
         // Do a debug message
         this.logger.debug([ '[ Sender.send ] -', this.type, 'Connector is ready' ].join(' '));
 
+        // set here sandbox process
+        transport = this.sandbox.check(transport, this.message);
+
         // If we are here we need to send the message
         transport.send(this.message).then(function (success) {
           // Update state and get new success object
@@ -195,8 +213,13 @@ Sender.prototype.send = function (options) {
           // On the other case we resolve the promise
           return deferred.resolve(success);
         }.bind(this)).catch(function (error) {
+          // debug message is enabled ?
+          if (this.debug) {
+            this.debuger.debug('[ Sender.send ] - Full error response is :', error);
+          }
+
           // Update state and get new success object
-          error = this.updateAndBuildStats(start, success, this.STATE_ERROR);
+          error = this.updateAndBuildStats(start, error, this.STATE_ERROR);
 
           // Reject with error
           deferred.reject(error);
