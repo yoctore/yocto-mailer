@@ -1,0 +1,1 @@
+"use strict";function Contact(t){this.logger=t,this.lists=[],this.contacts=[]}var _=require("lodash");Contact.prototype.createLists=function(t){_.isEmpty(t)||this.lists.push()},module.exports=function(t){return(_.isUndefined(t)||_.isNull(t))&&(logger.warning("[ Contact.constructor ] - Invalid logger given. Use internal logger"),t=logger),new Contact(t)};

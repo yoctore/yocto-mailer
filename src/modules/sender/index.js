@@ -12,7 +12,7 @@ var debuger     = require('../debugger');
  *
  * @param {Object} logger default logger to use on current instance
  */
-function Sender (logger) {
+function Sender (logger, options) {
   // default debut state to display full printed message (request / response)
   this.debug = process.env.DEBUG || false;
 
@@ -69,6 +69,11 @@ function Sender (logger) {
    * Default sandbox instance
    */
   this.sandbox = sandbox(this.logger);
+
+  /**
+   * Default options
+   */
+  this.options = options;
 }
 
 /**
@@ -127,9 +132,9 @@ Sender.prototype.updateState = function (code, message) {
  * @param {Object} options given options used for creation
  * @return {Sender} current sender instance
  */
-Sender.prototype.createTransport = function (options) {
+Sender.prototype.createTransport = function () {
   // Current transport
-  var transport = this.factory.createTransporter(this.type, options);
+  var transport = this.factory.createTransporter(this.type, this.options);
 
   // Set state
   this.updateState(transport ?
@@ -157,7 +162,7 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
   var end = process.hrtime(start);
 
   // Log debug messsage
-  this.logger.debug([ '[ Sender.send ] - sending email was take :',
+  this.logger.debug([ '[ Sender.send ] - processing requests was take :',
     end[0], 'secondes and', end[1] / 1000000, 'milliseconds'
   ].join(' '));
 
@@ -178,22 +183,28 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
  * Send current message with given options
  *
  * @param {Object|String} options options to use for current message
+ * @param {String} request specific request name is we need to override default request
+ * @param {String} type if we need to override the default type of request (GET/POST/DELETE/PUT) only
+ * @param {String} version if we need to override the default version
  * @return {Promise} promise to catch
  */
-Sender.prototype.send = function (options) {
+Sender.prototype.send = function (request, type, version, allowEmpty) {
   // Create deferred process
   var deferred = Q.defer();
 
   // Define here time when process start
   var start = process.hrtime();
 
+  // normalize allowEmpty value
+  allowEmpty = _.isBoolean(allowEmpty) ? allowEmpty : false;
+
   // Message is invalid ?
-  if (_.isEmpty(this.message)) {
+  if (_.isEmpty(this.message) && !allowEmpty) {
     // Invalid statement
     deferred.reject('Message in empty. Build your messsage before send.');
   } else {
     // Sender is valid ?
-    var transport = this.createTransport(options);
+    var transport = this.createTransport();
 
     // Transport is ready ?
     if (this.state.code === this.STATE_READY) {
@@ -206,7 +217,7 @@ Sender.prototype.send = function (options) {
         transport = this.sandbox.check(transport, this.message);
 
         // If we are here we need to send the message
-        transport.send(this.message).then(function (success) {
+        transport.send(this.message, request, type, version).then(function (success) {
           // Update state and get new success object
           success = this.updateAndBuildStats(start, success, this.STATE_SUCCESS);
 
@@ -245,7 +256,7 @@ Sender.prototype.send = function (options) {
  * @param {Object} l logger instance to use on main module
  * @return {Object} main Sender class to use on main process
  */
-module.exports = function (l) {
+module.exports = function (l, options) {
   // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
     // Log a warning message
@@ -256,5 +267,5 @@ module.exports = function (l) {
   }
 
   // Default statement
-  return new Sender(l);
+  return new Sender(l, options);
 };

@@ -30,7 +30,7 @@ function MailjetTransporter (logger) {
   /**
    * Default maijet api version
    */
-  this.version = 'v3.1';
+  this.version = '3.1';
 }
 
 /**
@@ -59,23 +59,35 @@ MailjetTransporter.prototype.isReady = function () {
  * Default method to send transactional email
  *
  * @param {Object} message message to send
+ * @param {String} request if we need to override the default request use it
+ * @param {String} type if we need to override the default type of request (GET/POST/DELETE/PUT) only
  * @return {Promise} promise to catch
  */
-MailjetTransporter.prototype.send = function (message) {
+MailjetTransporter.prototype.send = function (message, request, type, version) {
   // Create deferred process
   var deferred = Q.defer();
+
   // Default send method
-  mailjet.post('send', {
-    version : this.version
-  })
-    .request(message)
-    .then(function (success) {
+  var instance = mailjet[ type || 'post' ](request || 'send', {
+    version : [ 'v', version || this.version ].join('')
+  });
+
+  // has id inside default message ?
+  if (_.has(message, 'ID') || _.has(message, 'Address')) {
+    instance = instance.id(_.get(message, 'ID') || _.get(message, 'Address'));
+    // remove ID property
+    _.omit(message, 'ID');
+  }
+
+  // do default request
+  instance.request(message)
+  .then(function (success) {
     // On the other case we resolve the promise
-      return deferred.resolve(success);
-    }).catch(function (error) {
+    return deferred.resolve(success);
+  }).catch(function (error) {
     // Reject in this case
-      return deferred.reject(error);
-    });
+    return deferred.reject(error);
+  });
 
   // Default statement
   return deferred.promise;
@@ -89,8 +101,8 @@ MailjetTransporter.prototype.send = function (message) {
  */
 MailjetTransporter.prototype.create = function (options) {
   // Setup mailjet with api public api key and secret api key
-  mailjet = mailjet.connect(options.MJ_APIKEY_PUBLIC || process.env.MJ_APIKEY_PUBLIC,
-    options.MJ_APIKEY_PRIVATE || process.env.MJ_APIKEY_PRIVATE);
+  mailjet = mailjet.connect(options.publicKey || process.env.MJ_APIKEY_PUBLIC,
+    options.privateKey || process.env.MJ_APIKEY_PRIVATE);
 
   // Defined default schema
   var schema = joi.object().required().keys({

@@ -3,27 +3,28 @@
 var _         = require('lodash');
 var contact   = require('./contacts');
 var campaigns = require('./campaigns');
+var sender    = require('../sender');
 
 /**
  * Main Marketing object.
  *
  * @param {Object} logger current logger instance
  */
-function Marketing (logger) {
+function Marketing (logger, options) {
   /**
    * Default logger
    */
   this.logger = logger;
 
   /**
-   * Default contact instance
+   * Sender module to send data
    */
-  this.contact = contact(this.logger);
+  this.sender = sender(this.logger, options);
 
   /**
-   * Default campagins instance
+   * Default contact instance
    */
-  this.campaigns = campaigns(this.logger);
+  this.contact = contact(this.logger, this.sender);
 }
 
 /**

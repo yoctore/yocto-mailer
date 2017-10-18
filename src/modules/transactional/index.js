@@ -12,7 +12,7 @@ var transformer = require('./transformer');
  *
  * @param {Object} logger current logger instance
  */
-function Message (logger) {
+function Message (logger, options) {
   /**
    * Default logger
    */
@@ -41,7 +41,7 @@ function Message (logger) {
   /**
    * Default checker module
    */
-  this.converter = converter(this.message, this.logger);
+  this.converter = converter(this.message, this.logger, options);
 }
 
 /**

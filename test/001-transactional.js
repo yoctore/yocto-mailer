@@ -8,11 +8,11 @@ var should = require('chai').should();
 // disable console we dont need it
 message.logger.disableConsole();
 
-// create a new message
-var m = message.new();
+// create a New transactional message
+var m = message.transactional();
 
 describe('Message ()', function() {
-  describe('New message should be valid and type of object', function() {
+  describe('New transactional message should be valid and type of object', function() {
     it ('Message should be an object', function () {
       m.should.to.be.a('object');
     });
@@ -22,7 +22,7 @@ describe('Message ()', function() {
   });
 
   // For common method
-  describe('New message should have all common method', function() {
+  describe('New transactional message should have all common method', function() {
     [
       'setFrom',
       'addTo',
@@ -48,7 +48,7 @@ describe('Message ()', function() {
   });
 
   // for internal needed method
-  describe('New message should have some common internal method', function() {
+  describe('New transactional message should have some common internal method', function() {
     [
       'setPriority',
       'prepare',
@@ -64,7 +64,7 @@ describe('Message ()', function() {
   });
 
   // for internal needed module
-  describe('New message should have some common internal modules', function() {
+  describe('New transactional message should have some common internal modules', function() {
     [
       'schema',
       'transformers',
@@ -83,7 +83,7 @@ describe('Message ()', function() {
    */
 
   // default message build
-  describe('New message build should succeed/failed on these cases', function() {
+  describe('New transactional message build should succeed/failed on these cases', function() {
     [
       { name : 'setFrom', args : [ 'from@test.com' ], result : true, count : 2, property : 'from' },
       { name : 'setFrom', args : [ 'from2@test.com', 'from2Enveloppe@test.com' ], result : true, count : 2, property : 'from' },
@@ -129,14 +129,14 @@ describe('Message ()', function() {
     })
   });
   // to test transformation process
-  describe('New message build for nodemailer/mandrill must be on correct format', function() {
+  describe('New transactional message build for nodemailer/mandrill must be on correct format', function() {
     it ('Message must be an object and not empty for nodemailer', function () {
       var prepared = m.prepare();
       prepared.should.be.an('object');
       prepared.should.be.not.empty;      
       var messageFormat = prepared.toNodeMailer().toObject();
       messageFormat.should.be.an('object');
-      messageFormat.should.be.not.empty;   
+      messageFormat.should.be.not.empty;
     });
     it ('Message must be an object and not empty for mandrill', function () {
       var prepared = m.prepare();
@@ -148,7 +148,7 @@ describe('Message ()', function() {
     });
   });
   // to test if after transformation property is correct for current message format 
-  describe('New message build should properly transform for nodemailer format', function() {
+  describe('New transactional message build should properly transform for nodemailer format', function() {
     [
       'from',
       'to',
@@ -173,9 +173,9 @@ describe('Message ()', function() {
     })
   });
   // to test if after transformation property is correct for current message format 
-  describe('New message build should properly transform for Mandrill format', function() {
+  describe('New transactional message build should properly transform for Mandrill format', function() {
     [
-      'from.address',
+      'from_email',
       'to',
       'subject',
       'text',
@@ -183,22 +183,58 @@ describe('Message ()', function() {
       'attachments',
       'headers',
       'headers.Reply-To',
-      'priority',
+      'important',
       'subaccount'
     ].forEach(function (property) {
       it ([ 'Message must contains', property, 'property and not be empty' ].join(' '), function () {
-        var prepared = m.prepare().toNodeMailer().toObject();
+        var prepared = m.prepare().toMandrill().toObject();
+        //console.log(prepared);
         prepared.should.have.nested.property(property);
-        var value = _.get(prepared, property);
-        value.should.be.not.empty;
+        //var value = _.get(prepared, property);
+        //value.should.be.not.empty;
       });
     })
   });
+
   // to test if after transformation property is correct for current message format 
-  describe('New message should properly sent for nodemaler/mandrill format', function() {
+  describe('New transactional message build should properly transform for Mailjet format', function() {
+    [
+      { name : 'From', level : 1 },
+      { name : 'To', level : 1 },
+      { name : 'Cc', level : 1 },
+      { name : 'Bcc', level : 1 },
+      { name : 'Subject', level : 1 },
+      { name : 'TextPart', level : 1 },
+      { name : 'HTMLPart', level : 1 },
+      { name : 'Attachments', level : 1 },
+      { name : 'ReplyTo', level : 1 },
+      { name : 'Headers', level : 1 },
+      { name : 'Priority', level : 1 },
+      { name : 'SandboxMode', level : 0 }
+    ].forEach(function (property) {
+      it ([ 'Message must contains', property.name, 'property and not be empty' ].join(' '), function () {
+        var prepared = m.prepare().toMailjet().toObject();
+        var inside   = _.first(_.get(prepared, 'Messages'));
+
+        prepared.should.be.an('object');
+        prepared.Messages.should.be.an('array');
+
+        if (property.level === 1) {
+          inside.should.have.nested.property(property.name);
+        }
+
+        if (property.level === 0) {
+          prepared.should.have.nested.property(property.name);
+        }
+      });
+    })
+  });
+
+  // to test if after transformation property is correct for current message format 
+  describe('New transactional message should properly sent for all defined provider', function() {
     // we need to force the timeout
     this.timeout(30000);
-
+/*
     // node mailer
     it ('Message should be sent for nodemailer', function (done) {
       var options = {
@@ -242,6 +278,29 @@ describe('Message ()', function() {
       }).catch(function(error) {
         assert.isNotOk(false, 'Cannot connect on current server' + error);
         done();
+      });
+    });
+*/
+    // mailjet
+    it ('Message should be sent for mailjet', function (done) {
+      // current apiKey
+      var options = {
+        publicKey  : process.env.MJ_APIKEY_PUBLIC,
+        privateKey : process.env.MJ_APIKEY_PRIVATE
+      };
+
+      // we must enable sandbox mode
+      m.enableSandbox();
+
+      // try to send
+      var prepared = m.prepare().toMailjet().send(options).then(function (success) {
+        console.log(arguments);
+        //success.should.be.an('object');
+        //success.should.have.property('response');
+        //success.should.have.property('stats');
+        done();
+      }).catch(function(error) {
+        done(new Error('Cannot sent email with mailjet transporter : ' + error.response.response.text));
       });
     });
   });

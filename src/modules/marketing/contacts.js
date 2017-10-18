@@ -1,27 +1,29 @@
 'use strict';
 
-var _ = require('lodash');
+var _             = require('lodash');
+var contactLists  = require('./contact/lists');
 
 /**
  * Mail Contact class
  *
  * @param {Object} logger current logger instance
  */
-function Contact (logger) {
+function Contact (logger, sender) {
   /**
    * Default logger
    */
   this.logger = logger;
 
-  this.lists = [];
-  this.contacts = [];
-}
+  /**
+   * Sender module to send data
+   */
+  this.sender = sender;
 
-Contact.prototype.createLists = function (name) {
-  if (!_.isEmpty(name)) {
-    this.lists.push();
-  }
-};
+  /**
+   * Default contact list instance
+   */
+  this.lists  = contactLists(this.logger, this.sender);
+}
 
 /**
  * Default export
@@ -29,7 +31,7 @@ Contact.prototype.createLists = function (name) {
  * @param {Object} l logger instance to use on main module
  * @return {Object} main Sender class to use on main process
  */
-module.exports = function (l) {
+module.exports = function (l, sender) {
   // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
     // Log a warning message
@@ -40,5 +42,5 @@ module.exports = function (l) {
   }
 
   // Default statement
-  return new Contact(l);
+  return new Contact(l, sender);
 };

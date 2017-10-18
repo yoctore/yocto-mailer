@@ -86,16 +86,21 @@ Customiser.prototype.mailjetFromToCcBccFormat = function (key, value) {
     return value;
   }
 
-  // Defaut statement
-  return _.isArray(value) ? _.map(value, function (v) {
-    return {
-      Email : v.address,
-      Name  : v.name
-    };
-  }) : {
-    Email : value.address,
-    Name  : value.name
+  // is array ?
+  if (_.isArray(value)) {
+    return _.map(value, function (v) {
+      return {
+        Email : v.address,
+        Name  : v.name
+      };
+    });
   }
+
+  // default statement
+  return {
+    Email : _.isObject(value) && _.has(value, 'address') ? value.address : value,
+    Name  : _.isObject(value) && _.has(value, 'name') ? value.name : value
+  };
 };
 
 /**
@@ -138,6 +143,9 @@ Customiser.prototype.mailjetImportantFormat = function (key, value) {
  * @return {Object} formatted message
  */
 Customiser.prototype.postFormatTransactionnalMessage = function (message) {
+  // we need to do this because this propty is not allowed on headers property and
+  // in unit test this will failed because we force it
+  _.set(message, 'Headers', _.omit(_.get(message, 'Headers'), 'Reply-To'));
   // default FormattedMessage
   var formattedMessage = _.set({}, 'Messages',[ _.omit(message, 'SandboxMode') ]);
   // replace sandbox because we need it 

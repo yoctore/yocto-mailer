@@ -13,7 +13,7 @@ var path        = require('path');
  * @param {Object} message current message to convert
  * @param {Object} logger default logger to use on current instance
  */
-function Converter (message, logger) {
+function Converter (message, logger, options) {
   /**
    * Default logger
    */
@@ -32,7 +32,7 @@ function Converter (message, logger) {
   /**
    * Sender module to send data
    */
-  this.sender = sender(this.logger);
+  this.sender = sender(this.logger, options);
 
   /**
    * Internal rules content
@@ -186,7 +186,7 @@ Converter.prototype.convert = function (key) {
  * @param {Object} l logger instance to use on main module
  * @return {Object} main Converter class to use on main process
  */
-module.exports = function (message, l) {
+module.exports = function (message, l, options) {
   // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
     // Log a warning message
@@ -197,5 +197,5 @@ module.exports = function (message, l) {
   }
 
   // Default statement
-  return new Converter(message, l);
+  return new Converter(message, l, options);
 };

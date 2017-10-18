@@ -21,17 +21,17 @@ function MailerTools (logger) {
    *
    * @return {Object} a new instance of message object
    */
-  this.transactional = function () {
+  this.transactional = function (options) {
     // Default statement
-    return new Transactional(this.logger);
+    return new Transactional(this.logger, options);
   }.bind(this);
 
   /**
    * Internal method to create a marketing process
    */
-  this.marketing = function () {
+  this.marketing = function (options) {
     // Default statement
-    return new Marketing(this.logger);
+    return new Marketing(this.logger, options);
   }.bind(this);
 }
 

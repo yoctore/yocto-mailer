@@ -18,8 +18,8 @@ var options = {
   },
   mandrill : process.env.MANDRILL_API_KEY || '',
   mailjet : {
-    MJ_APIKEY_PUBLIC : process.env.MJ_APIKEY_PUBLIC || '',
-    MJ_APIKEY_PRIVATE : process.env.MJ_APIKEY_PRIVATE || ''
+    publicKey : process.env.MJ_APIKEY_PUBLIC || '',
+    privateKey : process.env.MJ_APIKEY_PRIVATE || ''
   }
 };
 
@@ -27,7 +27,7 @@ var options = {
 options  = _.get(options, provider);
 
 // create a new message
-var m = message.transactional();
+var m = message.transactional(options);
 
 m.setFrom({ address : 'demo@yocto.re', name : 'from' });
 m.addTo({ address : 'mathieu@yocto.re', name : 'to' });
@@ -42,17 +42,18 @@ m.setMessage('<b>My aaaaaa</b>');
 m.addAttachment('../README.md');
 m.addAlternative('../README.md');
 m.addAttachment('./Fichier_1.pdf');
-//m.setReplyTo('noreply@domain.com');
+m.setReplyTo('noreply@domain.com');
 //m.setPriorityToHigh();
 //m.setPriorityToLow();
-//m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
-//m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
-//m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
-//m.enableSandbox();
+m.setHeader({ key : 'X-AAAA-XX', value : 'aaa' });
+m.setHeader({ key : 'X-AAAA-EEDDDDD', value : 'aaa' });
+m.setHeader({ key : 'X-AAAA-XX', value : 'bbb' });
+m.enableSandbox();
 //console.log(m.prepare()[method]().toObject());
-m.prepare()[method]().send(options).then(function (success) {
+m.prepare()[method]().send().then(function (success) {
   console.log('success =>', success);
 }).catch(function(error) {
   console.log('error =>', error);
 });
+
 

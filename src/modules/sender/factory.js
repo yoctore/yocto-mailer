@@ -41,10 +41,6 @@ function SenderFactory (logger) {
     {
       instance : mailjetTransport(this.logger),
       type     : this.MAILJET_TYPE
-    },
-    {
-      instance : mailchimpTransport,
-      type     : this.MAILCHIMP_TYPE
     }
   ];
 }
@@ -59,7 +55,7 @@ function SenderFactory (logger) {
 SenderFactory.prototype.createTransporter = function (type, options) {
   // Try to get default defintion of transport
   var transport = _.find(this.lists, function (o) {
-    return o.type === type
+    return o.type === type;
   });
 
   // Default statement
