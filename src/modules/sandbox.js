@@ -1,6 +1,6 @@
 'use strict';
 
-var   _ = require('lodash');
+var _ = require('lodash');
 var Q = require('q');
 
 /**
@@ -16,21 +16,21 @@ function Sandbox (logger) {
 }
 
 Sandbox.prototype.check = function (transport, message) {
-  // get sandbox mode
+  // Get sandbox mode
   var state = _.get(message, 'localSandbox') || false;
 
-  // sandbox mode id enabled ?
+  // Sandbox mode id enabled ?
   if (state) {
-    // log a warning message
+    // Log a warning message
     this.logger.warning('[ Sandbox.check ] - Sandbox is requested, full sandbox is enabled');
 
-    // now transfort send method to return a success all the time
+    // Now transfort send method to return a success all the time
     transport.send = function () {
       // Create deferred process
       var deferred = Q.defer();
-    
+
       // Default verify process
-      if (true) {
+      if (deferred) {
         // On the other case we resolve the promise
         deferred.resolve({
           mode    : 'sandbox',
@@ -42,8 +42,8 @@ Sandbox.prototype.check = function (transport, message) {
       return deferred.promise;
     }
   }
-  
-  // default statement
+
+  // Default statement
   return transport;
 }
 

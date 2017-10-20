@@ -1,14 +1,13 @@
 'use strict';
 
-var _         = require('lodash');
 var contact   = require('./contacts');
-var campaigns = require('./campaigns');
 var sender    = require('../sender');
 
 /**
  * Main Marketing object.
  *
  * @param {Object} logger current logger instance
+ * @param {Object} options custom option to use on message
  */
 function Marketing (logger, options) {
   /**

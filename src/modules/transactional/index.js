@@ -8,9 +8,10 @@ var converter   = require('./converter');
 var transformer = require('./transformer');
 
 /**
- * Main message object.
+ * Main message object
  *
  * @param {Object} logger current logger instance
+ * @param {Object} options custom option to use on message
  */
 function Message (logger, options) {
   /**
@@ -352,7 +353,7 @@ Message.prototype.setSubAccount = function (value) {
  * @return {Boolean} true in case of success, false otherwise
  */
 Message.prototype.enableSandbox = function (localOnly) {
-  // localOnly is needed
+  // LocalOnly is needed
   if (localOnly) {
     this.set('localSandbox', true);
   }

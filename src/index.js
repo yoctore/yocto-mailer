@@ -19,6 +19,7 @@ function MailerTools (logger) {
   /**
    * Internal method to create a new transactionnal message
    *
+   * @param {Object} options default option to use on sub module
    * @return {Object} a new instance of message object
    */
   this.transactional = function (options) {
@@ -28,6 +29,9 @@ function MailerTools (logger) {
 
   /**
    * Internal method to create a marketing process
+   *
+   * @param {Object} options default option to use on sub module
+   * @return {Object} a new instance of message object
    */
   this.marketing = function (options) {
     // Default statement
@@ -54,3 +58,4 @@ module.exports = function (l) {
   // Default statement
   return new MailerTools(l);
 };
+

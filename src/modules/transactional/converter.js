@@ -12,6 +12,7 @@ var path        = require('path');
  *
  * @param {Object} message current message to convert
  * @param {Object} logger default logger to use on current instance
+ * @param {Object} options custom option to use on message
  */
 function Converter (message, logger, options) {
   /**
@@ -111,7 +112,7 @@ Converter.prototype.convert = function (key) {
 
   // Rules is array and not empty ?
   if (key !== this.sender.factory.NODEMAILER_TYPE && !_.isEmpty(rules) &&
-    _.has(rules, 'prerules') && _.isArray(rules.prerules) ) {
+    _.has(rules, 'prerules') && _.isArray(rules.prerules)) {
     // Process maps
     _.map(rules.prerules, function (rule) {
       // Try to get current value
@@ -156,9 +157,9 @@ Converter.prototype.convert = function (key) {
       }
     }.bind(this));
 
-    // has post rules ?
+    // Has post rules ?
     if (_.has(rules, 'postrules')) {
-      // parse postrules
+      // Parse postrules
       _.map(rules.postrules, function (rule) {
         // Try to get current value
         if (_.isFunction(this.customiser[rule.customiser])) {
@@ -184,6 +185,7 @@ Converter.prototype.convert = function (key) {
  *
  * @param {Object} message current messae object to convert 
  * @param {Object} l logger instance to use on main module
+ * @param {Object} options custom option to use on message
  * @return {Object} main Converter class to use on main process
  */
 module.exports = function (message, l, options) {

@@ -1,1 +1,1 @@
-"use strict";function Marketing(e,r){this.logger=e,this.sender=sender(this.logger,r),this.contact=contact(this.logger,this.sender)}var _=require("lodash"),contact=require("./contacts"),campaigns=require("./campaigns"),sender=require("../sender");module.exports=Marketing;
+"use strict";function Marketing(e,t){this.logger=e,this.sender=sender(this.logger,t),this.contact=contact(this.logger,this.sender)}var contact=require("./contacts"),sender=require("../sender");module.exports=Marketing;

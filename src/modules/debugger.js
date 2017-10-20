@@ -8,8 +8,10 @@ var _       = require('lodash');
 
 /**
  * Default logger class
+ *
+ * @param {Object} logger current logger instance
  */
-function Debugger(logger) {
+function Debugger (logger) {
   /**
    * Default logger
    */
@@ -20,9 +22,13 @@ function Debugger(logger) {
  * Save given content to a file
  *
  * @param {Mixed} message content to save
+ * @return {Mixed} return of write action
  */
 Debugger.prototype.saveToFile = function (message) {
-  fs.writeFileSync(path.resolve([ process.cwd(), 'debug', [ moment().format('YYYYMMDD-hhmm'), 'json' ].join('.') ].join('/')), message);
+  // Default statement
+  return fs.writeFileSync(path.resolve([ process.cwd(), 'debug', [
+    moment().format('YYYYMMDD-hhmm'), 'json' ].join('.')
+  ].join('/')), message);
 };
 
 /**
@@ -30,25 +36,28 @@ Debugger.prototype.saveToFile = function (message) {
  *
  * @param {String} prefix a custom string to append before print
  * @param {Mixed} message content to save
- * @param {Boolean} if true save it to a file
+ * @param {Boolean} toFile if true save it to a file
+ * @return {Mixed} return of write action
  */
 Debugger.prototype.log = function (prefix, message, toFile) {
-  // not for a file ?
+  // Not for a file ?
   if (!toFile) {
     return this.logger.debug([ prefix, utils.obj.inspect(message) ].join(' '));
   }
 
-  // default statement
+  // Default statement
   return this.saveToFile(JSON.stringify(message, null, 2));
 };
+
 /**
  * Default wrapper
  *
  * @param {String} prefix a custom string to append before print
  * @param {Mixed} message content to save
+ * @return {Mixed} return of write action
  */
 Debugger.prototype.debug = function (prefix, message) {
-  // default statement
+  // Default statement
   return this.log(prefix, message, process.env.DEBUG_TO_FILE || false);
 };
 

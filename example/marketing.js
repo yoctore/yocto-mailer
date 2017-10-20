@@ -72,12 +72,31 @@ m.contact.create('test@yocto.re', 'Test yocto', { 'Name' : 'Test', 'Second' : 'F
 });
 */
 
-m.contact.createAndAddToList('1938300', 'test3@yocto.re', 'Test yocto', { 'Name' : 'Test', 'Second' : 'Foo', 'Bar' : 'Yeah' }).then(function (success) {
+m.contact.createAndAddToList('1938300', 'test3@yocto.re', 'Test yocto', { 'testProperty': 'Test' }).then(function (success) {
   console.log('create and add to list success =>', success);
 }).catch(function(error) {
   console.log('error =>', error.response.response);
 });
 
+/*
+m.contact.addCustomProperties('testProperty').then(function (success) {
+  console.log('add custom properties =>', success);
+}).catch(function(error) {
+  console.log('error =>', error.response.response);
+});
+*/
+/*
+m.contact.unsubscribe('1938300', 'test2@yocto.re').then(function (success) {
+  console.log('ubsub list success =>', success);
+}).catch(function(error) {
+  console.log('error =>', error.response.response);
+});
+*/
+/*
+m.contact.remove('1938300', 'test3@yocto.re').then(function (success) {
+  console.log('remove to list success =>', success);
+}).catch(function(error) {
+  console.log('error =>', error.response.response);
+});
+*/
 
-
-//console.log(m);

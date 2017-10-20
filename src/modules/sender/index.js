@@ -11,9 +11,10 @@ var debuger     = require('../debugger');
  * Process send request on correct message type
  *
  * @param {Object} logger default logger to use on current instance
+ * @param {Object} options custom option to use on message
  */
 function Sender (logger, options) {
-  // default debut state to display full printed message (request / response)
+  // Default debut state to display full printed message (request / response)
   this.debug = process.env.DEBUG || false;
 
   /**
@@ -24,7 +25,7 @@ function Sender (logger, options) {
   /**
    * Default debugger instance
    */
-   this.debuger = debuger(logger);
+  this.debuger = debuger(logger);
 
   /**
    * Internal factory to build correct transporter
@@ -182,10 +183,10 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
 /**
  * Send current message with given options
  *
- * @param {Object|String} options options to use for current message
  * @param {String} request specific request name is we need to override default request
  * @param {String} type if we need to override the default type of request (GET/POST/DELETE/PUT) only
  * @param {String} version if we need to override the default version
+ * @param {Boolean} allowEmpty to allow to send message with empty value
  * @param {String} action needed action is ask
  * @return {Promise} promise to catch
  */
@@ -196,7 +197,7 @@ Sender.prototype.send = function (request, type, version, allowEmpty, action) {
   // Define here time when process start
   var start = process.hrtime();
 
-  // normalize allowEmpty value
+  // Normalize allowEmpty value
   allowEmpty = _.isBoolean(allowEmpty) ? allowEmpty : false;
 
   // Message is invalid ?
@@ -214,7 +215,7 @@ Sender.prototype.send = function (request, type, version, allowEmpty, action) {
         // Do a debug message
         this.logger.debug([ '[ Sender.send ] -', this.type, 'Connector is ready' ].join(' '));
 
-        // set here sandbox process
+        // Set here sandbox process
         transport = this.sandbox.check(transport, this.message);
 
         // If we are here we need to send the message
@@ -225,7 +226,7 @@ Sender.prototype.send = function (request, type, version, allowEmpty, action) {
           // On the other case we resolve the promise
           return deferred.resolve(success);
         }.bind(this)).catch(function (error) {
-          // debug message is enabled ?
+          // Debug message is enabled ?
           if (this.debug) {
             this.debuger.debug('[ Sender.send ] - Full error response is :', error);
           }
@@ -255,6 +256,7 @@ Sender.prototype.send = function (request, type, version, allowEmpty, action) {
  * Default export
  *
  * @param {Object} l logger instance to use on main module
+ * @param {Object|String} options options to use for current message
  * @return {Object} main Sender class to use on main process
  */
 module.exports = function (l, options) {

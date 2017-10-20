@@ -70,33 +70,34 @@ MailjetTransporter.prototype.send = function (message, request, type, version, a
   var deferred = Q.defer();
 
   // Default send method
-  var instance = mailjet[ type || 'post' ](request || 'send', {
+  var instance = mailjet[type || 'post'](request || 'send', {
     version : [ 'v', version || this.version ].join('')
   });
 
-  // has id inside default message ?
+  // Has id inside default message ?
   if (_.has(message, 'ID') || _.has(message, 'Address')) {
     instance = instance.id(_.get(message, 'ID') || _.get(message, 'Address'));
-    // remove ID property
+
+    // Remove ID property
     _.omit(message, 'ID');
   }
 
-console.log(action);
+  console.log(action);
 
-  // has action defined ?
+  // Has action defined ?
   if (_.isString(action)) {
     instance = instance.action(action);
   }
 
-  // do default request
+  // Do default request
   instance.request(message)
-  .then(function (success) {
+    .then(function (success) {
     // On the other case we resolve the promise
-    return deferred.resolve(success);
-  }).catch(function (error) {
+      return deferred.resolve(success);
+    }).catch(function (error) {
     // Reject in this case
-    return deferred.reject(error);
-  });
+      return deferred.reject(error);
+    });
 
   // Default statement
   return deferred.promise;

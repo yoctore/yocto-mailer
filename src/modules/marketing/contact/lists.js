@@ -7,6 +7,7 @@ var Q = require('Q');
  * Mail ContactList class
  *
  * @param {Object} logger current logger instance
+ * @param {Object} sender default sender instance to use 
  */
 function ContactLists (logger, sender) {
   /**
@@ -26,7 +27,7 @@ function ContactLists (logger, sender) {
  * @return {Promise} a promise to catch
  */
 ContactLists.prototype.list = function () {
-  // default statement
+  // Default statement
   return this.sender.store({},
     this.sender.factory.MAILJET_TYPE).send('contactslist', 'get', 3, true);
 };
@@ -38,22 +39,22 @@ ContactLists.prototype.list = function () {
  * @return {Promise} a promise to catch
  */
 ContactLists.prototype.viewByName = function (name) {
-  // create an async process
+  // Create an async process
   var deferred = Q.defer();
 
-  // get list and fetch needed item
+  // Get list and fetch needed item
   this.list().then(function (success) {
     return deferred.resolve(_.compact(_.map(
-    _.flatten(_.compact(_.map(JSON.parse(success.response.response.text), function (item) {
-      return _.isArray(item) ? item : false;
-    }))), function (item) {
-      return _.get(item, 'Name') === name ? item : false;
-    })));
-  }).catch(function(error) {
+      _.flatten(_.compact(_.map(JSON.parse(success.response.response.text), function (item) {
+        return _.isArray(item) ? item : false;
+      }))), function (item) {
+        return _.get(item, 'Name') === name ? item : false;
+      })));
+  }).catch(function (error) {
     return deferred.reject(error);
   });
 
-  // default statement
+  // Default statement
   return deferred.promise;
 };
 
@@ -64,9 +65,9 @@ ContactLists.prototype.viewByName = function (name) {
  * @return {Promise} a promise to catch
  */
 ContactLists.prototype.view = function (id) {
-  // default statement
+  // Default statement
   return this.sender.store({
-    'ID' : id
+    ID : id
   }, this.sender.factory.MAILJET_TYPE).send('contactslist', 'get', 3);
 };
 
@@ -77,9 +78,9 @@ ContactLists.prototype.view = function (id) {
  * @return {Promise} a promise to catch
  */
 ContactLists.prototype.create = function (name) {
-  // default statement
+  // Default statement
   return this.sender.store({
-    'Name' : name
+    Name : name
   }, this.sender.factory.MAILJET_TYPE).send('contactslist', 'post', 3);
 };
 
@@ -91,25 +92,25 @@ ContactLists.prototype.create = function (name) {
  * @return {Promise} a promise to catch
  */
 ContactLists.prototype.update = function (id, name) {
-  // default statement
+  // Default statement
   return this.sender.store(_.omitBy({
-    'ID' : id,
-    'Name' : name
+    ID   : id,
+    Name : name
   }, function (item) {
     return _.isEmpty(item);
   }), this.sender.factory.MAILJET_TYPE).send('contactslist', 'put', 3);
 };
 
 /**
- * delete a list by id
+ * Delete a list by id
  *
  * @param {String} id identifier to use for delete
  * @return {Promise} a promise to catch
  */
 ContactLists.prototype.delete = function (id) {
-  // default statement
+  // Default statement
   return this.sender.store({
-    'ID' : id
+    ID : id
   }, this.sender.factory.MAILJET_TYPE).send('contactslist', 'delete', 3);
 };
 
@@ -117,7 +118,9 @@ ContactLists.prototype.delete = function (id) {
  * Default export
  *
  * @param {Object} l logger instance to use on main module
- * @return {Object} main Sender class to use on main process
+ * @param {Object} sender main sender class to use on main process
+ *
+ * @return {Object} current instance
  */
 module.exports = function (l, sender) {
   // Is a valid logger ?

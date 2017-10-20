@@ -5,7 +5,6 @@ var _                   = require('lodash');
 var nodemailerTransport = require('../transporter/nodemailer');
 var mandrillTransport   = require('../transporter/mandrill');
 var mailjetTransport    = require('../transporter/mailjet');
-var mailchimpTransport  = require('../transporter/mailchimp');
 
 /**
  * Create a valid and generic transporter from given options
@@ -21,10 +20,10 @@ function SenderFactory (logger) {
   /**
    * We define here all available provider / services
    */
-  this.NODEMAILER_TYPE  = 'nodemailer';
-  this.MANDRILL_TYPE    = 'mandrill';
-  this.MAILJET_TYPE     = 'mailjet';
-  this.MAILCHIMP_TYPE   = 'mailchimp';
+  this.NODEMAILER_TYPE = 'nodemailer';
+  this.MANDRILL_TYPE = 'mandrill';
+  this.MAILJET_TYPE = 'mailjet';
+  this.MAILCHIMP_TYPE = 'mailchimp';
 
   /**
    * Default list of transport to use for mapping

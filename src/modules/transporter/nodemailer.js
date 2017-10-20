@@ -5,7 +5,6 @@ var _           = require('lodash');
 var nodemailer  = require('nodemailer');
 var Q           = require('q');
 var joi         = require('joi');
-var util        = require('util');
 
 /**
  * Default mandrill transporter to process mandrill request
@@ -17,6 +16,7 @@ function NodemailerTransporter (logger) {
    * Default logger
    */
   this.logger = logger;
+
   /**
    * Internal transport
    */
@@ -81,7 +81,6 @@ NodemailerTransporter.prototype.send = function (message) {
  * @return {Boolean|Object} generic transport instance to use for sending
  */
 NodemailerTransporter.prototype.create = function (options) {
-
   // Default validation schema
   var schema = joi.object().required().keys({
     auth : joi.object().optional().keys({
