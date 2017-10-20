@@ -56,10 +56,28 @@ var m = message.marketing(options);
 });
 */
 
+/*
 m.contact.lists.viewByName('testApi2').then(function (success) {
   console.log('view by name success =>', success);
 }).catch(function(error) {
   console.log('error =>', error.response.response);
 });
+*/
+
+/*
+m.contact.create('test@yocto.re', 'Test yocto', { 'Name' : 'Test', 'Second' : 'Foo', 'Bar' : 'Yeah' }).then(function (success) {
+  console.log('create success =>', success);
+}).catch(function(error) {
+  console.log('error =>', error.response.response);
+});
+*/
+
+m.contact.createAndAddToList('1938300', 'test3@yocto.re', 'Test yocto', { 'Name' : 'Test', 'Second' : 'Foo', 'Bar' : 'Yeah' }).then(function (success) {
+  console.log('create and add to list success =>', success);
+}).catch(function(error) {
+  console.log('error =>', error.response.response);
+});
+
+
 
 //console.log(m);

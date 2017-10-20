@@ -61,9 +61,11 @@ MailjetTransporter.prototype.isReady = function () {
  * @param {Object} message message to send
  * @param {String} request if we need to override the default request use it
  * @param {String} type if we need to override the default type of request (GET/POST/DELETE/PUT) only
+ * @param {String} version the api version
+ * @param {String} action extend action to use on request
  * @return {Promise} promise to catch
  */
-MailjetTransporter.prototype.send = function (message, request, type, version) {
+MailjetTransporter.prototype.send = function (message, request, type, version, action) {
   // Create deferred process
   var deferred = Q.defer();
 
@@ -77,6 +79,13 @@ MailjetTransporter.prototype.send = function (message, request, type, version) {
     instance = instance.id(_.get(message, 'ID') || _.get(message, 'Address'));
     // remove ID property
     _.omit(message, 'ID');
+  }
+
+console.log(action);
+
+  // has action defined ?
+  if (_.isString(action)) {
+    instance = instance.action(action);
   }
 
   // do default request

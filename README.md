@@ -9,12 +9,12 @@ This module provide in one tool a connector for :
 
  - Nodemailer (SMTP)
  - Mandrill API (/messages)
- - Mailjet API (/messages) (COMMING SOON)
+ - Mailjet API (/messages - /contact - /contactlists)
 
 ## Motivation
 
 Our main motivation for this module is create and provide a generic & very simple mailer connector for our three main e-mail provider.
- 
+
 ## Available methods
 
 ### default method
@@ -41,6 +41,7 @@ Our main motivation for this module is create and provide a generic & very simpl
 
 ### mailjet additional methods
 
+See example
 
 ## How To use
 
@@ -59,3 +60,18 @@ This module was completely rewrite and update to the latest version of each used
 There is no compatibility between v1.x.x and v2.x.x
 
 ### v2.x.x to v3.x.x
+
+See example the main change is : 
+
+```
+// create a new transactional message
+var m = message.new(options);
+```
+
+to
+
+```
+// create a new transactional message
+var m = message.transactional(options);
+```
+

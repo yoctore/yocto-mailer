@@ -2,7 +2,7 @@
 
 var _             = require('lodash');
 var contactLists  = require('./contact/lists');
-
+var Q             = require('Q');
 /**
  * Mail Contact class
  *
@@ -24,6 +24,27 @@ function Contact (logger, sender) {
    */
   this.lists  = contactLists(this.logger, this.sender);
 }
+
+/**
+ *
+ */
+Contact.prototype.create = function (email, fullname) {
+  // default statement
+  return this.sender.store({
+    'Email' : email,
+    'Name' : fullname,
+  }, this.sender.factory.MAILJET_TYPE).send('contact', 'post', 3);
+};
+
+Contact.prototype.createAndAddToList = function (idList, email, fullname, properties) {
+  // default statement
+  return this.sender.store({
+    'Email' : email,
+    'Name' : fullname,
+    'ID' : idList,
+    'Action' : 'addnoforce'
+  }, this.sender.factory.MAILJET_TYPE).send('contactslist', 'post', 3, false, 'managecontact');
+};
 
 /**
  * Default export

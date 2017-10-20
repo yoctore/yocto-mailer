@@ -85,24 +85,23 @@ describe('Message ()', function() {
   // default message build
   describe('New transactional message build should succeed/failed on these cases', function() {
     [
-      { name : 'setFrom', args : [ 'from@test.com' ], result : true, count : 2, property : 'from' },
-      { name : 'setFrom', args : [ 'from2@test.com', 'from2Enveloppe@test.com' ], result : true, count : 2, property : 'from' },
+      { name : 'setFrom', args : [ 'technique@yocto.re' ], result : true, count : 2, property : 'from' },
       { name : 'setFrom', args : [ 'invalid email' ], result : false, count : 2, property : 'from' },
-      { name : 'addTo', args : [ 'to@test.com' ], result : true, count : 1, property : 'to' },
-      { name : 'addTo', args : [ { address : 'to2@test.com' } ], result : true, count : 2, property : 'to' },
-      { name : 'addTo', args : [ { address : 'to3@test.com', name : 'to3' } ], result : true, count : 3, property : 'to' },
-      { name : 'addCC', args : [ 'cc@test.com' ], result : true, count : 1, property : 'cc' },
-      { name : 'addCC', args : [ { address : 'cc2@test.com' } ], result : true, count : 2, property : 'cc' },
-      { name : 'addCC', args : [ { address : 'cc3@test.com', name : 'c3' } ], result : true, count : 3, property : 'cc' },
-      { name : 'addBCC', args : [ 'bcc@test.com' ], result : true, count : 1, property : 'bcc' },
-      { name : 'addBCC', args : [ { address : 'bcc2@test.com' } ], result : true, count : 2, property : 'bcc' },
-      { name : 'addBCC', args : [ { address : 'bcc3@test.com', name : 'bcc3' } ], result : true, count : 3, property : 'bcc' },
+      { name : 'addTo', args : [ 'to@yocto.re' ], result : true, count : 1, property : 'to' },
+      { name : 'addTo', args : [ { address : 'to2@yocto.re' } ], result : true, count : 2, property : 'to' },
+      { name : 'addTo', args : [ { address : 'to3@yocto.re', name : 'to3' } ], result : true, count : 3, property : 'to' },
+      { name : 'addCC', args : [ 'cc@yocto.re' ], result : true, count : 1, property : 'cc' },
+      { name : 'addCC', args : [ { address : 'cc2@yocto.re' } ], result : true, count : 2, property : 'cc' },
+      { name : 'addCC', args : [ { address : 'cc3@yocto.re', name : 'c3' } ], result : true, count : 3, property : 'cc' },
+      { name : 'addBCC', args : [ 'bcc@yocto.re' ], result : true, count : 1, property : 'bcc' },
+      { name : 'addBCC', args : [ { address : 'bcc2@yocto.re' } ], result : true, count : 2, property : 'bcc' },
+      { name : 'addBCC', args : [ { address : 'bcc3@yocto.re', name : 'bcc3' } ], result : true, count : 3, property : 'bcc' },
       { name : 'setSubject', args : [ 'My Subject' ], result : true, count : 1, property : 'subject' },
       { name : 'setMessage', args : [ 'My Message' ], result : true, count : 1, property : 'text' },
       { name : 'setMessage', args : [ '<b>My Message </b>' ], result : true, count : 1, property : 'html' },
       { name : 'addAttachment', args : [ './README.md' ], result : true, count : 1, property : 'attachments' },
       { name : 'addAlternative', args : [ './Gruntfile.js' ], result : true, count : 1,  property : 'alternatives' },
-      { name : 'setReplyTo', args : [ 'reply-to@test.com' ], result : true, count : 1,  property : 'replyTo' },
+      { name : 'setReplyTo', args : [ 'reply-to@yocto.re' ], result : true, count : 1,  property : 'replyTo' },
       { name : 'setHeader', args : [ { key : 'X-HEADER-1', value : 'X-HEADER-1-VALUE' } ], result : true, count : 1,  property : 'headers' },
       { name : 'setHeader', args : [ { key : 'X-HEADER-2', value : 'X-HEADER-2-VALUE' } ], result : true, count : 2,  property : 'headers' },
       { name : 'setHeader', args : [ { key : 'X-HEADER-3', value : 'X-HEADER-3-VALUE' } ], result : true, count : 3,  property : 'headers' },
@@ -234,7 +233,7 @@ describe('Message ()', function() {
   describe('New transactional message should properly sent for all defined provider', function() {
     // we need to force the timeout
     this.timeout(30000);
-/*
+
     // node mailer
     it ('Message should be sent for nodemailer', function (done) {
       var options = {
@@ -280,7 +279,7 @@ describe('Message ()', function() {
         done();
       });
     });
-*/
+
     // mailjet
     it ('Message should be sent for mailjet', function (done) {
       // current apiKey
@@ -294,10 +293,9 @@ describe('Message ()', function() {
 
       // try to send
       var prepared = m.prepare().toMailjet().send(options).then(function (success) {
-        console.log(arguments);
-        //success.should.be.an('object');
-        //success.should.have.property('response');
-        //success.should.have.property('stats');
+        success.should.be.an('object');
+        success.should.have.property('response');
+        success.should.have.property('stats');
         done();
       }).catch(function(error) {
         done(new Error('Cannot sent email with mailjet transporter : ' + error.response.response.text));

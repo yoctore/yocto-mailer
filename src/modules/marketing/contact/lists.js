@@ -20,12 +20,23 @@ function ContactLists (logger, sender) {
   this.sender = sender;
 }
 
+/**
+ * List all existing list from mailjet account
+ *
+ * @return {Promise} a promise to catch
+ */
 ContactLists.prototype.list = function () {
   // default statement
   return this.sender.store({},
     this.sender.factory.MAILJET_TYPE).send('contactslist', 'get', 3, true);
 };
 
+/**
+ * Get an a list by his name
+ *
+ * @param {String} name name to find on list
+ * @return {Promise} a promise to catch
+ */
 ContactLists.prototype.viewByName = function (name) {
   // create an async process
   var deferred = Q.defer();
@@ -46,6 +57,12 @@ ContactLists.prototype.viewByName = function (name) {
   return deferred.promise;
 };
 
+/**
+ * View details of a list givent by his id
+ *
+ * @param {String} id id to find on list
+ * @return {Promise} a promise to catch
+ */
 ContactLists.prototype.view = function (id) {
   // default statement
   return this.sender.store({
@@ -53,6 +70,12 @@ ContactLists.prototype.view = function (id) {
   }, this.sender.factory.MAILJET_TYPE).send('contactslist', 'get', 3);
 };
 
+/**
+ * Create a list with given name
+ *
+ * @param {String} name name of the list to create
+ * @return {Promise} a promise to catch
+ */
 ContactLists.prototype.create = function (name) {
   // default statement
   return this.sender.store({
@@ -60,6 +83,13 @@ ContactLists.prototype.create = function (name) {
   }, this.sender.factory.MAILJET_TYPE).send('contactslist', 'post', 3);
 };
 
+/**
+ * Update a list by id
+ *
+ * @param {String} id identifier to use for update
+ * @param {String} name name to update on list request
+ * @return {Promise} a promise to catch
+ */
 ContactLists.prototype.update = function (id, name) {
   // default statement
   return this.sender.store(_.omitBy({
@@ -70,6 +100,12 @@ ContactLists.prototype.update = function (id, name) {
   }), this.sender.factory.MAILJET_TYPE).send('contactslist', 'put', 3);
 };
 
+/**
+ * delete a list by id
+ *
+ * @param {String} id identifier to use for delete
+ * @return {Promise} a promise to catch
+ */
 ContactLists.prototype.delete = function (id) {
   // default statement
   return this.sender.store({

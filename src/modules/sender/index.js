@@ -186,9 +186,10 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
  * @param {String} request specific request name is we need to override default request
  * @param {String} type if we need to override the default type of request (GET/POST/DELETE/PUT) only
  * @param {String} version if we need to override the default version
+ * @param {String} action needed action is ask
  * @return {Promise} promise to catch
  */
-Sender.prototype.send = function (request, type, version, allowEmpty) {
+Sender.prototype.send = function (request, type, version, allowEmpty, action) {
   // Create deferred process
   var deferred = Q.defer();
 
@@ -217,7 +218,7 @@ Sender.prototype.send = function (request, type, version, allowEmpty) {
         transport = this.sandbox.check(transport, this.message);
 
         // If we are here we need to send the message
-        transport.send(this.message, request, type, version).then(function (success) {
+        transport.send(this.message, request, type, version, action).then(function (success) {
           // Update state and get new success object
           success = this.updateAndBuildStats(start, success, this.STATE_SUCCESS);
 
