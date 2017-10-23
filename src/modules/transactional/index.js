@@ -8,11 +8,12 @@ var converter   = require('./converter');
 var transformer = require('./transformer');
 
 /**
- * Main message object.
+ * Main message object
  *
  * @param {Object} logger current logger instance
+ * @param {Object} options custom option to use on message
  */
-function Message (logger) {
+function Message (logger, options) {
   /**
    * Default logger
    */
@@ -41,7 +42,7 @@ function Message (logger) {
   /**
    * Default checker module
    */
-  this.converter = converter(this.message, this.logger);
+  this.converter = converter(this.message, this.logger, options);
 }
 
 /**
@@ -309,19 +310,6 @@ Message.prototype.raw = function (value) {
   return true;
 };
 
-// From here we are in specific mandrill wrapper method
-
-/**
- * Set a subaccount for current message object (Specific Mandrill)
- *
- * @param {String} value subaccount value for current object
- * @return {Boolean} true in case of success, false otherwise
- */
-Message.prototype.setSubAccount = function (value) {
-  // Defaut statement
-  return this.set('subaccount', value);
-};
-
 /**
  * Get the current prepared message
  *
@@ -337,6 +325,43 @@ Message.prototype.prepare = function () {
   // Default statement
   return this.converter.update(this.message);
 };
+
+/** ****************************************************************************************
+ * From here we are in specific mandrill wrapper method
+ ******************************************************************************************/
+
+/**
+ * Set a subaccount for current message object (Specific Mandrill)
+ *
+ * @param {String} value subaccount value for current object
+ * @return {Boolean} true in case of success, false otherwise
+ */
+Message.prototype.setSubAccount = function (value) {
+  // Defaut statement
+  return this.set('subaccount', value);
+};
+
+
+/** ****************************************************************************************
+ * From here we are in utility method
+ ******************************************************************************************/
+
+/**
+ * Set a sandbox flag for current message object (Specific Mailjet or for sandbox all your request)
+ *
+ * @param {Boolean} localOnly if true all requests will response success, otherwise keep the normal sandbox process (only for mailjet transactional)
+ * @return {Boolean} true in case of success, false otherwise
+ */
+Message.prototype.enableSandbox = function (localOnly) {
+  // LocalOnly is needed
+  if (localOnly) {
+    this.set('localSandbox', true);
+  }
+
+  // Defaut statement
+  return this.set('sandbox', true);
+};
+
 
 /**
  * Default export

@@ -4,17 +4,33 @@ var logger      = require('yocto-logger');
 var _           = require('lodash');
 var Q           = require('q');
 var factory     = require('./factory');
+var sandbox     = require('../sandbox');
+var debuger     = require('../debugger');
 
 /**
  * Process send request on correct message type
  *
  * @param {Object} logger default logger to use on current instance
+ * @param {Object} options custom option to use on message
  */
-function Sender (logger) {
+function Sender (logger, options) {
+  // Default debut state to display full printed message (request / response)
+  this.debug = process.env.DEBUG || false;
+
   /**
    * Default logger
    */
   this.logger = logger;
+
+  /**
+   * Default debugger instance
+   */
+  this.debuger = debuger(logger);
+
+  /**
+   * Internal factory to build correct transporter
+   */
+  this.factory = factory(this.logger);
 
   /**
    * Message save and ready to send
@@ -22,19 +38,9 @@ function Sender (logger) {
   this.message = {};
 
   /**
-   * Constant to use for sender
-   */
-
-  // For nodemailer process
-  this.NODEMAILER_TYPE = 'nodemailer';
-
-  // For mandrill process
-  this.MANDRILL_TYPE = 'mandrill';
-
-  /**
    * Default type of mailer module
    */
-  this.type = this.NODEMAILER_TYPE;
+  this.type = this.factory.NODEMAILER_TYPE;
 
   /**
    * Constant for state list
@@ -61,9 +67,14 @@ function Sender (logger) {
   };
 
   /**
-   * Internal factory to build correct transporter
+   * Default sandbox instance
    */
-  this.factory = factory(this.logger);
+  this.sandbox = sandbox(this.logger);
+
+  /**
+   * Default options
+   */
+  this.options = options;
 }
 
 /**
@@ -122,21 +133,9 @@ Sender.prototype.updateState = function (code, message) {
  * @param {Object} options given options used for creation
  * @return {Sender} current sender instance
  */
-Sender.prototype.createTransport = function (options) {
+Sender.prototype.createTransport = function () {
   // Current transport
-  var transport = false;
-
-  // Is nodemailer ?
-  if (this.type === this.NODEMAILER_TYPE) {
-    // Set transport
-    transport = this.factory.createNodeMailerTransporter(options);
-  }
-
-  // Is mandrill ?
-  if (this.type === this.MANDRILL_TYPE) {
-    // Set transport
-    transport = this.factory.createMandrillTransporter(options);
-  }
+  var transport = this.factory.createTransporter(this.type, this.options);
 
   // Set state
   this.updateState(transport ?
@@ -164,7 +163,7 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
   var end = process.hrtime(start);
 
   // Log debug messsage
-  this.logger.debug([ '[ Sender.send ] - sending email was take :',
+  this.logger.debug([ '[ Sender.send ] - processing requests was take :',
     end[0], 'secondes and', end[1] / 1000000, 'milliseconds'
   ].join(' '));
 
@@ -184,24 +183,30 @@ Sender.prototype.updateAndBuildStats = function (start, response, status) {
 /**
  * Send current message with given options
  *
- * @param {Object|String} options options to use for current message
+ * @param {String} request specific request name is we need to override default request
+ * @param {String} type if we need to override the default type of request (GET/POST/DELETE/PUT) only
+ * @param {String} version if we need to override the default version
+ * @param {Boolean} allowEmpty to allow to send message with empty value
+ * @param {String} action needed action is ask
  * @return {Promise} promise to catch
  */
-Sender.prototype.send = function (options) {
+Sender.prototype.send = function (request, type, version, allowEmpty, action) {
   // Create deferred process
   var deferred = Q.defer();
 
   // Define here time when process start
   var start = process.hrtime();
 
-  // Message is invalid ?
+  // Normalize allowEmpty value
+  allowEmpty = _.isBoolean(allowEmpty) ? allowEmpty : false;
 
-  if (_.isEmpty(this.message)) {
+  // Message is invalid ?
+  if (_.isEmpty(this.message) && !allowEmpty) {
     // Invalid statement
     deferred.reject('Message in empty. Build your messsage before send.');
   } else {
     // Sender is valid ?
-    var transport = this.createTransport(options);
+    var transport = this.createTransport();
 
     // Transport is ready ?
     if (this.state.code === this.STATE_READY) {
@@ -210,16 +215,24 @@ Sender.prototype.send = function (options) {
         // Do a debug message
         this.logger.debug([ '[ Sender.send ] -', this.type, 'Connector is ready' ].join(' '));
 
+        // Set here sandbox process
+        transport = this.sandbox.check(transport, this.message);
+
         // If we are here we need to send the message
-        transport.send(this.message).then(function (success) {
+        transport.send(this.message, request, type, version, action).then(function (success) {
           // Update state and get new success object
           success = this.updateAndBuildStats(start, success, this.STATE_SUCCESS);
 
           // On the other case we resolve the promise
           return deferred.resolve(success);
         }.bind(this)).catch(function (error) {
+          // Debug message is enabled ?
+          if (this.debug) {
+            this.debuger.debug('[ Sender.send ] - Full error response is :', error);
+          }
+
           // Update state and get new success object
-          error = this.updateAndBuildStats(start, success, this.STATE_ERROR);
+          error = this.updateAndBuildStats(start, error, this.STATE_ERROR);
 
           // Reject with error
           deferred.reject(error);
@@ -243,9 +256,10 @@ Sender.prototype.send = function (options) {
  * Default export
  *
  * @param {Object} l logger instance to use on main module
+ * @param {Object|String} options options to use for current message
  * @return {Object} main Sender class to use on main process
  */
-module.exports = function (l) {
+module.exports = function (l, options) {
   // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
     // Log a warning message
@@ -256,5 +270,5 @@ module.exports = function (l) {
   }
 
   // Default statement
-  return new Sender(l);
+  return new Sender(l, options);
 };

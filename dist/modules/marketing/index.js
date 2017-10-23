@@ -1,0 +1,1 @@
+"use strict";function Marketing(e,t){this.logger=e,this.sender=sender(this.logger,t),this.contact=contact(this.logger,this.sender)}var contact=require("./contacts"),sender=require("../sender");module.exports=Marketing;

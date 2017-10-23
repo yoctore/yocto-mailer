@@ -48,14 +48,16 @@ function SchemaValidator (logger) {
       key   : joi.string().required().empty(),
       value : joi.string().required().empty()
     }),
-    html       : joi.string().required().empty(),
-    inReplyTo  : joi.string().required().empty(),
-    priority   : joi.string().required().valid([ 'low', 'normal', 'high' ]),
-    replyTo    : joi.string().email().required().empty(),
-    subaccount : joi.string().required().empty(),
-    subject    : joi.string().required().empty(),
-    text       : joi.string().required().empty(),
-    to         : joi.alternatives().try(
+    html         : joi.string().required().empty(),
+    inReplyTo    : joi.string().required().empty(),
+    localSandbox : joi.boolean().optional(),
+    priority     : joi.string().required().valid([ 'low', 'normal', 'high' ]),
+    replyTo      : joi.string().email().required().empty(),
+    sandbox      : joi.boolean().optional().default(false),
+    subaccount   : joi.string().required().empty(),
+    subject      : joi.string().required().empty().max(255),
+    text         : joi.string().required().empty(),
+    to           : joi.alternatives().try(
       joi.object().required().keys({
         address : joi.string().email().required().empty(),
         name    : joi.string().optional().default(joi.ref('address'))

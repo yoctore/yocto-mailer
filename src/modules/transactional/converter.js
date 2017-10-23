@@ -3,7 +3,7 @@
 var logger      = require('yocto-logger');
 var _           = require('lodash');
 var customiser  = require('./customiser');
-var sender      = require('./sender');
+var sender      = require('../sender');
 var fs          = require('fs');
 var path        = require('path');
 
@@ -12,8 +12,9 @@ var path        = require('path');
  *
  * @param {Object} message current message to convert
  * @param {Object} logger default logger to use on current instance
+ * @param {Object} options custom option to use on message
  */
-function Converter (message, logger) {
+function Converter (message, logger, options) {
   /**
    * Default logger
    */
@@ -32,7 +33,7 @@ function Converter (message, logger) {
   /**
    * Sender module to send data
    */
-  this.sender = sender(this.logger);
+  this.sender = sender(this.logger, options);
 
   /**
    * Internal rules content
@@ -73,7 +74,7 @@ Converter.prototype.toString = function () {
  */
 Converter.prototype.toNodeMailer = function () {
   // Default statement
-  return this.convert(this.sender.NODEMAILER_TYPE);
+  return this.convert(this.sender.factory.NODEMAILER_TYPE);
 };
 
 /**
@@ -83,7 +84,17 @@ Converter.prototype.toNodeMailer = function () {
  */
 Converter.prototype.toMandrill = function () {
   // Default statement
-  return this.convert(this.sender.MANDRILL_TYPE);
+  return this.convert(this.sender.factory.MANDRILL_TYPE);
+};
+
+/**
+ * Return current message for mailjet reprensentation
+ *
+ * @return {Object} current message on object representation
+ */
+Converter.prototype.toMailjet = function () {
+  // Default statement
+  return this.convert(this.sender.factory.MAILJET_TYPE);
 };
 
 /**
@@ -94,15 +105,16 @@ Converter.prototype.toMandrill = function () {
  */
 Converter.prototype.convert = function (key) {
   // We need first clone deep this current message
-  var cloned = key === this.sender.NODEMAILER_TYPE ? this.message : {};
+  var cloned = key === this.sender.factory.NODEMAILER_TYPE ? this.message : {};
 
   // Try to get rules
   var rules = _.get(this.rules, key);
 
   // Rules is array and not empty ?
-  if (key !== this.sender.NODEMAILER_TYPE && _.isArray(rules) && !_.isEmpty(rules)) {
+  if (key !== this.sender.factory.NODEMAILER_TYPE && !_.isEmpty(rules) &&
+    _.has(rules, 'prerules') && _.isArray(rules.prerules)) {
     // Process maps
-    _.map(rules, function (rule) {
+    _.map(rules.prerules, function (rule) {
       // Try to get current value
       var value = !_.isFunction(this.customiser[rule.customiser]) ?
         _.get(this.message, rule.sourcePath) :
@@ -114,7 +126,6 @@ Converter.prototype.convert = function (key) {
         var exists = _.get(cloned, rule.destinationPath);
 
         // Try to process array and object case
-
         if (_.isArray(exists) || _.isObject(exists)) {
           // Is array ?
           if (_.isArray(exists)) {
@@ -145,9 +156,20 @@ Converter.prototype.convert = function (key) {
         _.set(cloned, rule.destinationPath, value);
       }
     }.bind(this));
+
+    // Has post rules ?
+    if (_.has(rules, 'postrules')) {
+      // Parse postrules
+      _.map(rules.postrules, function (rule) {
+        // Try to get current value
+        if (_.isFunction(this.customiser[rule.customiser])) {
+          cloned = this.customiser[rule.customiser](cloned);
+        }
+      }.bind(this));
+    }
   } else {
     // Is not not mailer ?
-    if (key !== this.sender.NODEMAILER_TYPE) {
+    if (key !== this.sender.factory.NODEMAILER_TYPE) {
       // Log a warning message
       this.logger.warning([ '[ Converter.convert ] - cannot process convertion to [', key,
         '] format. Rules are not defined or is empty' ].join(' '));
@@ -163,9 +185,10 @@ Converter.prototype.convert = function (key) {
  *
  * @param {Object} message current messae object to convert 
  * @param {Object} l logger instance to use on main module
+ * @param {Object} options custom option to use on message
  * @return {Object} main Converter class to use on main process
  */
-module.exports = function (message, l) {
+module.exports = function (message, l, options) {
   // Is a valid logger ?
   if (_.isUndefined(l) || _.isNull(l)) {
     // Log a warning message
@@ -176,5 +199,5 @@ module.exports = function (message, l) {
   }
 
   // Default statement
-  return new Converter(message, l);
+  return new Converter(message, l, options);
 };

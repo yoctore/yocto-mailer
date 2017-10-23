@@ -78,7 +78,7 @@ Transformer.prototype.attachementsToArray = function (value) {
   return this.toArray({
     cid         : uuid.v4(),
     content     : fs.readFileSync(value).toString('base64'),
-    contentType : mime.lookup(value),
+    contentType : mime.getType(value),
     encoding    : 'base64',
     filename    : path.basename(value)
   });

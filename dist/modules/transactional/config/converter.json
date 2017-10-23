@@ -1,0 +1,41 @@
+{
+  "mandrill" : {
+    "prerules" : [
+      { "sourcePath" : "html", "destinationPath" : "html" },
+      { "sourcePath" : "text", "destinationPath" : "text" },
+      { "sourcePath" : "subject", "destinationPath" : "subject" },
+      { "sourcePath" : "from.address", "destinationPath" : "from_email" },
+      { "sourcePath" : "from.name", "destinationPath" : "from_name" },
+      { "sourcePath" : "to", "destinationPath" : "to", "customiser" : "mandrillToFormat" }, 
+      { "sourcePath" : "cc", "destinationPath" : "to", "customiser" : "mandrillToFormat" },
+      { "sourcePath" : "bcc", "destinationPath" : "to", "customiser" : "mandrillToFormat" },
+      { "sourcePath" : "headers", "destinationPath" : "headers" },
+      { "sourcePath" : "replyTo", "destinationPath" : "headers.Reply-To" },
+      { "sourcePath" : "priority", "destinationPath" : "important", "customiser" : "mandrillImportantFormat" },
+      { "sourcePath" : "subaccount", "destinationPath" : "subaccount" },
+      { "sourcePath" : "attachments", "destinationPath" : "attachments", "customiser" : "mandrillAttachementFormat" },
+      { "sourcePath" : "localSandbox", "destinationPath" : "localSandbox" }
+    ]
+  },
+  "mailjet" : {
+    "prerules" : [
+      { "sourcePath" : "html", "destinationPath" : "HTMLPart" },
+      { "sourcePath" : "text", "destinationPath" : "TextPart" },
+      { "sourcePath" : "subject", "destinationPath" : "Subject" },
+      { "sourcePath" : "from", "destinationPath" : "From", "customiser" : "mailjetFromToCcBccFormat" },
+      { "sourcePath" : "to", "destinationPath" : "To", "customiser" : "mailjetFromToCcBccFormat" }, 
+      { "sourcePath" : "cc", "destinationPath" : "Cc", "customiser" : "mailjetFromToCcBccFormat" },
+      { "sourcePath" : "bcc", "destinationPath" : "Bcc", "customiser" : "mailjetFromToCcBccFormat" },
+      { "sourcePath" : "headers", "destinationPath" : "Headers" },
+      { "sourcePath" : "attachments", "destinationPath" : "Attachments", "customiser" : "mailjetAttachementFormat" },
+      { "sourcePath" : "sandbox", "destinationPath" : "SandboxMode" },
+      { "sourcePath" : "priority", "destinationPath" : "Priority", "customiser" : "mailjetImportantFormat" },
+      { "sourcePath" : "localSandbox", "destinationPath" : "localSandbox" },
+      { "sourcePath" : "replyTo", "destinationPath" : "ReplyTo", "customiser" : "mailjetFromToCcBccFormat" }
+    ],
+    "postrules" : [
+      { "customiser" : "postFormatTransactionnalMessage" }
+    ]
+  }
+}
+
