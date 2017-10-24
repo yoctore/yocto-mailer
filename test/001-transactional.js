@@ -304,6 +304,13 @@ describe('Message ()', function() {
         privateKey : process.env.MJ_APIKEY_PRIVATE
       };
 
+      var m = message.transactional(options);
+
+      m.setSubject('My subject');
+      m.setMessage('<b>My aaaaaa</b>');
+      m.setFrom({ address : 'technique@yocto.re', name : 'from' });
+      m.addTo({ address : 'demo@yocto.re', name : 'to' });
+
       // we must enable sandbox mode
       m.enableSandbox();
 
