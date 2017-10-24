@@ -1,9 +1,9 @@
 var logger  = require('yocto-logger');
 var message = require('../dist/index.js')(logger);
-var assert = require('assert');
 var _      = require('lodash');
 var utils  = require('yocto-utils');
 var should = require('chai').should();
+var assert = require('chai').assert;
 
 // disable console we dont need it
 message.logger.disableConsole();
@@ -132,7 +132,7 @@ describe('Message ()', function() {
     it ('Message must be an object and not empty for nodemailer', function () {
       var prepared = m.prepare();
       prepared.should.be.an('object');
-      prepared.should.be.not.empty;      
+      prepared.should.be.not.empty;
       var messageFormat = prepared.toNodeMailer().toObject();
       messageFormat.should.be.an('object');
       messageFormat.should.be.not.empty;
@@ -140,13 +140,13 @@ describe('Message ()', function() {
     it ('Message must be an object and not empty for mandrill', function () {
       var prepared = m.prepare();
       prepared.should.be.an('object');
-      prepared.should.be.not.empty;      
+      prepared.should.be.not.empty;
       var messageFormat = prepared.toMandrill().toObject();
       messageFormat.should.be.an('object');
-      messageFormat.should.be.not.empty;   
+      messageFormat.should.be.not.empty;
     });
   });
-  // to test if after transformation property is correct for current message format 
+  // to test if after transformation property is correct for current message format
   describe('New transactional message build should properly transform for nodemailer format', function() {
     [
       'from',
@@ -171,7 +171,7 @@ describe('Message ()', function() {
       });
     })
   });
-  // to test if after transformation property is correct for current message format 
+  // to test if after transformation property is correct for current message format
   describe('New transactional message build should properly transform for Mandrill format', function() {
     [
       'from_email',
@@ -195,7 +195,7 @@ describe('Message ()', function() {
     })
   });
 
-  // to test if after transformation property is correct for current message format 
+  // to test if after transformation property is correct for current message format
   describe('New transactional message build should properly transform for Mailjet format', function() {
     [
       { name : 'From', level : 1 },
@@ -226,10 +226,10 @@ describe('Message ()', function() {
           prepared.should.have.nested.property(property.name);
         }
       });
-    })
+    });
   });
 
-  // to test if after transformation property is correct for current message format 
+  // to test if after transformation property is correct for current message format
   describe('New transactional message should properly sent for all defined provider', function() {
     // we need to force the timeout
     this.timeout(30000);
@@ -246,8 +246,15 @@ describe('Message ()', function() {
         }
       };
 
+      var m = message.transactional(options);
+
+      m.setSubject('My subject');
+      m.setMessage('<b>My aaaaaa</b>');
+      m.setFrom({ address : 'demo@yocto.re', name : 'from' });
+      m.addTo({ address : 'demo@yocto.re', name : 'to' });
+
       // try to send
-      var prepared = m.prepare().toNodeMailer().send(options).then(function (success) {
+      var prepared = m.prepare().toNodeMailer().send().then(function (success) {
         success.should.be.an('object');
         success.should.have.property('response');
         success.should.have.property('stats');
@@ -258,8 +265,9 @@ describe('Message ()', function() {
         success.should.have.nested.property('response.messageId');
         done();
       }).catch(function(error) {
-        assert.isNotOk(false, 'Cannot connect on current server' + error);
-        done();
+
+        done(new Error('Cannot sent email with Nodemailer transporter : ' +
+        utils.obj.inspect(error)));
       });
     });
 
@@ -268,15 +276,23 @@ describe('Message ()', function() {
       // current apiKey
       var options = process.env.MANDRILL_API_KEY;
 
+      var m = message.transactional(options);
+
+      m.setSubject('My subject');
+      m.setMessage('<b>My aaaaaa</b>');
+      m.setFrom({ address : 'demo@yocto.re', name : 'from' });
+      m.addTo({ address : 'demo@yocto.re', name : 'to' });
+
       // try to send
-      var prepared = m.prepare().toMandrill().send(options).then(function (success) {
+      var prepared = m.prepare().toMandrill().send().then(function (success) {
         success.should.be.an('object');
         success.should.have.property('response');
         success.should.have.property('stats');
         done();
       }).catch(function(error) {
-        assert.isNotOk(false, 'Cannot connect on current server' + error);
-        done();
+
+        done(new Error('Cannot sent email with Mandrill transporter : ' +
+        utils.obj.inspect(error)));
       });
     });
 
@@ -292,13 +308,15 @@ describe('Message ()', function() {
       m.enableSandbox();
 
       // try to send
-      var prepared = m.prepare().toMailjet().send(options).then(function (success) {
+      var prepared = m.prepare().toMailjet(options).send().then(function (success) {
         success.should.be.an('object');
         success.should.have.property('response');
         success.should.have.property('stats');
         done();
       }).catch(function(error) {
-        done(new Error('Cannot sent email with mailjet transporter : ' + error.response.response.text));
+
+        done(new Error('Cannot sent email with Mailjet transporter : ' +
+        utils.obj.inspect(error)));
       });
     });
   });

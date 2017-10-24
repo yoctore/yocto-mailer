@@ -1,13 +1,13 @@
 'use strict';
 
 var _ = require('lodash');
-var Q = require('Q');
+var Q = require('q');
 
 /**
  * Mail ContactList class
  *
  * @param {Object} logger current logger instance
- * @param {Object} sender default sender instance to use 
+ * @param {Object} sender default sender instance to use
  */
 function ContactLists (logger, sender) {
   /**
